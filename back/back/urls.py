@@ -16,7 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from back.app_back.views import get_csrf
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # path('me/', me)
+    path('get_csrf/', get_csrf)
+
 ]
