@@ -1,0 +1,34 @@
+services:
+  db:
+    image: postgres:17
+    restart: always
+    ports:
+      - "5432:5432"
+
+    environment:
+      POSTGRES_DB: "app_music"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+
+  back:
+    build: ./back
+    volumes:
+      - type: bind
+        source: ./back
+        target: /app
+
+    ports:
+      - "8000:8000"
+
+    depends_on:
+      - db
+
+  front:
+    build: ./front
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+
+    ports:
+      - "4200:4200"
+  
