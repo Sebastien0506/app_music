@@ -20,13 +20,14 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView
 )
-from back.app_back.views import get_csrf
+from back.app_back.views import get_csrf, register
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('me/', me)
     path('get_csrf/', get_csrf),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh')
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/register/', register)
 
 ]

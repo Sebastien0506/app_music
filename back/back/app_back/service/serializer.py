@@ -6,14 +6,14 @@ import html
 class UserSerializer(serializers.ModelSerializer) :
     class Meta:
         model = User
-        fields = ['id', 'name', 'last_name', 'email', 'password']
+        fields = ['id', 'username', 'last_name', 'email', 'password']
 
     #On déclare la fonction qui permet de nettoyer les champs
     def clean_input(self, value) :
         return html.escape(value)
     
     #On valide le nom
-    def validate_name(self, value) :
+    def validate_username(self, value) :
         #On appel le fonction pour nettoyer le champ
         cleaned_value = self.clean_input(value)
 
@@ -72,7 +72,7 @@ class UserSerializer(serializers.ModelSerializer) :
             raise serializers.ValidationError("Le mot de passe doit contenir au moins une lettre minuscule.")
         
         #On vérifie que le mot de passe contient au moins un chiffre
-        if any(char.isdigit() for char in value) :
+        if not any(char.isdigit() for char in value) :
             raise serializers.ValidationError("Le mot de passe doit contenir au moins un chiffre.")
         
         #On vérifie que le mot de passe contient au moins un caractère spécial
