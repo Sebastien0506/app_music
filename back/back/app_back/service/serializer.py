@@ -88,6 +88,71 @@ class UserSerializer(serializers.ModelSerializer) :
     def create(self, validated_data): 
         user = User.objects.create_user(**validated_data)
         return user
+
+#On crée le serializer qui permet de valider l'email et le mot de passe   
+class LoginSerializer(serializers.Serializer) :
+
+    #On récupère l'email et le mot de passe
+    email = serializers.EmailField()
+    password= serializers.CharField(write_only=True)
+
+    #On échappe les caractères spéciaux
+    def clean_input(self, value) :
+        return html.escape(value)
+    
+    #On vérifie que l'email est correct
+    def validate_email(self, value):
+        cleaned_value = self.clean_input(value)
+
+        #On vérifie que @ est présent que une seul fois
+        if cleaned_value.count("@") != 1 or not "." in cleaned_value:
+            raise serializers.ValidationError("Adresse email invalide")
+        
+        if not all(char.isalnum() or char in ["@", ".", "-", "_"] for char in cleaned_value) :
+            raise serializers.ValidationError("L'email contient des caractères invalide.")
+        
+        #On définit les nom de domaines accepter
+        domaine_accepted = ["gmail.com", "outlook.com", "hotmail.com", "live.com", "orange.com"]
+        
+        #On récupère le nom de domaine de l'email
+        domaines = cleaned_value.split("@")[1]
+
+        #On vérifie que le nom de domaine est accepter
+        if domaines not in domaine_accepted : 
+            raise serializers.ValidationError("Le nom de domaine n'est pas accepter.")
+        
+        return cleaned_value
+    
+    #On valide le mot de passe
+    def validate_password(self, value) :
+        #On définit les caractères spéciaux qui sont autorisé
+        special_chars = {"@", "$", "!", "*", "?", "&"}
+
+        #On vérifie si le mot de passe contient au moins 8 caratères.
+        if len(value) < 8 :
+            raise serializers.ValidationError("le mot de passe doit contenir au moins 8 caractères.")
+        
+        #On vérifie si il contient au moins une majuscule
+        if not any(char.isupper() for char in value) :
+            raise serializers.ValidationError("Le mot de passe doit contenir au moins une majuscule.")
+        
+        #on vérifie si il contien une minuscule
+        if not any(char.islower() for char in value) :
+            raise serializers.ValidationError("le mot de passe doit contenir au moins une lettre minuscule.")
+        
+        #On vérifie si il contient au moins chiffre
+        if not any(char.isdigit() for char in value) :
+            raise serializers.ValidationError("Le mot de passe doit contenir au moins un chiffre.")
+        
+        #On vérifie que le mot de passe contient seulement les caractères spéciaux autorisé.
+        if not all(char.isalnum() or char in special_chars for char in value) :
+            raise serializers.ValidationError(" Le mot de passe contient des caractères spéciaux non autorisé.")
+        
+        return value
+        
+
+
+
         
 
 

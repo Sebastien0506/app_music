@@ -6,7 +6,7 @@ from back.app_back.models import User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response 
-from back.app_back.service.serializer import UserSerializer
+from back.app_back.service.serializer import UserSerializer, LoginSerializer
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
@@ -75,8 +75,6 @@ def register(request) :
        )
        #On retourne la reponse 
        return response
-        
-
     
     return Response(
         serializer.errors,
@@ -84,11 +82,76 @@ def register(request) :
     )
 
 
-    # else:
-    #     return Response(
-    #         serializer.errors,
-    #         status=status.HTTP_400_BAD_REQUEST
-    #     )
+
+#On crée la fonction pour la connexion
+@api_view(["POST"])
+def login(request) :
+
+    #On récupère les données de l'utilisateur
+    email: str = request.data.get("email")
+    password: str = request.data.get("password")
+     
+    #On vérifie que les données sont présentes
+    if not email or not password :
+        return Response(
+            {
+                "errors": "Données manquant."
+            }, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    #on initialise le serializer
+    serializer = LoginSerializer(
+        data = {
+            "email": email,
+            "password": password
+        }
+    )
+
+    #On vérifie que le serializer est valide
+    if serializer.is_valid() :
+
+        #On récupère l'utilisateur
+        user = User.objects.get(email=email)
+
+        #On vérifie que l'utilisateur est bien présent en db
+        if not user :
+            return Response(
+                {
+                    "errors": "Aucun utilisateur trouvé."
+                }, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        #On génère le token
+        tokens = get_token_for_user(user)
+
+        #On envoie la reponse
+        response = Response(
+            {"success": "Connexion réussie."},
+            status=status.HTTP_200_OK
+        )
+
+        response.set_cookie(
+            key="access_token",
+            value=tokens["access"],
+            httponly=True
+        )
+
+        response.set_cookie(
+            key="refresh_token",
+            value=tokens["refresh"],
+            httponly=True
+        )
+        return response
+    else :
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+
+
     
     
     
