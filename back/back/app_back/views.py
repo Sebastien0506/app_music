@@ -10,6 +10,7 @@ from back.app_back.service.serializer import UserSerializer, LoginSerializer
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
+from back.app_back import authentication
 
 @api_view(["POST"])
 @ensure_csrf_cookie
@@ -149,29 +150,17 @@ def login(request) :
             status=status.HTTP_400_BAD_REQUEST
         )
 
-
-
-
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def me(request): 
     
-    
-    
-    
+#On récupère l'utilisateur dans la requête
+    user = request.user
+    #On renvoi les données de l'utilisateur
+    return Response({
+        "id": user.id,
+        "username": user.username,
+        "last_name": user.last_name
+    })
 
-
-
-
-
-
-
-# def me(request): 
-
-# #On récupère l'utilisateur dans la requête
-#     user = request.user
-#     #On renvoi les données de l'utilisateur
-#     return Response({
-#         "id": user.id,
-#         "name": user.name,
-#         "last_name": user.last_name
-#     })
-
-    
+  

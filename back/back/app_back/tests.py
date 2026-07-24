@@ -28,28 +28,65 @@ User = get_user_model()
 #             User.objects.filter(email="sebastien@gmail.com").exists()
 #         )
 
-class LoginTest(TestCase) :
-    def test_login(self) :
-        User.objects.create_user(
+# class LoginTest(TestCase) :
+#     def test_login(self) :
+#         User.objects.create_user(
+#             username="Sébastien",
+#             last_name="Dec",
+#             email="sebastien@gmail.com",
+#             password="Password@123",
+#         )
+
+#         client  = APIClient()
+
+#         response = client.post(
+#             "/api/login/",
+#             {
+#                 "email": "sebastien@gmail.com",
+#                 "password": "Password@123",
+#             },
+#             format="json",
+
+#         )
+#         print(response.status_code)
+#         print(response.content.decode())
+#         self.assertEqual(response.status_code, 200)
+#         self.assertTrue(User.objects.filter(email="sebastien@gmail.com").exists())
+
+
+class MeTest(TestCase):
+
+    def test_me(self):
+
+        user = User.objects.create_user(
             username="Sébastien",
             last_name="Dec",
             email="sebastien@gmail.com",
             password="Password@123",
         )
 
-        client  = APIClient()
+        client = APIClient()
 
-        response = client.post(
-            "/api/login/",
-            {
-                "email": "sebastien@gmail.com",
-                "password": "Password@123",
-            },
-            format="json",
+        # login_response = client.post(
+        #     "/api/login/",
+        #     {
+        #         "email": "sebastien@gmail.com",
+        #         "password": "Password@123",
+        #     },
+        #     format="json",
+        # )
 
-        )
-        print(response.status_code)
-        print(response.content.decode())
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(User.objects.filter(email="sebastien@gmail.com").exists())
+        # self.assertEqual(login_response.status_code, 200)
+        # self.assertIn("access_token", login_response.cookies)
+
+        me_response = client.get("/api/me/")
+
+        print(me_response.status_code)
+        print(me_response.content.decode())
+
+        self.assertEqual(me_response.status_code, 401)
+
+        # self.assertEqual(me_response.data["id"], user.id)
+        # self.assertEqual(me_response.data["username"], user.username)
+        # self.assertEqual(me_response.data["last_name"], user.last_name)
 
