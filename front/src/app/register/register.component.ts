@@ -4,6 +4,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatDialogContent } from '@angular/material/dialog';
 import { RegisterService } from './register.service';
+import { LoggedService } from '../logged.service';
 
 @Component({
   selector: 'app-register',
@@ -13,7 +14,7 @@ import { RegisterService } from './register.service';
   styleUrl: './register.component.css'
 })
 export class RegisterComponent {
-  constructor(private registerService: RegisterService){}
+  constructor(private registerService: RegisterService, private logedService: LoggedService){}
 
   //On récupère les données du formulaire
   usernameInput = signal('');
@@ -153,6 +154,7 @@ export class RegisterComponent {
     //On envoie la requête
     this.registerService.requestRegister(data).subscribe({
       next: (res) => {
+        this.logedService.userLogin();
         console.log('User created')
       },
       error: (err) => {
