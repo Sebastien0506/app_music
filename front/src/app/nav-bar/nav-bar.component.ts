@@ -4,6 +4,7 @@ import { AuthServiceService } from '../auth-service.service';
 import { LoginComponent } from '../login/login.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule, MatButton } from '@angular/material/button';
+import { RegisterComponent } from '../register/register.component';
 
 
 @Component({
@@ -37,6 +38,13 @@ export class NavBarComponent implements OnInit {
     this.dialog.open(LoginComponent, {
       height: '700px',
       width: '700px'
+    });
+  }
+
+  ouvrirFormulaireRegister(){
+    this.dialog.open(RegisterComponent, {
+      height: '700px',
+      width: '700px',
     });
   }
   
