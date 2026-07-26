@@ -3,6 +3,7 @@ import { MatDialog, MatDialogContent } from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatInputModule} from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { ConnexionService } from './connexion.service';
   
 @Component({
   selector: 'app-login',
@@ -12,7 +13,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  constructor(){}
+  constructor(private connexionService: ConnexionService){}
 
   //On récupère les données du formulaire
   emailInput = signal('');
@@ -22,17 +23,17 @@ export class LoginComponent {
   errorMessage = signal('');
   
   //On crée une fonction qui vérifie les champs
-  verifyInput(){
+  verifyInput(): boolean {
 
     //On vérifie que les champs contient quelque chose
     if(this.emailInput().trim() === '' || this.passwordInput().trim() === ''){
       // Si un champs est vide on renvoie un message
       this.errorMessage.set("Veuillez remplir tous les champs.");
-      return;
+      return false;
     }
     this.errorMessage.set(''); 
-    console.log(this.emailInput);
-    console.log(this.passwordInput);
+    console.log(this.emailInput());
+    console.log(this.passwordInput());
 
     const email = this.emailInput()
     const password = this.passwordInput()
@@ -70,7 +71,7 @@ export class LoginComponent {
     let contientChiffre = false;
     let contientCaractereSpecial = false;
 
-    for (let i = 0; i > password.length; i++) {
+    for (let i = 0; i < password.length; i++) {
       const code = password.charCodeAt(i);
 
       if ( code >= 48 && code <= 57) {
@@ -95,13 +96,41 @@ export class LoginComponent {
     if(!contientChiffre || !contientCaractereSpecial){
       return false;
     }
-    return false;
+    return true;
 
 
   }
 
  
+  sendRequest(){
+    console.log("test");
+    //On appel la fonction verifyInput
+    const verifyData = this.verifyInput();
+    console.log(verifyData);
 
+    if(!verifyData) {
+      this.errorMessage.set('Certain champs sont invalide.');
+      return;
+    };
+
+    //On stock les données dans la variable data
+    const data = {
+      email: this.emailInput(),
+      password: this.passwordInput()
+    };
+
+    //On envoi les données
+    this.connexionService.sendRequestLogin(data).subscribe({
+      next: (res) => {
+        console.log('User connected');
+      },
+      error: (error) => {
+        console.error('Erreur lors de la connexion :', error);
+      }
+    });
+
+
+  }
   
 
 }

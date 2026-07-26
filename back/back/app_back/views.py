@@ -12,6 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from back.app_back import authentication
 
+
 @api_view(["POST"])
 @ensure_csrf_cookie
 def get_csrf(request):
@@ -149,6 +150,22 @@ def login(request) :
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def logout(request) :
+
+    refresh_token = request.COOKIES.get("refresh_token")
+
+    if refresh_token :
+        refresh = RefreshToken(refresh_token)
+        refresh.blacklist()
+    response = Response({"success": "Déconnexion réussie."})
+    
+    response.delete_cookie("access_token")
+    response.delete_cookie("refresh_token")
+
+
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
