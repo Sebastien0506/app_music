@@ -1,9 +1,11 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { MatDialog, MatDialogContent } from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatInputModule} from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { ConnexionService } from './connexion.service';
+import { AuthServiceService } from '../auth-service.service';
+import { LoggedService } from '../logged.service';
   
 @Component({
   selector: 'app-login',
@@ -12,9 +14,20 @@ import { ConnexionService } from './connexion.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
-  constructor(private connexionService: ConnexionService){}
+export class LoginComponent implements OnInit{
+  constructor(private connexionService: ConnexionService, private authService: AuthServiceService, private logedService: LoggedService){}
 
+  ngOnInit(): void {
+      this.authService.getCsrfToken().subscribe({
+        next: (res) => {
+          this.logedService.userLogin();
+          
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      })
+  }
   //On récupère les données du formulaire
   emailInput = signal('');
   passwordInput = signal('');

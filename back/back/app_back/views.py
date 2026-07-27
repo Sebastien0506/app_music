@@ -13,7 +13,7 @@ from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from back.app_back import authentication
 
 
-@api_view(["POST"])
+@api_view(["GET"])
 @ensure_csrf_cookie
 def get_csrf(request):
     return Response({"token": get_token(request)})

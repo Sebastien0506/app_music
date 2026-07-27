@@ -1,10 +1,11 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatDialogContent } from '@angular/material/dialog';
 import { RegisterService } from './register.service';
 import { LoggedService } from '../logged.service';
+import { AuthServiceService } from '../auth-service.service';
 
 @Component({
   selector: 'app-register',
@@ -13,8 +14,19 @@ import { LoggedService } from '../logged.service';
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
-export class RegisterComponent {
-  constructor(private registerService: RegisterService, private logedService: LoggedService){}
+export class RegisterComponent implements OnInit {
+  constructor(private registerService: RegisterService, private logedService: LoggedService, private authService: AuthServiceService){}
+
+  ngOnInit(): void {
+      this.authService.getCsrfToken().subscribe({
+        next: (res) => {
+          console.log("Jeton CSRF récuperer");
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+  }
 
   //On récupère les données du formulaire
   usernameInput = signal('');
@@ -47,7 +59,7 @@ export class RegisterComponent {
     const password = this.passwordInput();
 
     //On vérifie que les champs username, last_name et email sont bien des string
-    if (typeof username || last_name || email != 'string'){
+    if (typeof username !== "string" || typeof last_name !== "string" || typeof email != 'string'){
       return false;
     }
 
@@ -60,8 +72,8 @@ export class RegisterComponent {
     for (let i = 0; i < username.length; i++){
       const code = username.charCodeAt(i);
       if(
-        !(code >= 65 && code <= 90) || //A - Z
-        !(code >= 97 && code <= 122) || // a - z
+        !(code >= 65 && code <= 90) && //A - Z
+        !(code >= 97 && code <= 122) && // a - z
         code != 65
       ) {
         this.errorMessage.set("Le champs 'Nom' contient des caractères invalide.")
@@ -73,8 +85,8 @@ export class RegisterComponent {
     for (let i = 0; i < last_name.length; i++) {
       const  code = last_name.charCodeAt(i);
       if(
-        !(code >= 65 && code <= 90)||
-        !(code >= 97 && code <= 122) ||
+        !(code >= 65 && code <= 90) &&
+        !(code >= 97 && code <= 122) &&
         code != 65
       ) {
         this.errorMessage.set("le champs 'Prénom' contient des caractères invalides.");
@@ -134,8 +146,10 @@ export class RegisterComponent {
   }
 
   sendRequestRegister(){
+    console.log('Passe dans le requête.');
     //On appel la fonction verifyInput
     const verifyData = this.verifyInput();
+    console.log(verifyData);
 
     //On vérifie qu'elle soit valide
     if(!verifyData){
@@ -154,6 +168,7 @@ export class RegisterComponent {
     //On envoie la requête
     this.registerService.requestRegister(data).subscribe({
       next: (res) => {
+        //On utilise this.logedService.userLogin() pour mettre la variable isLogged a true
         this.logedService.userLogin();
         console.log('User created')
       },
