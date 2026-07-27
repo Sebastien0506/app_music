@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'back.app_back',
     'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'rest_framework_simplejwt',
     'django.contrib.admin',
     'django.contrib.auth',

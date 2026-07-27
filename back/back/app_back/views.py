@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import ensure_csrf_cookie
 from back.app_back.models import User
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response 
 from back.app_back.service.serializer import UserSerializer, LoginSerializer
 from rest_framework import status
@@ -13,10 +13,11 @@ from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from back.app_back import authentication
 
 
-@api_view(["GET"])
+# @api_view(["GET"])
+# @permission_classes([AllowAny])
 @ensure_csrf_cookie
 def get_csrf(request):
-    return Response({"token": get_token(request)})
+    return JsonResponse({"token": get_token(request)})
 
 #On génère le token jwt
 def get_token_for_user(user):
@@ -69,11 +70,17 @@ def register(request) :
            key="access_token",
            value=tokens["access"],
            httponly=True,
+           secure=False,
+           samesite="Lax",
+           max_age=300
        )
        response.set_cookie(
            key="refresh_token",
            value=tokens["refresh"],
-           httponly=True
+           httponly=True,
+           secure=False,
+           samesite="Lax",
+           max_age=300
        )
        #On retourne la reponse 
        return response
@@ -87,6 +94,8 @@ def register(request) :
 
 #On crée la fonction pour la connexion
 @api_view(["POST"])
+# @authentication_classes([])
+@permission_classes([AllowAny])
 def login(request) :
 
     #On récupère les données de l'utilisateur
@@ -136,13 +145,19 @@ def login(request) :
         response.set_cookie(
             key="access_token",
             value=tokens["access"],
-            httponly=True
+            httponly=True,
+            secure=False,
+            samesite="Lax",
+            max_age=300
         )
 
         response.set_cookie(
             key="refresh_token",
             value=tokens["refresh"],
-            httponly=True
+            httponly=True,
+            secure=False,
+            samesite="Lax",
+            max_age=300
         )
         return response
     else :
@@ -152,6 +167,7 @@ def login(request) :
         )
 
 @api_view(["POST"])
+
 @permission_classes([IsAuthenticated])
 def logout(request) :
 
@@ -164,6 +180,8 @@ def logout(request) :
     
     response.delete_cookie("access_token")
     response.delete_cookie("refresh_token")
+
+    return response
 
 
 

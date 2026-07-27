@@ -12,21 +12,12 @@ import { AuthServiceService } from './auth-service.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'front';
 
   constructor(private loggedService: LoggedService, private authService: AuthServiceService){}
 
-  ngOnInit(): void {
-      this.authService.getCsrfToken().subscribe({
-        next: () => {
-          this.loggedService.checkLogin();
-        },
-        error: (err) => {
-          console.error(err);
-        }
-      });
-  }
+  
 
 
 }

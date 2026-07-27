@@ -1,11 +1,12 @@
-import { Component, signal, OnInit } from '@angular/core';
-import { MatDialog, MatDialogContent } from '@angular/material/dialog';
+import { Component, signal, OnInit, inject } from '@angular/core';
+import { MatDialog, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatInputModule} from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { ConnexionService } from './connexion.service';
 import { AuthServiceService } from '../auth-service.service';
 import { LoggedService } from '../logged.service';
+import { Router } from '@angular/router';
   
 @Component({
   selector: 'app-login',
@@ -15,12 +16,12 @@ import { LoggedService } from '../logged.service';
   styleUrl: './login.component.css'
 })
 export class LoginComponent implements OnInit{
-  constructor(private connexionService: ConnexionService, private authService: AuthServiceService, private logedService: LoggedService){}
-
+  constructor(private connexionService: ConnexionService, private authService: AuthServiceService, private logedService: LoggedService, private router: Router){}
+  private dialogRef = inject(MatDialogRef<LoginComponent>);
   ngOnInit(): void {
       this.authService.getCsrfToken().subscribe({
         next: (res) => {
-          this.logedService.userLogin();
+          console.log("CSRF récupérer")
           
         },
         error: (err) => {
@@ -135,7 +136,10 @@ export class LoginComponent implements OnInit{
     //On envoi les données
     this.connexionService.sendRequestLogin(data).subscribe({
       next: (res) => {
+        this.logedService.userLogin();
         console.log('User connected');
+        this.dialogRef.close();
+
       },
       error: (error) => {
         console.error('Erreur lors de la connexion :', error);
