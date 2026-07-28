@@ -26,17 +26,20 @@ export class NavBarComponent implements OnInit{
   private loggedService = inject(LoggedService);
 
   isLogged = this.loggedService.isLogged;
+  isStaff = this.loggedService.isStaff;
 
   successMessage = signal('');
 
   ngOnInit(): void {
       this.loggedService.checkLogin();
+      
   }
   
   logout() {
     this.navBarService.logoutUser().subscribe({
       next: (res) => {
         this.loggedService.userLogout();
+        this.loggedService.isStaff.set(false);
         this.successMessage.set('Utilisateur déconnecter avec succès.');
         console.log(res);
       },

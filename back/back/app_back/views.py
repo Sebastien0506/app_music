@@ -138,7 +138,8 @@ def login(request) :
 
         #On envoie la reponse
         response = Response(
-            {"success": "Connexion réussie."},
+            {"success": "Connexion réussie.",
+             "is_staff": user.is_staff},
             status=status.HTTP_200_OK
         )
 
@@ -195,7 +196,8 @@ def me(request):
     return Response({
         "id": user.id,
         "username": user.username,
-        "last_name": user.last_name
+        "last_name": user.last_name,
+        "is_staff": user.is_staff
     })
 
   

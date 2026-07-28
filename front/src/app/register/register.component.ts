@@ -169,7 +169,7 @@ export class RegisterComponent implements OnInit {
     this.registerService.requestRegister(data).subscribe({
       next: (res) => {
         //On utilise this.logedService.userLogin() pour mettre la variable isLogged a true
-        this.logedService.userLogin();
+        this.logedService.userLogin(res.is_staff);
         console.log('User created')
       },
       error: (err) => {

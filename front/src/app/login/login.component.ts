@@ -136,7 +136,7 @@ export class LoginComponent implements OnInit{
     //On envoi les données
     this.connexionService.sendRequestLogin(data).subscribe({
       next: (res) => {
-        this.logedService.userLogin();
+        this.logedService.userLogin(res.is_staff);
         console.log('User connected');
         this.dialogRef.close();
 

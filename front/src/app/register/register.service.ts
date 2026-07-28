@@ -5,7 +5,8 @@ import { Observable } from 'rxjs';
 //On crée une interface 
 interface RegisterResponse {
   message: string;
-  access_token: string;
+  // access_token: string;
+  is_staff: boolean;
 }
 @Injectable({
   providedIn: 'root'

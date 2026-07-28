@@ -13,7 +13,10 @@
             <a class="nav-link active" aria-current="page" href="#" (click)="ouvrirFormulaireLogin()">Connexion</a>
           </li> -->
           @if (isLogged()) {
-            <a href="">AdminDashboard</a>
+            @if(isStaff()) {
+              <a href="">AdminDashboard</a>
+               
+            }
             <button mat-button (click)="logout()">Déconnexion</button>
           } @else {
             <button mat-button (click)="ouvrirFormulaireLogin()">Connexion</button>

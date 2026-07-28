@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 //On créé une interface pour récuperer les données reçut
 export interface LoginResponse {
   message: string;
-  access_token: string;
+  is_staff: boolean;
 }
 @Injectable({
   providedIn: 'root'
