@@ -1,6 +1,8 @@
 services:
   db:
     image: postgres:17
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     restart: always
     ports:
       - "5432:5432"
@@ -9,6 +11,12 @@ services:
       POSTGRES_DB: "app_music"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
+    
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d app_music"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   back:
     build: ./back
@@ -21,7 +29,8 @@ services:
       - "8000:8000"
 
     depends_on:
-      - db
+      db: 
+        condition: service_healthy
 
   front:
     build: ./front
@@ -31,4 +40,7 @@ services:
 
     ports:
       - "4200:4200"
+
+volumes:
+  postgres_data:
   

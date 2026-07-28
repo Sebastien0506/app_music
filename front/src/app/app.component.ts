@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavBarComponent } from "./nav-bar/nav-bar.component";
+import { LoggedService } from './logged.service';
+import { AuthServiceService } from './auth-service.service';
 
 
 @Component({
@@ -12,4 +14,10 @@ import { NavBarComponent } from "./nav-bar/nav-bar.component";
 })
 export class AppComponent {
   title = 'front';
+
+  constructor(private loggedService: LoggedService, private authService: AuthServiceService){}
+
+  
+
+
 }

@@ -1,0 +1,14 @@
+
+<ng-container>
+    <mat-dialog-content>
+        <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput type="text" [(ngModel)]="emailInput">
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Password</mat-label>
+            <input matInput type="password" [(ngModel)]="passwordInput">
+        </mat-form-field>
+    </mat-dialog-content>
+    <button (click)="sendRequest()">Se connecter</button>
+</ng-container>
