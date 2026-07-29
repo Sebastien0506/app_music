@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { MatFormFieldModule} from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { FormsResetPasswordService } from './forms-reset-password.service';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -17,7 +18,9 @@ import { FormsModule } from '@angular/forms';
 })
 export class FormsResetPasswordComponent {
 
-  constructor(private formsResetPassword: FormsResetPasswordService){}
+  constructor(private formsResetPassword: FormsResetPasswordService, private router: Router){}
+
+  
 
   emailInput = signal('');
   errorMessage = signal('');
@@ -81,6 +84,8 @@ export class FormsResetPasswordComponent {
     this.formsResetPassword.requestResetPassword(data).subscribe({
         next:(response) => {
             this.successMessage.set('Un email vous a été envoyer.');
+            this.router.navigate(['/']);
+            
         },
         error: (err) => {
           console.error(err);

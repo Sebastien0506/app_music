@@ -8,6 +8,7 @@ import { RegisterComponent } from '../register/register.component';
 import { LoggedService } from '../logged.service';
 import { DialogRef } from '@angular/cdk/dialog';
 import { NavBarService } from './nav-bar.service';
+import { Router } from '@angular/router';
 
 
 
@@ -21,7 +22,7 @@ import { NavBarService } from './nav-bar.service';
 
 export class NavBarComponent implements OnInit{
 
-  constructor(private authservice: AuthServiceService, private dialog: MatDialog, private navBarService: NavBarService) {}
+  constructor(private authservice: AuthServiceService, private dialog: MatDialog, private navBarService: NavBarService, private router: Router) {}
   
   private loggedService = inject(LoggedService);
 
@@ -50,10 +51,17 @@ export class NavBarComponent implements OnInit{
   }
 
   ouvrirFormulaireLogin(){
-    this.dialog.open(LoginComponent, {
+    const dialogRef = this.dialog.open(LoginComponent, {
       height: '700px',
       width: '700px'
     });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if(result === 'reset-password') {
+        this.router.navigate(['/forms_reset_password']);
+      }
+    });
+    
   }
 
   ouvrirFormulaireRegister(){

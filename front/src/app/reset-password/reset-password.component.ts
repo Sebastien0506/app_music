@@ -6,6 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { ResetPasswordService } from './reset-password.service';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 // import { ɵEmptyOutletComponent } from "@angular/router";
 
@@ -18,7 +19,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class ResetPasswordComponent implements OnInit{
   private readonly route = inject(ActivatedRoute);
-  constructor(private resetPasswordService: ResetPasswordService) {}
+  constructor(private resetPasswordService: ResetPasswordService, private router: Router) {}
 
   token: string | null = null;
 
@@ -149,6 +150,7 @@ export class ResetPasswordComponent implements OnInit{
       next: (response) => {
         console.log('Succès :', response);
         this.errorMessage.set('Le mot de passe a bien été modifié.');
+        this.router.navigate(['/']);
       },
       error: (error) => {
         console.error('Erreur :', error);

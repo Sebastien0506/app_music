@@ -19,6 +19,8 @@ import { MatButton } from "@angular/material/button";
 export class LoginComponent implements OnInit{
   constructor(private connexionService: ConnexionService, private authService: AuthServiceService, private logedService: LoggedService, private router: Router){}
   private dialogRef = inject(MatDialogRef<LoginComponent>);
+
+  
   ngOnInit(): void {
       this.authService.getCsrfToken().subscribe({
         next: (res) => {
@@ -152,6 +154,11 @@ export class LoginComponent implements OnInit{
     });
 
 
+  }
+
+  redirectToFormsResetPassword():void {
+    
+    this.dialogRef.close('reset-password');
   }
   
 
