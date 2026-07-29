@@ -6,12 +6,13 @@ import { FormsModule } from '@angular/forms';
 import { ConnexionService } from './connexion.service';
 import { AuthServiceService } from '../auth-service.service';
 import { LoggedService } from '../logged.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { MatButton } from "@angular/material/button";
   
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [MatFormFieldModule, MatDialogContent, MatInputModule, FormsModule],
+  imports: [MatFormFieldModule, MatDialogContent, MatInputModule, FormsModule, MatButton, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -35,6 +36,9 @@ export class LoginComponent implements OnInit{
 
   //On déclare une variable errorMessage
   errorMessage = signal('');
+  successMessage = signal('');
+
+  
   
   //On crée une fonction qui vérifie les champs
   verifyInput(): boolean {
@@ -142,6 +146,7 @@ export class LoginComponent implements OnInit{
 
       },
       error: (error) => {
+        this.errorMessage.set('Erreur lors de la connexion.');
         console.error('Erreur lors de la connexion :', error);
       }
     });

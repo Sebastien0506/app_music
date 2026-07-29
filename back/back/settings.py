@@ -26,6 +26,12 @@ SECRET_KEY = 'django-insecure-%a7!++#51&1zl^1@@r4o1whb&0ah_^h_)9d2%104fb8!(b30dt
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_HOST_USER = '4ca8af744e1d16'
+EMAIL_HOST_PASSWORD = 'dadea22d5ccb6b'
+EMAIL_PORT = '2525'
+
 ALLOWED_HOSTS = []
 
 CORS_ALLOWED_ORIGINS = [
@@ -45,6 +51,7 @@ INSTALLED_APPS = [
     'back.app_back',
     'corsheaders',
     'rest_framework',
+    'django_rest_passwordreset',
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework_simplejwt',
     'django.contrib.admin',

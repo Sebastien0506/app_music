@@ -7,6 +7,8 @@ export interface LoginResponse {
   message: string;
   is_staff: boolean;
 }
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,4 +22,7 @@ export class ConnexionService {
       withCredentials: true
     });
   }
+
+  
 }
+

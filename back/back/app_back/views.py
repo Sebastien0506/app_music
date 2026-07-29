@@ -11,6 +11,12 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from back.app_back import authentication
+from django.core.mail import EmailMultiAlternatives
+from django.dispatch import receiver
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django_rest_passwordreset.signals import reset_password_token_created
+from django.contrib.auth import authenticate
 
 
 # @api_view(["GET"])
@@ -92,80 +98,75 @@ def register(request) :
 
 
 
-#On crée la fonction pour la connexion
 @api_view(["POST"])
-# @authentication_classes([])
 @permission_classes([AllowAny])
-def login(request) :
+def login(request):
+    #On récupère les données
+    email = request.data.get("email")
+    password = request.data.get("password")
 
-    #On récupère les données de l'utilisateur
-    email: str = request.data.get("email")
-    password: str = request.data.get("password")
-     
-    #On vérifie que les données sont présentes
-    if not email or not password :
+    #Si il n'y a pas email ou password
+    if not email or not password:
         return Response(
-            {
-                "errors": "Données manquant."
-            }, 
-            status=status.HTTP_400_BAD_REQUEST
+            {"errors": "Données manquantes."},
+            status=status.HTTP_400_BAD_REQUEST,
         )
-    
-    #on initialise le serializer
+    #On initialise le serializer
     serializer = LoginSerializer(
-        data = {
+        data={
             "email": email,
-            "password": password
+            "password": password,
         }
     )
-
-    #On vérifie que le serializer est valide
-    if serializer.is_valid() :
-
-        #On récupère l'utilisateur
-        user = User.objects.get(email=email)
-
-        #On vérifie que l'utilisateur est bien présent en db
-        if not user :
-            return Response(
-                {
-                    "errors": "Aucun utilisateur trouvé."
-                }, 
-                status=status.HTTP_404_NOT_FOUND
-            )
-        #On génère le token
-        tokens = get_token_for_user(user)
-
-        #On envoie la reponse
-        response = Response(
-            {"success": "Connexion réussie.",
-             "is_staff": user.is_staff},
-            status=status.HTTP_200_OK
-        )
-
-        response.set_cookie(
-            key="access_token",
-            value=tokens["access"],
-            httponly=True,
-            secure=False,
-            samesite="Lax",
-            max_age=300
-        )
-
-        response.set_cookie(
-            key="refresh_token",
-            value=tokens["refresh"],
-            httponly=True,
-            secure=False,
-            samesite="Lax",
-            max_age=300
-        )
-        return response
-    else :
+    #Si le serializer n'est pas valide
+    if not serializer.is_valid():
         return Response(
             serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
+            status=status.HTTP_400_BAD_REQUEST,
         )
+    #On identifie l'utilisateur
+    user = authenticate(
+        request=request,
+        email=email,
+        password=password,
+    )
+    #Si aucun utilisateur
+    if user is None:
+        return Response(
+            {"errors": "Email ou mot de passe incorrect."},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+    #On génère le token
+    tokens = get_token_for_user(user)
+    
+    #On envoie la response
+    response = Response(
+        {
+            "success": "Connexion réussie.",
+            "is_staff": user.is_staff,
+        },
+        status=status.HTTP_200_OK,
+    )
+    #On met les cookie dans la response
+    response.set_cookie(
+        key="access_token",
+        value=tokens["access"],
+        httponly=True,
+        secure=False,
+        samesite="Lax",
+        max_age=300,
+    )
+
+    response.set_cookie(
+        key="refresh_token",
+        value=tokens["refresh"],
+        httponly=True,
+        secure=False,
+        samesite="Lax",
+        max_age=300,
+    )
+
+    return response
 
 @api_view(["POST"])
 
@@ -200,4 +201,38 @@ def me(request):
         "is_staff": user.is_staff
     })
 
-  
+#View pour reset le password
+@receiver(reset_password_token_created)
+def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs) :
+    #Envoi de l'email a l'utilisateur
+    context = {
+        'current_user': reset_password_token.user,
+        'username': reset_password_token.user.username,
+        'email': reset_password_token.user.email,
+        # 'reset_password_url': "{}?token={}".format(
+        #     instance.request.build_absolute_uri(reverse('password_reset:reset-password-confirm')),
+        #     reset_password_token.key
+        # )
+        'reset_password_url': (
+            f"http://localhost:4200/reset_password"
+            f"?token={reset_password_token.key}"
+        ),
+    }
+
+    #On fait le rendu de l'email
+    email_html_message = render_to_string('email/user_reset_password.html', context)
+    email_plaintext_message = render_to_string('email/user_reset_password.txt', context)
+
+    msg = EmailMultiAlternatives(
+        #Titre
+        "Password Reset for {title}".format(title="Some website title"),
+        #Message:
+        email_plaintext_message,
+        #From
+        "noreply@somehost.local",
+        #to:
+        [reset_password_token.user.email]
+
+    )
+    msg.attach_alternative(email_html_message, "text/html")
+    msg.send()

@@ -1,6 +1,7 @@
 asgiref==3.12.1
 Django==6.0.7
 django-cors-headers==4.9.0
+django-rest-passwordreset==1.6.0
 djangorestframework==3.17.1
 djangorestframework_simplejwt==5.5.1
 iniconfig==2.3.0
