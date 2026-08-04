@@ -6,6 +6,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from "@angular/forms";
 import { UserUpdateService } from './user-update.service';
+import { UserComponent } from '../user/user.component';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-user-update',
@@ -18,22 +20,23 @@ import { UserUpdateService } from './user-update.service';
 export class UserUpdateComponent {
 
   constructor(private userUpdate: UserUpdateService){}
+  private dialogRef = inject(MatDialogRef<UserComponent>)
 
   data = inject<{userData: User}>(MAT_DIALOG_DATA);
 
   //On récupère les données du formulaire
-  usernameInput = signal('');
-  last_nameInput = signal('');
-  emailInput = signal('');
+  usernameInput = this.data.userData.username;
+  last_nameInput = this.data.userData.last_name;
+  emailInput = this.data.userData.email;
   errorMessage = signal('');
   succesMessage = signal('');
   //On crée la fonction pour valider les données
   verifyInput(): boolean {
 
     //On met les données du formulaire dans des variables
-    const username = this.usernameInput();
-    const last_name = this.last_nameInput();
-    const email = this.emailInput();
+    const username = this.usernameInput;
+    const last_name = this.last_nameInput;
+    const email = this.emailInput;
     console.log(email, username, last_name);
     if (
       username.trim() === '' ||
@@ -121,15 +124,19 @@ export class UserUpdateComponent {
     //On crée la variable data pour stocker les données
     const data = {
       //On stock les données de l'utilisateur
-      username: this.usernameInput(),
-      last_name: this.last_nameInput(),
-      email: this.emailInput(),
+      username: this.usernameInput,
+      last_name: this.last_nameInput,
+      email: this.emailInput,
     };
     console.log(data);
 
     this.userUpdate.sendRequestUpdateUser(data).subscribe({
-      next: (res) => {
-          this.succesMessage.set("L'utilisateur à été modifier avec succès.");
+      next: () => {
+          this.dialogRef.close({
+            success: true,
+            message: "L'utilisateur a été modifié avec succès.",
+            user: data
+          });
 
       },
       error: (err) => {

@@ -23,3 +23,8 @@
   mat-form-field {
     flex: 1;
   }
+
+  .success-message {
+    color: green;
+    margin-bottom: 10px;
+  }

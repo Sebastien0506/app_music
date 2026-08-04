@@ -1,3 +1,8 @@
+@if (
+  successMessage()
+) {
+  <p class="success-message">{{ successMessage() }}</p>
+}
 @if (user(); as currentUser) {
     <mat-card>
       <mat-card-content>

@@ -19,6 +19,8 @@ export class UserComponent implements OnInit{
   constructor(private userService: UserService){}
   dialog = inject(MatDialog);
   user = signal<User | null>(null);
+  successMessage = signal('');
+  
 
   
   ngOnInit(): void {
@@ -37,15 +39,31 @@ export class UserComponent implements OnInit{
     });
       
   }
-
+  
   openDialog(){
-    this.dialog.open(UserUpdateComponent, {
+    const dialogRef = this.dialog.open(UserUpdateComponent, {
       data: {
         userData: this.user(),
       },
       width: '700px',
       height: '700px'
-    })
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(!result?.success) {
+        return;
+      }
+      this.successMessage.set(result.message);
+
+      this.user.update(currentUser => {
+        if (!currentUser) {
+          return currentUser;
+        }
+        return {
+          ...currentUser,
+          ...result.user
+        };
+      });
+    });
   }
 
  

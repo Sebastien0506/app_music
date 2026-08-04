@@ -1,15 +1,22 @@
+@if (succesMessage()) {
+    <p class="success-message">{{succesMessage()}}</p>
+}
+
+@if (errorMessage()) {
+    <p class="error-message">{{errorMessage()}}</p>
+}
 <div>
     <mat-form-field>
         <mat-label>Prénom</mat-label>
-        <input matInput type="text" [value]="data.userData.username" [(ngModel)]="usernameInput">
+        <input matInput type="text"  [(ngModel)]="usernameInput">
     </mat-form-field>
     <mat-form-field>
         <mat-label>Nom</mat-label>
-        <input matInput type="text" [value]="data.userData.last_name" [(ngModel)]="last_nameInput">
+        <input matInput type="text"  [(ngModel)]="last_nameInput">
     </mat-form-field>
     <mat-form-field>
         <mat-label>Email</mat-label>
-        <input matInput type="text" [value]="data.userData.email" [(ngModel)]="emailInput">
+        <input matInput type="text" [(ngModel)]="emailInput">
     </mat-form-field>
 
     <button (click)="sendRequest()">Modifier</button>
