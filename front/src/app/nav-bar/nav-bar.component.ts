@@ -11,6 +11,8 @@ import { NavBarService } from './nav-bar.service';
 import { Router, RouterLink } from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
 import { MatMenuModule} from '@angular/material/menu';
+import {MatBottomSheet} from '@angular/material/bottom-sheet';
+import { AdminDashboardComponent } from '../admin-dashboard/admin-dashboard.component';
 
 
 
@@ -24,7 +26,9 @@ import { MatMenuModule} from '@angular/material/menu';
 
 export class NavBarComponent implements OnInit{
 
-  constructor(private authservice: AuthServiceService, private dialog: MatDialog, private navBarService: NavBarService, private router: Router) {}
+  constructor(private authservice: AuthServiceService, 
+    private dialog: MatDialog, private navBarService: NavBarService, 
+    private router: Router, private bottomSheet: MatBottomSheet) {}
   
   private loggedService = inject(LoggedService);
 
@@ -70,6 +74,13 @@ export class NavBarComponent implements OnInit{
     this.dialog.open(RegisterComponent, {
       height: '700px',
       width: '700px',
+    });
+    
+  }
+
+  openBottomSheet(){
+    const bottomSheetRef = this.bottomSheet.open(AdminDashboardComponent, {
+      ariaLabel: 'Share on social media'
     });
     
   }

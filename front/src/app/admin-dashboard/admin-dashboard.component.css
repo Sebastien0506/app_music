@@ -1,0 +1,7 @@
+.container {
+    background-color: beige;
+    display: flex;
+    margin: auto;
+    width: 100vh;
+    height: 100vh;
+}

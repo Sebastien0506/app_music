@@ -13,14 +13,21 @@
             <a class="nav-link active" aria-current="page" href="#" (click)="ouvrirFormulaireLogin()">Connexion</a>
           </li> -->
           @if (isLogged()) {
-            @if(isStaff()) {
+            <!-- @if(isStaff()) {
               <a href="">AdminDashboard</a>
                
-            }
+            } -->
             <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="Ouvrir le menu utilisateur">
               <mat-icon>person</mat-icon>
             </button>
             <mat-menu #userMenu="matMenu">
+              @if (isStaff()) {
+                <button mat-menu-item (click)="openBottomSheet()">
+                  <mat-icon>dashboard</mat-icon>
+                  <span>AdminDashboard</span>
+                </button>
+              }
+                
                 <button mat-menu-item routerLink="/favoris">
                   <mat-icon>favorite</mat-icon>
                   <span>Favoris</span>
