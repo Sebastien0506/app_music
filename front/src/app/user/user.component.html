@@ -1,1 +1,12 @@
-<p>user works!</p>
+@if (user(); as currentUser) {
+    <mat-card>
+      <mat-card-content>
+        <p>Prénom : {{ currentUser.username }} </p>
+        <p>Nom : {{ currentUser.last_name }}  </p>
+        <p>Email : {{ currentUser.email }} </p>
+        <button mat-button (click)="openDialog()">Modifier</button>
+      </mat-card-content>
+    </mat-card>
+  } @else {
+    <p>Chargement...</p>
+  }

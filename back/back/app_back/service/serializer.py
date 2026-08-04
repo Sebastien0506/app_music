@@ -149,6 +149,73 @@ class LoginSerializer(serializers.Serializer) :
             raise serializers.ValidationError(" Le mot de passe contient des caractères spéciaux non autorisé.")
         
         return value
+    
+class UpdateUserSerializer(serializers.Serializer) :
+
+    username = serializers.CharField()
+    last_name = serializers.CharField()
+    email = serializers.EmailField()
+
+    #On nettoie les données.
+    def clean_input(self, value) : 
+        return html.escape(value)
+    
+
+    #On valide le username
+    def validated_username(self, value) :
+        #On appel la fonction pour nettoyer les données
+        clenead_value = self.clean_input(value)
+
+        #On vérifie que le champ ne comporte que des lettres.
+        if not all(char.isalpha() or not char in ["-", ""] for char in clenead_value) :
+            return serializers.ValidationError("Le champ 'Nom' contient des caractères non autorisé.")
+        return clenead_value
+    
+    def validate_last_name(self, value) :
+        cleaned_value = self.clean_input(value)
+
+        #On vérifie qu'il contient que des caractères autoris&.
+        if not all(char.isalpha() or not char in ["-", ""] for char in cleaned_value):
+            return serializers.ValidationError("Le champ 'Prénom contient des caractère non autorisé.")
+        return cleaned_value
+    
+    def validate_email(self, value):
+        #On appel la fonction qui nettoie les données.
+        cleaned_value = self.clean_input(value)
+
+        #On vérifie que l'email contient un @ et un point
+        if cleaned_value.count("@") != 1 or not "." in cleaned_value :
+            return serializers.ValidationError("L'email est invalide.")
+        
+        #On défini les nom de domaine qui sont accepter
+        domain_accepted = ["gmail.com", "outlook.com", "hotmail.com"]
+
+        #On récupère le nom de domaine de l'utilisateur
+        domain_user = cleaned_value.split("@")[1]
+
+        #On vérifie que le nom de domaine de l'utilisateur est bien dans la liste
+        if not domain_user in domain_accepted :
+            return serializers.ValidationError("Le nom de domaine n'est pas accepter.")
+        
+        #On vérifie que l'email ne contient pas de caractères non autorisé
+        if not all (char.isalnum() or char in ["-", "_", "@", "."] for char in cleaned_value) :
+            return serializers.ValidationError("L'email contient des caractères non autorisé.")
+        
+        return cleaned_value
+    
+    def update(self, instance, validated_data):
+        instance.username = validated_data.get("username", instance.username)
+        instance.last_name = validated_data.get("last_name", instance.last_name)
+        instance.email = validated_data.get("email", instance.email)
+
+        instance.save()
+
+        return instance
+    
+
+
+
+
         
 
 

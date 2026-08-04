@@ -6,7 +6,7 @@ from back.app_back.models import User
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response 
-from back.app_back.service.serializer import UserSerializer, LoginSerializer
+from back.app_back.service.serializer import UserSerializer, LoginSerializer, UpdateUserSerializer
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
@@ -198,7 +198,8 @@ def me(request):
         "id": user.id,
         "username": user.username,
         "last_name": user.last_name,
-        "is_staff": user.is_staff
+        "email": user.email,
+        "is_staff": user.is_staff,
     })
 
 #View pour reset le password
@@ -236,3 +237,43 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
     )
     msg.attach_alternative(email_html_message, "text/html")
     msg.send()
+
+
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def user_update(request) :
+
+    #On récupère l'utilisateur
+    user = request.user
+
+     #On récupère les données
+    username = request.data.get("username")
+    last_name = request.data.get("last_name")
+    email = request.data.get("email")
+    print(username, last_name, email)
+
+    #On vérifie que les donnée ne sont pas vide 
+    if not username or not last_name or not email :
+        return Response({"error" : "Un champ est manquant."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    #On initialise le serializer 
+    serializer = UpdateUserSerializer(
+        instance=user,
+        data={
+            "username": username,
+            "last_name": last_name,
+            "email": email
+        }
+    )
+
+    #Si le serializer est valide
+    if serializer.is_valid() :
+
+        serializer.save()
+
+        return Response({"success": "Utilisateur modifier avec succès"}, status=status.HTTP_200_OK)
+    else :
+        return Response(
+            serializer.errors, status=status.HTTP_400_BAD_REQUEST
+        )
+

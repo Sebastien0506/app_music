@@ -3,19 +3,21 @@ import { UserComponent } from '../user/user.component';
 import { AuthServiceService } from '../auth-service.service';
 import { LoginComponent } from '../login/login.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatButtonModule, MatButton } from '@angular/material/button';
+import { MatButtonModule, MatButton, MatIconButton } from '@angular/material/button';
 import { RegisterComponent } from '../register/register.component';
 import { LoggedService } from '../logged.service';
 import { DialogRef } from '@angular/cdk/dialog';
 import { NavBarService } from './nav-bar.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import {MatIconModule} from '@angular/material/icon';
+import { MatMenuModule} from '@angular/material/menu';
 
 
 
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
-  imports: [MatButton],
+  imports: [MatButton, MatIconModule, MatMenuModule, MatIconButton, RouterLink],
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css'
 })

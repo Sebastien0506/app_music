@@ -1,0 +1,25 @@
+.user-field {
+    margin-bottom: 20px;
+  }
+  
+  .field-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  
+  .field-line p {
+    margin: 0;
+  }
+  
+  .edit-zone {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  mat-form-field {
+    flex: 1;
+  }

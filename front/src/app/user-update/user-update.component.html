@@ -1,0 +1,16 @@
+<div>
+    <mat-form-field>
+        <mat-label>Prénom</mat-label>
+        <input matInput type="text" [value]="data.userData.username" [(ngModel)]="usernameInput">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Nom</mat-label>
+        <input matInput type="text" [value]="data.userData.last_name" [(ngModel)]="last_nameInput">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput type="text" [value]="data.userData.email" [(ngModel)]="emailInput">
+    </mat-form-field>
+
+    <button (click)="sendRequest()">Modifier</button>
+</div>

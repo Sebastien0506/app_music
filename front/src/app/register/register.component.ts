@@ -74,7 +74,7 @@ export class RegisterComponent implements OnInit {
       if(
         !(code >= 65 && code <= 90) && //A - Z
         !(code >= 97 && code <= 122) && // a - z
-        code != 65
+        code != 45
       ) {
         this.errorMessage.set("Le champs 'Nom' contient des caractères invalide.")
         return false;

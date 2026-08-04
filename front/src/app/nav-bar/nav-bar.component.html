@@ -17,6 +17,23 @@
               <a href="">AdminDashboard</a>
                
             }
+            <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="Ouvrir le menu utilisateur">
+              <mat-icon>person</mat-icon>
+            </button>
+            <mat-menu #userMenu="matMenu">
+                <button mat-menu-item routerLink="/favoris">
+                  <mat-icon>favorite</mat-icon>
+                  <span>Favoris</span>
+                </button>
+                <button mat-menu-item routerLink="/user-account">
+                  <mat-icon>account_circle</mat-icon>
+                  <span>Mon compte</span>
+                </button>
+                <button mat-menu-item routerLink="/parametres">
+                  <mat-icon>settings</mat-icon>
+                  <span>Paramètres</span>
+                </button>
+            </mat-menu>
             <button mat-button (click)="logout()">Déconnexion</button>
           } @else {
             <button mat-button (click)="ouvrirFormulaireLogin()">Connexion</button>
