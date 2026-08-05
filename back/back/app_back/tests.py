@@ -2,7 +2,9 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 from rest_framework import status
-
+from django.core.files.uploadedfile import SimpleUploadedFile
+from back.app_back.models import Music
+from unittest.mock import MagicMock, patch
 
 User = get_user_model()
 
@@ -91,33 +93,94 @@ User = get_user_model()
         # self.assertEqual(me_response.data["username"], user.username)
         # self.assertEqual(me_response.data["last_name"], user.last_name)
 
-class UpdateUser(TestCase) :
-    def test_update_me(self):
+# class UpdateUser(TestCase) :
+#     def test_update_me(self):
 
-        #On crée l'utilisateur
+#         #On crée l'utilisateur
+#         user = User.objects.create_user(
+#             username="Sébastien",
+#             last_name="Dec",
+#             email="dec05@gmail.com"
+#         )
+
+#         client = APIClient()
+#         client.force_authenticate(user=user)
+
+#         #On fait la requête
+#         update_response = client.put(
+#             "/api/update_user/",
+#             {
+#                 "username": "Sébastien",
+#                 "last_name": "Dec",
+#                 "email": "dec0506@gmail.com"
+#             },
+#             format="json",
+#         )
+#         self.assertEqual(update_response.status_code, status.HTTP_200_OK)
+#         user.refresh_from_db()
+
+#         self.assertEqual(user.username, 'Sébastien')
+#         self.assertEqual(user.last_name, 'Dec')
+#         self.assertEqual(user.email, 'dec0506@gmail.com')
+
+ #On fait le test pour upload un fichier   
+class AddMusicTest(TestCase):
+
+    @patch("back.app_back.views.MP3")
+
+    @patch("back.app_back.views.magic.from_buffer")
+
+    def test_add_music(self, mock_from_buffer, mock_mp3):
+
         user = User.objects.create_user(
+
             username="Sébastien",
+
             last_name="Dec",
-            email="dec05@gmail.com"
+
+            email="dec05@gmail.com",
+
+            password="password123",
+
         )
 
         client = APIClient()
+
         client.force_authenticate(user=user)
 
-        #On fait la requête
-        update_response = client.put(
-            "/api/update_user/",
-            {
-                "username": "Sébastien",
-                "last_name": "Dec",
-                "email": "dec0506@gmail.com"
-            },
-            format="json",
-        )
-        self.assertEqual(update_response.status_code, status.HTTP_200_OK)
-        user.refresh_from_db()
+        # On simule python-magic
 
-        self.assertEqual(user.username, 'Sébastien')
-        self.assertEqual(user.last_name, 'Dec')
-        self.assertEqual(user.email, 'dec0506@gmail.com')
-    
+        mock_from_buffer.return_value = "audio/mpeg"
+
+        # On simule Mutagen et une durée de 180 secondes
+
+        fake_audio = MagicMock()
+
+        fake_audio.info.length = 180
+
+        mock_mp3.return_value = fake_audio
+
+        file = SimpleUploadedFile(
+
+            name="music.mp3",
+
+            content=b"fake audio content",
+
+            content_type="audio/mpeg",
+
+        )
+
+        response = client.post(
+
+            "/api/add_music/",
+
+            {"music": file},
+
+            format="multipart",
+
+        )
+        print(response.status_code)
+        print(response.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        self.assertEqual(Music.objects.count(), 1)

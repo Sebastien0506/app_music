@@ -10,3 +10,12 @@ class User(AbstractUser) :
     
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
+
+class Music(models.Model) :
+    title = models.CharField(max_length=100)
+    file = models.FileField(upload_to="music/")
+    filename = models.CharField(max_length=50, unique=True)
+    size = models.PositiveBigIntegerField()
+    duration = models.PositiveIntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+

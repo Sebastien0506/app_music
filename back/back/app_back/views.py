@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import ensure_csrf_cookie
-from back.app_back.models import User
+from back.app_back.models import User, Music
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response 
@@ -17,8 +17,10 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
 from django.contrib.auth import authenticate
-
-
+import magic
+from mutagen.mp3 import MP3
+import uuid
+from pathlib import Path
 # @api_view(["GET"])
 # @permission_classes([AllowAny])
 @ensure_csrf_cookie
@@ -276,4 +278,99 @@ def user_update(request) :
         return Response(
             serializer.errors, status=status.HTTP_400_BAD_REQUEST
         )
+
+#On définit la vue pour ajouter une musique
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def add_music(request) :
+
+    #On récupère l'utilisateur
+    user = request.user
+
+    if not user :
+        return Response({
+            "error" : "Utilisateur introuvable."
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    #On récupère le fichier dans la requête
+    file = request.FILES.get("music")
+
+    #Si aucun fichier est trouvé on renvoi une erreur
+    if not file :
+        return Response({"error": "Aucun fichier"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    #On vérifie la taille du fichier
+    max_size = 100 * 1024 * 1024
+    
+    if file.size > max_size :
+        return Response({"error" : "Le fichier est trop volumineux."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    #On vérifie que le fichier est accepter
+    try:
+        mime = magic.from_buffer(file.read(2048), mime=True)
+        file.seek(0)
+
+        allowed_types = [
+            "audio/mpeg",
+            "audio/wav",
+            "audio/x-wav",
+            "audio/flac",
+            "audio/mp4",
+            "audio/mp3"
+        ]
+        if mime not in allowed_types :
+            return Response(
+                {"error": "Le type du fichier n'est pas autorisé."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    except Exception as e :
+        return Response(
+            {"error": f"Impossible d'identifier le fichier: {e}"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    #On récupère la durer du fichier
+    try:
+        audio = MP3(file)
+        duration = audio.info.length
+
+    except Exception :
+        return Response(
+            {"error": "Impossible de lire le fichier audio."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    try :
+        original_name = Path(file.name).stem
+        generate_name = str(uuid.uuid4()) + ".mp3"
+        file.name = generate_name
+    
+    except Exception as e :
+        return Response ({
+            "error": f"Erreur lors de la génération du nom aleatoire. {e}"
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    #On sauvegarde tous
+    music = Music.objects.create(
+        title=original_name,
+        file=file,
+        filename=generate_name,
+        size=file.size,
+        duration=int(duration),
+        user=user
+    )
+    #On retourne un reponse
+    return Response(
+        {
+            "success": "Musique ajoutée avec succès."
+        },
+        status=status.HTTP_201_CREATED
+    )
+    # music.save()
+    
+
+    
+
+    
+
 
