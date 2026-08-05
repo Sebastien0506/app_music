@@ -43,9 +43,9 @@ describe('UserUpdateComponent', () => {
   });
 
   it('should accept input', () => {
-    component.usernameInput.set('Sebastien');
-    component.last_nameInput.set('Dec');
-    component.emailInput.set('dec05@gmail.com');
+    component.usernameInput = 'Sebastien';
+    component.last_nameInput = 'Dec';
+    component.emailInput = 'dec05@gmail.com';
   
     const result = component.verifyInput();
   
@@ -53,9 +53,9 @@ describe('UserUpdateComponent', () => {
   });
   
   it('should unaccept input username', () => {
-    component.usernameInput.set('');
-    component.last_nameInput.set('Dec');
-    component.emailInput.set('dec05@gmail.com');
+    component.usernameInput = '';
+    component.last_nameInput = 'Dec';
+    component.emailInput = 'dec05@gmail.com';
   
     component.verifyInput();
   
@@ -63,9 +63,9 @@ describe('UserUpdateComponent', () => {
   });
   
   it('should unaccept input last_name', () => {
-    component.usernameInput.set('Sebastien');
-    component.last_nameInput.set('Dec1');
-    component.emailInput.set('dec05@gmail.com');
+    component.usernameInput = 'Sebastien';
+    component.last_nameInput = 'Dec1';
+    component.emailInput = 'dec05@gmail.com';
   
     component.verifyInput();
   
@@ -75,9 +75,9 @@ describe('UserUpdateComponent', () => {
   });
 
   it('should unaccept input email', () => {
-    component.usernameInput.set('Sebastien');
-    component.last_nameInput.set('Dec');
-    component.emailInput.set('dec05gmail');
+    component.usernameInput = 'Sebastien';
+    component.last_nameInput = 'Dec';
+    component.emailInput = 'dec05gmail';
   
     component.verifyInput();
   

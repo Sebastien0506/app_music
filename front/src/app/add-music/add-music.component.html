@@ -1,1 +1,34 @@
-<p>add-music works!</p>
+<input
+  #fileInput
+  type="file"
+  hidden
+  accept="audio/*"
+  (change)="onFileSelected($event)"
+>
+
+<mat-form-field appearance="outline">
+  <mat-label>Musique</mat-label>
+
+  <input
+    matInput
+    readonly
+    [value]="selectedFile?.name ?? ''"
+    placeholder="Aucun fichier sélectionné"
+  >
+</mat-form-field>
+@if (selectedFile) {
+    <button mat-raised-button type="button">Enregistrez la musique</button>
+}
+@else {
+    <button
+    mat-raised-button
+    type="button"
+    (click)="fileInput.click()"
+  >
+    Choisir une musique
+  </button>
+}
+
+<!-- @if (selectedFile) {
+    <button>Enregistrez la musique</button>
+} -->
