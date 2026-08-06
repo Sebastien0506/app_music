@@ -369,7 +369,35 @@ def add_music(request) :
     # music.save()
     
 
+#On crée la vue pou récupérer toutes les musiques
+@api_view(["GET"])
+def get_all_music(request) :
     
+    #On récupère toutes les musiques
+    musiques = Music.objects.all()
+
+    if not musiques.exists() :
+        return Response({
+            "error": "Aucun musiques enregistrer."
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    data = []
+    #Pour toutes les musiques on récupère ces information
+    for musique in musiques : 
+
+        data.append(
+            {
+                "id": musique.id,
+                "title": musique.title,
+                "duration": musique.duration,
+                "size": musique.size,
+            }
+        )
+    return Response(data, status=status.HTTP_200_OK)
+
+
+
+
 
     
 

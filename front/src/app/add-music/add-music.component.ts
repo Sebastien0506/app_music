@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { max } from 'rxjs';
+import { AddMusicService } from './add-music.service';
 
 @Component({
   selector: 'app-add-music',
@@ -14,7 +15,9 @@ import { max } from 'rxjs';
 })
 export class AddMusicComponent {
 
+  constructor(private addMusicService: AddMusicService){}
   errorMessage = signal('');
+  successMessage = signal('');
    
   //Fichier sélectionné par l'utilisateur
   selectedFile: File | null = null;
@@ -106,15 +109,25 @@ export class AddMusicComponent {
     if(!this.verifyFile){
       return;
     }
-
+    console.log(this.verifyFile());
     //On déclare la varianle forData
     const formData = new FormData;
-
     //On lui met le fichier
     formData.append("music", this.selectedFile!);
+    console.log(formData);
+
 
     //On envoi la requête
-    
+    this.addMusicService.uploadMusic(formData).subscribe({
+      next:(res) => {
+         this.successMessage.set('Musique Ajouter avec succès.');
+         console.log(res);
+      },
+      error: (err) => {
+        this.errorMessage.set(" Erreur lors de l'ajout de la musique.");
+        console.log(err);
+      }
+    });
 
-  }
+  };
 }

@@ -66,7 +66,12 @@
           </li> -->
         </ul>
         <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+          <input class="form-control me-2" type="text" placeholder="Search" matInput [formControl]="searchControl" (focus)="sendRequest()"[matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete">
+            @for(music of fileteredMusic | async; track music.id){
+                <mat-option [value]="music.title">{{music.title}}</mat-option>
+            }
+          </mat-autocomplete>
           <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
       </div>

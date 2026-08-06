@@ -17,7 +17,7 @@
   >
 </mat-form-field>
 @if (selectedFile) {
-    <button mat-raised-button type="button">Enregistrez la musique</button>
+    <button mat-raised-button type="button" (click)="sendRequest()">Enregistrez la musique</button>
 }
 @else {
     <button
