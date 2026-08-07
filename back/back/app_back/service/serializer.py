@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from back.app_back.models import User
+from back.app_back.models import User, Category
 import html
 
 
@@ -211,6 +211,40 @@ class UpdateUserSerializer(serializers.Serializer) :
         instance.save()
 
         return instance
+    
+class CreateCategorySerializer(serializers.Serializer) :
+
+    name = serializers.CharField(max_length=50)
+
+    #On clean les données
+    def cleant_input(self, value) :
+        return html.escape(value)
+    
+    #On vérifie le champs name 
+    def validate_name(self, value) :
+        #On appel la fonction pour nettoyer les données
+        cleaned_value = self.cleant_input(value)
+
+        if not all(
+
+            char.isalpha() or char in ["-", " "]
+
+            for char in cleaned_value
+
+        ):
+
+            raise serializers.ValidationError(
+
+                "Le champ 'Nom' contient des caractères non autorisés."
+
+            )
+
+        return cleaned_value
+    
+    #On crée la catégorie
+    def create(self, validated_data):
+        category = Category.objects.create(**validated_data)
+        return category
     
 
 

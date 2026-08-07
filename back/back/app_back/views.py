@@ -6,7 +6,7 @@ from back.app_back.models import User, Music
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response 
-from back.app_back.service.serializer import UserSerializer, LoginSerializer, UpdateUserSerializer
+from back.app_back.service.serializer import UserSerializer, LoginSerializer, UpdateUserSerializer, CreateCategorySerializer
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
@@ -394,6 +394,44 @@ def get_all_music(request) :
             }
         )
     return Response(data, status=status.HTTP_200_OK)
+
+#On crée la fonction pour ajouter une catégorie
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def create_category(request):
+
+    #On récupère l'utilisateur
+    user = request.user
+
+    if not user : 
+        return Response({"error": "Utilisateur introuvable."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if not user.is_staff :
+        return Response({"error": "Vous n'avez pas le droit d'ajouter une catégorie"}, status=status.HTTP_403_FORBIDDEN)
+    
+    #On récupère les données depuis la requête
+    name_category = request.data.get("name")
+
+    if not name_category :
+        return Response({"error": "Aucun nom de catégorie fourni."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    #On initialize un serializer
+    serializer = CreateCategorySerializer(
+        data={
+            "name": name_category
+        }
+    )
+
+    if serializer.is_valid() :
+        serializer.save()
+
+        return Response({"succes": "Catégorie crée avec succès."}, status=status.HTTP_201_CREATED)
+    
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 
 

@@ -20,7 +20,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView
 )
-from back.app_back.views import get_csrf, register, login, me, logout, user_update, add_music, get_all_music
+from back.app_back.views import get_csrf, register, login, me, logout, user_update, add_music, get_all_music, create_category
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,6 +34,7 @@ urlpatterns = [
     path('api/update_user/', user_update),
     path('api/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
     path('api/add_music/', add_music),
-    path('api/get_all_music/', get_all_music)
+    path('api/get_all_music/', get_all_music),
+    path('api/create_category/', create_category),
 
 ]

@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 from rest_framework import status
 from django.core.files.uploadedfile import SimpleUploadedFile
-from back.app_back.models import Music
+from back.app_back.models import Music, Category
 from unittest.mock import MagicMock, patch
 
 User = get_user_model()
@@ -119,68 +119,141 @@ User = get_user_model()
 #         self.assertEqual(update_response.status_code, status.HTTP_200_OK)
 #         user.refresh_from_db()
 
-#         self.assertEqual(user.username, 'Sébastien')
-#         self.assertEqual(user.last_name, 'Dec')
-#         self.assertEqual(user.email, 'dec0506@gmail.com')
+        # self.assertEqual(user.username, 'Sébastien')
+        # self.assertEqual(user.last_name, 'Dec')
+        # self.assertEqual(user.email, 'dec0506@gmail.com')
 
- #On fait le test pour upload un fichier   
-class AddMusicTest(TestCase):
+#on fait le test pour crée une catégorie
+class CreateCategoryTest(TestCase) :
+    def test_create_category(self) :
 
-    @patch("back.app_back.views.MP3")
-
-    @patch("back.app_back.views.magic.from_buffer")
-
-    def test_add_music(self, mock_from_buffer, mock_mp3):
-
+        #On crée l'utilisateur
         user = User.objects.create_user(
-
             username="Sébastien",
-
             last_name="Dec",
-
-            email="dec05@gmail.com",
-
-            password="password123",
-
+            email="dec05@fmail.com",
+            password="Password@1",
+            is_staff=True
         )
-
         client = APIClient()
 
+        #On connecte de force l'utilisateur
         client.force_authenticate(user=user)
 
-        # On simule python-magic
-
-        mock_from_buffer.return_value = "audio/mpeg"
-
-        # On simule Mutagen et une durée de 180 secondes
-
-        fake_audio = MagicMock()
-
-        fake_audio.info.length = 180
-
-        mock_mp3.return_value = fake_audio
-
-        file = SimpleUploadedFile(
-
-            name="music.mp3",
-
-            content=b"fake audio content",
-
-            content_type="audio/mpeg",
-
+        #On créer l'objet catégorie
+        category = Category.objects.create(
+            name = "Rap"
         )
+        
 
-        response = client.post(
-
-            "/api/add_music/",
-
-            {"music": file},
-
-            format="multipart",
-
+        #On fait la requête
+        create_category = client.post(
+            "/api/create_category/",
+            {
+                "name": "Rap"
+            },
+            format="json"
         )
-        print(response.status_code)
-        print(response.data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        print(create_category.status_code)
+        print(create_category.content.decode())
+        self.assertEqual(create_category.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(category.name, "Rap")
+        
+#On fait le test pour voir si sa refuse quand il y a un caractères non autoriser
+# class CreateCategoryTest(TestCase) :
+#     def test_create_category(self) :
 
-        self.assertEqual(Music.objects.count(), 1)
+#         #On crée l'utilisateur
+#         user = User.objects.create_user(
+#             username="Sébastien",
+#             last_name="Dec",
+#             email="dec05@fmail.com",
+#             password="Password@1",
+#             is_staff=True
+#         )
+#         client = APIClient()
+
+#         #On connecte de force l'utilisateur
+#         client.force_authenticate(user=user)
+
+#         #On créer l'objet catégorie
+#         category = Category.objects.create(
+#             name = "Rap"
+#         )
+        
+
+#         #On fait la requête
+#         create_category = client.post(
+#             "/api/create_category/",
+#             {
+#                 "name": "Rap123"
+#             },
+#             format="json"
+#         )
+#         print(create_category.status_code)
+#         print(create_category.content.decode())
+#         self.assertEqual(create_category.status_code, status.HTTP_400_BAD_REQUEST)
+#         self.assertEqual(category.name, "Rap")
+        # self.assertEqual(create_category.name, 'Rap')
+
+ #On fait le test pour upload un fichier   
+# class AddMusicTest(TestCase):
+
+#     @patch("back.app_back.views.MP3")
+
+#     @patch("back.app_back.views.magic.from_buffer")
+
+#     def test_add_music(self, mock_from_buffer, mock_mp3):
+
+#         user = User.objects.create_user(
+
+#             username="Sébastien",
+
+#             last_name="Dec",
+
+#             email="dec05@gmail.com",
+
+#             password="password123",
+
+#         )
+
+#         client = APIClient()
+
+#         client.force_authenticate(user=user)
+
+#         # On simule python-magic
+
+#         mock_from_buffer.return_value = "audio/mpeg"
+
+#         # On simule Mutagen et une durée de 180 secondes
+
+#         fake_audio = MagicMock()
+
+#         fake_audio.info.length = 180
+
+#         mock_mp3.return_value = fake_audio
+
+#         file = SimpleUploadedFile(
+
+#             name="music.mp3",
+
+#             content=b"fake audio content",
+
+#             content_type="audio/mpeg",
+
+#         )
+
+#         response = client.post(
+
+#             "/api/add_music/",
+
+#             {"music": file},
+
+#             format="multipart",
+
+#         )
+#         print(response.status_code)
+#         print(response.data)
+#         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+#         self.assertEqual(Music.objects.count(), 1)
