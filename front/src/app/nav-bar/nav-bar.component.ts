@@ -13,7 +13,7 @@ import {MatIconModule} from '@angular/material/icon';
 import { MatMenuModule} from '@angular/material/menu';
 import {MatBottomSheet} from '@angular/material/bottom-sheet';
 import { AdminDashboardComponent } from '../admin-dashboard/admin-dashboard.component';
-import { MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import { MatInput } from "@angular/material/input";
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { map, Observable, startWith } from 'rxjs';
@@ -45,8 +45,8 @@ export class NavBarComponent implements OnInit{
     private dialog: MatDialog, private navBarService: NavBarService, 
     private router: Router, private bottomSheet: MatBottomSheet) {
       this.fileteredMusic = this.searchControl.valueChanges.pipe(
-        startWith(''),
-        map(value => this.filterMusic(value))
+        startWith('' as string | Music),
+        map((value) => this.filterMusic(value))
       );
     }
     sendRequest(): void {
@@ -65,17 +65,25 @@ export class NavBarComponent implements OnInit{
         }
       });
     }
-    private filterMusic(value: string): Music[] {
-      const search = value.trim().toLowerCase();
-
-      return this.allMusic().filter(music => music.title.toLowerCase().includes(search));
+    private filterMusic(value: string | Music | null): Music[] {
+      let search = '';
+    
+      if (typeof value === 'string') {
+        search = value.trim().toLowerCase();
+      } else if (value) {
+        search = value.title.trim().toLowerCase();
+      }
+    
+      return this.allMusic().filter((music) =>
+        music.title.toLowerCase().includes(search)
+      );
     }
   
   private loggedService = inject(LoggedService);
 
   isLogged = this.loggedService.isLogged;
   isStaff = this.loggedService.isStaff;
-
+  errorMessage = signal('');
   successMessage = signal('');
   
   //On crée un signal pour récupérer toutes les musiques
@@ -129,7 +137,24 @@ export class NavBarComponent implements OnInit{
     
   }
 
-  
+
+  selectMusic(event: MatAutocompleteSelectedEvent): void {
+    const music = event.option.value as Music;
+
+    console.log(music.id);
+    console.log(music.title);
+
+    this.router.navigate(['/info_music', music.id])
+  }
+
+  // //On fait la fonction pour rediriger l'utilisateur quand il a sélectioner une musique
+  // infoMusic(){
+  //    if(!this.searchInput){
+  //     this.errorMessage.set('Aucune musique est sélectionner.');
+  //    }
+  //    console.log(music.id)
+  //   //  this.router.navigate(["/info_music", this.searchInput]);
+  // }
   
   
 }

@@ -1,0 +1,14 @@
+<div class="page">
+    <div class="category-form">
+        <h2>Ajouter une catégorie</h2>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Nom</mat-label>
+            <input matInput type="text" [(ngModel)]="nameInput">
+        </mat-form-field>
+
+        <button mat-raised-button (click)="sendRequest()">
+            Ajouter la catégorie
+        </button>
+    </div>
+</div>

@@ -66,13 +66,13 @@
           </li> -->
         </ul>
         <form class="d-flex" role="search">
-          <input class="form-control me-2" type="text" placeholder="Search" matInput [formControl]="searchControl" (focus)="sendRequest()"[matAutocomplete]="auto">
-          <mat-autocomplete #auto="matAutocomplete">
+          <input class="form-control me-2" type="text" placeholder="Search"  matInput  [formControl]="searchControl" (focus)="sendRequest()"[matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectMusic($event)">
             @for(music of fileteredMusic | async; track music.id){
-                <mat-option [value]="music.title">{{music.title}}</mat-option>
+                <mat-option [value]="music">{{music.title}}</mat-option>
             }
           </mat-autocomplete>
-          <button class="btn btn-outline-success" type="submit">Search</button>
+          <button class="btn btn-outline-success">Search</button>
         </form>
       </div>
     </div>
