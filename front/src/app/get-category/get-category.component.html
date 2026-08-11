@@ -4,7 +4,7 @@
     <p>{{ category.name}}</p>
 } -->
 
-<table mat-table [dataSource]="categories">
+<table mat-table [dataSource]="category">
     <ng-container matColumnDef="category_name">
         <th mat-header-cell *matHeaderCellDef> Name</th>
         <td mat-cell *matCellDef="let category">{{ category.name }}</td>

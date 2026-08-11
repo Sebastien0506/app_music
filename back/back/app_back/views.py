@@ -464,6 +464,32 @@ def get_all_category(request) :
         category_name, status=status.HTTP_200_OK
     )
 
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_category(request, category_id):
+
+    #On récupère la catégorie par son id
+    category = Category.objects.filter(id=category_id)
+    
+    #Si elle n'existe pas on renvoi un message d'erreur
+    if not category.exists() :
+        return Response(
+            {
+                "error": "La catégorie sélectionner n'existe pas."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    #On supprime la catégorie
+    category.delete()
+    return Response(
+        {
+            "success" : "Categorie supprimer avec succès."
+        },
+        status=status.HTTP_200_OK
+    )
+
+
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_music_category(request, category_id) :

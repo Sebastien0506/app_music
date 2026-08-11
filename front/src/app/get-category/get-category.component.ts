@@ -17,8 +17,11 @@ export class GetCategoryComponent {
 
   constructor(private getCategory: GetCategoryService, private dialogRef: MatDialog, private router: Router){}
 
-  categories: Category[] = [];
+  category: Category[] = [];
   displayedColumns: string[] = ['category_name', 'actions'];
+
+  successMessage = signal('');
+  errorMessage = signal('');
 
   openForms(){
     this.dialogRef.open(CreateCategoryComponent, {
@@ -37,8 +40,8 @@ export class GetCategoryComponent {
     this.getCategory.getCtegoryAll().subscribe({
       next: (data) => {
         
-        this.categories = data;
-        console.log(this.categories);
+        this.category = data;
+        console.log(this.category);
         //On récupère le nom des catégorie
         
       }
@@ -53,7 +56,18 @@ viewMusic(id: number){
 
 updateCategory(id: number) {}
 
-deleteCategory(id: number) {}
+deleteCategory(id: number) {
+
+  this.getCategory.deleteCategory(id).subscribe({
+    next: (res) => {
+       this.successMessage.set('La catégorie à bien été supprimer avec succès.');
+       this.category = this.category.filter(
+        category => category.id !== id
+       );
+    }
+  })
+  console.log(id);
+}
 
 
 

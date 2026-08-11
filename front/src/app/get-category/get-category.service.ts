@@ -12,6 +12,11 @@ interface MusicCategory{
   duration: number;
   file: string;
 }
+
+//On fait l'interface pour la reponse lors de la suppression de la catégorie
+export interface DeleteCategoryResponse{
+  message: string;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -27,6 +32,13 @@ export class GetCategoryService {
 
   getMusicCategory(category_id: number): Observable<MusicCategory[]>{
     return this.http.get<MusicCategory[]>(`http://localhost:8000/api/get_music_category/${category_id}`, {
+      withCredentials: true
+    });
+  }
+
+  //On fait la requête pour la suppression de la catégorie
+  deleteCategory(id: number): Observable<DeleteCategoryResponse>{
+    return this.http.delete<DeleteCategoryResponse>(`http://localhost:8000/api/delete_category/${id}/`, {
       withCredentials: true
     });
   }

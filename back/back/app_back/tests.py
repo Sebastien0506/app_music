@@ -124,8 +124,42 @@ User = get_user_model()
         # self.assertEqual(user.email, 'dec0506@gmail.com')
 
 #on fait le test pour crée une catégorie
-class CreateCategoryTest(TestCase) :
-    def test_create_category(self) :
+# class CreateCategoryTest(TestCase) :
+#     def test_create_category(self) :
+
+#         #On crée l'utilisateur
+#         user = User.objects.create_user(
+#             username="Sébastien",
+#             last_name="Dec",
+#             email="dec05@fmail.com",
+#             password="Password@1",
+#             is_staff=True
+#         )
+#         client = APIClient()
+
+#         #On connecte de force l'utilisateur
+#         client.force_authenticate(user=user)
+
+#         #On créer l'objet catégorie
+#         category = Category.objects.create(
+#             name = "Rap"
+#         )
+        
+
+#         #On fait la requête
+#         create_category = client.post(
+#             "/api/create_category/",
+#             {
+#                 "name": "Rap"
+#             },
+#             format="json"
+#         )
+#         print(create_category.status_code)
+#         print(create_category.content.decode())
+#         self.assertEqual(create_category.status_code, status.HTTP_201_CREATED)
+#         self.assertEqual(category.name, "Rap")
+class DeleteCategoryTest(TestCase) :
+    def test_delete_category(self) :
 
         #On crée l'utilisateur
         user = User.objects.create_user(
@@ -142,22 +176,22 @@ class CreateCategoryTest(TestCase) :
 
         #On créer l'objet catégorie
         category = Category.objects.create(
+            id='1',
             name = "Rap"
         )
         
 
-        #On fait la requête
-        create_category = client.post(
-            "/api/create_category/",
-            {
-                "name": "Rap"
-            },
-            format="json"
+        delete_category = client.delete(
+            "/api/delete_category/1/",
+            
         )
-        print(create_category.status_code)
-        print(create_category.content.decode())
-        self.assertEqual(create_category.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(category.name, "Rap")
+        print(delete_category.status_code)
+        print(delete_category.content.decode())
+        self.assertEqual(delete_category.status_code, status.HTTP_200_OK)
+        self.assertFalse(
+            Category.objects.filter(id=category.id).exists()
+        )
+        
         
 #On fait le test pour voir si sa refuse quand il y a un caractères non autoriser
 # class CreateCategoryTest(TestCase) :
