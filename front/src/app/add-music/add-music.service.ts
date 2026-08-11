@@ -5,6 +5,11 @@ import { HttpClient } from '@angular/common/http';
 interface Response {
   message: string;
 }
+
+export interface Category{
+  id: number;
+  name: string;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -18,5 +23,11 @@ export class AddMusicService {
         withCredentials: true
       }
     )
+  }
+
+  getCategory(): Observable<Category[]> {
+    return this.http.get<Category[]>('http://localhost:8000/api/get_all_category', {
+      withCredentials: true
+    });
   }
 }

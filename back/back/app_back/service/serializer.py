@@ -227,7 +227,7 @@ class CreateCategorySerializer(serializers.Serializer) :
 
         if not all(
 
-            char.isalpha() or char in ["-", " "]
+            char.isalnum() or char in ["-", " "]
 
             for char in cleaned_value
 

@@ -20,7 +20,9 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView
 )
-from back.app_back.views import get_csrf, register, login, me, logout, user_update, add_music, get_all_music, create_category
+from back.app_back.views import get_csrf, register, login, me, logout, user_update, add_music, get_all_music, create_category, get_all_category, get_music_category
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,5 +38,13 @@ urlpatterns = [
     path('api/add_music/', add_music),
     path('api/get_all_music/', get_all_music),
     path('api/create_category/', create_category),
+    path('api/get_all_category/', get_all_category),
+    path('api/get_music_category/<int:category_id>/', get_music_category)
 
 ]
+
+
+urlpatterns += static(
+    settings.MEDIA_URL,
+    document_root=settings.MEDIA_ROOT
+)

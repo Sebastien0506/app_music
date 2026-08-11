@@ -1,23 +1,58 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, computed } from '@angular/core';
 import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { max } from 'rxjs';
-import { AddMusicService } from './add-music.service';
+import { AddMusicService, Category } from './add-music.service';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+
 
 @Component({
   selector: 'app-add-music',
   standalone: true,
-  imports: [MatButtonModule, MatFormFieldModule, MatInputModule],
+  imports: [MatButtonModule, MatFormFieldModule, MatInputModule, MatCheckboxModule],
   templateUrl: './add-music.component.html',
   styleUrl: './add-music.component.css'
 })
 export class AddMusicComponent {
 
-  constructor(private addMusicService: AddMusicService){}
+  constructor(private addMusicService: AddMusicService, private getCategory: AddMusicService){}
+
+  
+
+  category: Category[] = [];
+  selectedCategoryId: number | null = null;
+  
   errorMessage = signal('');
   successMessage = signal('');
+  ngOnInit(){
+     this.getCategory.getCategory().subscribe({
+      next: (data) => {
+        this.category = data;
+        
+      },
+      error: (err) => {
+        this.errorMessage.set('Les catégories n\'ont pas pu être récupérer.');
+        console.error(err);
+      }
+     });
+  }
+  
+  
+  onCheckBoxValidate(event: Event): void {
+    console.log('fonction appelée.');
+    //On récupère l'évènement dans le html
+    const checkboxInput = event.target as HTMLInputElement;
+    //On vérifie qu'une checkbox est été sélectionner
+    if (!checkboxInput.checked) {
+      this.selectedCategoryId = null;
+      this.errorMessage.set('Une categori n\'a pas été sélectionner');
+      return;
+    }
+    this.selectedCategoryId = Number(checkboxInput.value);
+    console.log(this.selectedCategoryId);
+  }
    
   //Fichier sélectionné par l'utilisateur
   selectedFile: File | null = null;
@@ -106,7 +141,13 @@ export class AddMusicComponent {
   //On envoi la requête
   sendRequest(): void {
     //On vérifie le fichier
-    if(!this.verifyFile){
+    if(!this.verifyFile()){
+      return;
+    }
+    
+    //On vérifie que selectedId n'est pas null
+    if (this.selectedCategoryId === null) {
+      this.errorMessage.set('Aucune catégorie sélectionnée.');
       return;
     }
     console.log(this.verifyFile());
@@ -114,7 +155,16 @@ export class AddMusicComponent {
     const formData = new FormData;
     //On lui met le fichier
     formData.append("music", this.selectedFile!);
+    formData.append(
+      "category_id",
+      this.selectedCategoryId.toString()
+    );
     console.log(formData);
+
+
+
+    //On déclare la variable data pour stocker l'id
+    
 
 
     //On envoi la requête

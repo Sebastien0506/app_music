@@ -17,7 +17,7 @@ export class MusicCategoryComponent implements OnInit {
 
   music: MusicCategory[] = [];
   
-  displayedColumns: string[] = ['title', 'duration'];
+  displayedColumns: string[] = ['title', 'duration', 'player'];
   ngOnInit(){
     //On récupère l'id dans l'url
      const id = this.route.snapshot.paramMap.get('id');

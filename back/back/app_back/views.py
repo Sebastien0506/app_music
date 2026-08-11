@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import ensure_csrf_cookie
-from back.app_back.models import User, Music
+from back.app_back.models import User, Music, Category
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response 
@@ -299,6 +299,15 @@ def add_music(request) :
     if not file :
         return Response({"error": "Aucun fichier"}, status=status.HTTP_400_BAD_REQUEST)
     
+    #On récupère l'id
+    category_id = request.data.get('category_id')
+
+    #Si aucune catégorie on renvoi un message d'erreur
+    if not category_id :
+        return Response({
+            "error": "Aucun catégorie a été fournis."
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
     #On vérifie la taille du fichier
     max_size = 100 * 1024 * 1024
     
@@ -357,7 +366,8 @@ def add_music(request) :
         filename=generate_name,
         size=file.size,
         duration=int(duration),
-        user=user
+        user=user,
+        category_id=category_id
     )
     #On retourne un reponse
     return Response(
@@ -430,6 +440,70 @@ def create_category(request):
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_all_category(request) :
+
+    #On récupère toutes les catégories
+    category = Category.objects.all()
+
+    #On définit category_name sur un tableau vide
+    category_name = []
+
+    #Pour chaque catégori on récupère sont nom
+    for categorie in category :
+        category_name.append(
+            {
+                "id": categorie.id,
+                "name": categorie.name
+            } 
+        )
+
+    return Response(
+        category_name, status=status.HTTP_200_OK
+    )
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_music_category(request, category_id) :
+    print("category_id :", category_id)
+
+
+    # print(
+    #     list(
+    #         Music.objects.values(
+    #             "id",
+    #             "title",
+    #             "category_id"
+    #         )
+    #     ),
+    #     flush=True
+    # )
+    #On récupère les musiques par l'id de la catégorie 
+    music = Music.objects.filter(category_id=category_id)
+    # print("music :", music, flush=True)
+    
+    #Si pas de musiques on renvoie un message d'erreur
+    if not music :
+        return Response({
+            "error": "Aucune musique dans cette catégorie."
+        }, status=status.HTTP_400_BAD_REQUEST)
+    #On définit la variable musiques par un tableau vide
+    musiques = []
+    #Pour chaque musiques on récupère sont id et son nom
+    for musique in music :
+        musiques.append(
+            {
+                "id": musique.id,
+                "title": musique.title,
+                "duration": musique.duration,
+                "file": musique.file.url,
+            }
+        )
+    return Response(
+        musiques, status=status.HTTP_200_OK
+    )
 
 
 

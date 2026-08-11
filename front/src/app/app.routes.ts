@@ -7,6 +7,7 @@ import { AddMusicComponent } from './add-music/add-music.component';
 import { InfoMusicComponent } from './info-music/info-music.component';
 import { CreateCategoryComponent } from './create-category/create-category.component';
 import { GetCategoryComponent } from './get-category/get-category.component';
+import { MusicCategoryComponent } from './music-category/music-category.component';
 
 export const routes: Routes = [
     {path: 'reset_password', component: ResetPasswordComponent},
@@ -15,7 +16,8 @@ export const routes: Routes = [
     {path: 'add-music', component: AddMusicComponent},
     {path: 'info_music/:id', component: InfoMusicComponent},
     {path: 'create_category', component: CreateCategoryComponent},
-    {path: 'get_category', component: GetCategoryComponent}
+    {path: 'get_category', component: GetCategoryComponent},
+    {path: 'category/:id/musics', component: MusicCategoryComponent}
     
     // {path: 'admin-dashboard', component: AdminDashboardComponent},
 ];
