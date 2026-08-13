@@ -4,6 +4,7 @@ from django.middleware.csrf import get_token
 from django.views.decorators.csrf import ensure_csrf_cookie
 from back.app_back.models import User, Music, Category
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from .authentication import IsStaff
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response 
 from back.app_back.service.serializer import UserSerializer, LoginSerializer, UpdateUserSerializer, CreateCategorySerializer
@@ -40,6 +41,7 @@ def get_token_for_user(user):
     }
 #On crée la fonction pour l'inscription
 @api_view(["POST"])
+
 def register(request) : 
 
     #On récupère les données de l'utilisateur depuis la requête
@@ -281,8 +283,10 @@ def user_update(request) :
 
 #On définit la vue pour ajouter une musique
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsStaff])
 def add_music(request) :
+
+    
 
     #On récupère l'utilisateur
     user = request.user
@@ -495,17 +499,6 @@ def delete_category(request, category_id):
 def get_music_category(request, category_id) :
     print("category_id :", category_id)
 
-
-    # print(
-    #     list(
-    #         Music.objects.values(
-    #             "id",
-    #             "title",
-    #             "category_id"
-    #         )
-    #     ),
-    #     flush=True
-    # )
     #On récupère les musiques par l'id de la catégorie 
     music = Music.objects.filter(category_id=category_id)
     # print("music :", music, flush=True)
@@ -531,6 +524,60 @@ def get_music_category(request, category_id) :
         musiques, status=status.HTTP_200_OK
     )
 
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_music(request, music_id):
+
+    #On récupère la musique par sont id 
+    music = Music.objects.filter(id=music_id)
+
+    #Si la musique n'existe pas on retourne une erreur
+    if not music.exists() :
+        return Response(
+            {
+                "error": "Aucune musique trouvé."
+            },
+            status = status.HTTP_400_BAD_REQUEST
+        )
+    #On supprime la musique
+    music.delete()
+
+    return Response(
+        {
+            "succès" : "Musique supprimer avec succès."
+        },
+        status=status.HTTP_200_OK
+    )
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_one_music(request, music_id):
+
+    music = Music.objects.filter(id=music_id).first()
+
+    if not music :
+        return Response(
+            {
+                "error": "Impossible de trouvé la musique."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    return Response(
+        {
+            "id": music.id,
+            "title": music.title,
+            "duration": music.duration,
+            "size": music.size,
+            "category": music.category.name if music.category else None,
+            "file": music.file.url,
+        },
+        status=status.HTTP_200_OK
+    )
+    
+    
 
 
 

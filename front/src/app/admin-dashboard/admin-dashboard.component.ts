@@ -33,6 +33,9 @@ export class AdminDashboardComponent {
     this.router.navigate(['manage-music']);
   }
 
-  
+  goToAllMusic(): void {
+    this.bottomSheetRef?.dismiss();
+    this.router.navigate(['/get_all_music']);
+  }
 
 }

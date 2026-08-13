@@ -50,11 +50,11 @@ export class GetCategoryComponent {
   }
 
 
-viewMusic(id: number){
-  this.router.navigate(["/category", id, 'musics'])
+viewMusic(){
+  this.router.navigate(["/info_music"])
 }
 
-updateCategory(id: number) {}
+
 
 deleteCategory(id: number) {
 

@@ -20,7 +20,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView
 )
-from back.app_back.views import get_csrf, register, login, me, logout, user_update, add_music, get_all_music, create_category, get_all_category, get_music_category, delete_category
+from back.app_back.views import get_csrf, register, login, me, logout, user_update, add_music, get_all_music, create_category, get_all_category, get_music_category, delete_category, get_all_music, delete_music, get_one_music
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -41,7 +41,8 @@ urlpatterns = [
     path('api/get_all_category/', get_all_category),
     path('api/get_music_category/<int:category_id>/', get_music_category),
     path('api/delete_category/<int:category_id>/', delete_category),
-
+    path('api/delete_music/<int:music_id>/', delete_music),
+    path('api/get_one_music/<int:music_id>/', get_one_music),
 ]
 
 

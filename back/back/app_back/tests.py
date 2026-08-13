@@ -158,10 +158,42 @@ User = get_user_model()
 #         print(create_category.content.decode())
 #         self.assertEqual(create_category.status_code, status.HTTP_201_CREATED)
 #         self.assertEqual(category.name, "Rap")
-class DeleteCategoryTest(TestCase) :
-    def test_delete_category(self) :
+# class DeleteCategoryTest(TestCase) :
+#     def test_delete_category(self) :
 
-        #On crée l'utilisateur
+#         #On crée l'utilisateur
+#         user = User.objects.create_user(
+#             username="Sébastien",
+#             last_name="Dec",
+#             email="dec05@fmail.com",
+#             password="Password@1",
+#             is_staff=True
+#         )
+#         client = APIClient()
+
+#         #On connecte de force l'utilisateur
+#         client.force_authenticate(user=user)
+
+#         #On créer l'objet catégorie
+#         category = Category.objects.create(
+#             id='1',
+#             name = "Rap"
+#         )
+        
+
+#         delete_category = client.delete(
+#             "/api/delete_category/1/",
+            
+#         )
+#         print(delete_category.status_code)
+#         print(delete_category.content.decode())
+#         self.assertEqual(delete_category.status_code, status.HTTP_200_OK)
+#         self.assertFalse(
+#             Category.objects.filter(id=category.id).exists()
+#         )
+class DeleteMusicTest(TestCase):
+    def test_delete_music(self):
+
         user = User.objects.create_user(
             username="Sébastien",
             last_name="Dec",
@@ -169,27 +201,33 @@ class DeleteCategoryTest(TestCase) :
             password="Password@1",
             is_staff=True
         )
-        client = APIClient()
 
-        #On connecte de force l'utilisateur
+        client = APIClient()
         client.force_authenticate(user=user)
 
-        #On créer l'objet catégorie
-        category = Category.objects.create(
-            id='1',
-            name = "Rap"
+        music = Music.objects.create(
+            title="Test music",
+            file="music/test.mp3",
+            filename="test.mp3",
+            size=1000,
+            duration=253,
+            user=user
         )
-        
 
-        delete_category = client.delete(
-            "/api/delete_category/1/",
-            
+        delete_music = client.delete(
+            f"/api/delete_music/{music.id}/"
         )
-        print(delete_category.status_code)
-        print(delete_category.content.decode())
-        self.assertEqual(delete_category.status_code, status.HTTP_200_OK)
+
+        print(delete_music.status_code)
+        print(delete_music.content.decode())
+
+        self.assertEqual(
+            delete_music.status_code,
+            status.HTTP_200_OK
+        )
+
         self.assertFalse(
-            Category.objects.filter(id=category.id).exists()
+            Music.objects.filter(id=music.id).exists()
         )
         
         

@@ -13,11 +13,8 @@
     <ng-container matColumnDef="actions">
          <th mat-header-cell *matHeaderCellDef>Actions</th>
          <td mat-cell *matCellDef="let category">
-            <button mat-button (click)="viewMusic(category.id)">
+            <button mat-button (click)="viewMusic()">
                 Voir les musiques
-            </button>
-            <button mat-button (click)="updateCategory(category.id)">
-                Modifier
             </button>
             <button mat-button (click)="deleteCategory(category.id)">
                 Supprimer

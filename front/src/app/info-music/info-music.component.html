@@ -1,1 +1,23 @@
-<p>info-music works!</p>
+<mat-card class="exemple-card" appearance="outlined">
+    <mat-card-header>
+        <mat-card-title>{{ infoMusic?.title }}</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+        <p>Durée: {{ minutes }} min {{ seconds }} sec</p>
+
+        <p>{{ infoMusic?.category?.name }}</p>
+
+        <p>Taille du fichier: {{ size }} MO</p>
+    </mat-card-content>
+
+    <mat-card-content>
+        <audio #audioOption [src]="'http://localhost:8000' + infoMusic?.file">
+            <!-- <source [src]="'http://localhost:8000' + infoMusic?.file" type="audio/mp3"> -->
+        </audio>
+        <button mat-button (click)="onAudioPlayer()">Lire la musique</button>
+        <button mat-button>Télécharger la musique</button>
+        <button mat-button>Favoris</button>
+    </mat-card-content>
+</mat-card>
+
