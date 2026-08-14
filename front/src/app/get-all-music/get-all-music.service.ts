@@ -8,6 +8,7 @@ export interface AllMusic{
   title: string;
   duration: number;
   size: number;
+  category: string | null;
 }
 @Injectable({
   providedIn: 'root'

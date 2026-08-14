@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from .authentication import IsStaff
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response 
-from back.app_back.service.serializer import UserSerializer, LoginSerializer, UpdateUserSerializer, CreateCategorySerializer
+from back.app_back.service.serializer import UserSerializer, LoginSerializer, UpdateUserSerializer, CreateCategorySerializer, UpdateMusicSerializer
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
@@ -405,6 +405,7 @@ def get_all_music(request) :
                 "title": musique.title,
                 "duration": musique.duration,
                 "size": musique.size,
+                "category": musique.category.name if musique.category else None
             }
         )
     return Response(data, status=status.HTTP_200_OK)
@@ -576,7 +577,69 @@ def get_one_music(request, music_id):
         },
         status=status.HTTP_200_OK
     )
+
+
+#on fait la view pour update les musiques
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsStaff])
+def update_music(request, music_id) :
+    #on récupère l'id de la musique
+    music = Music.objects.filter(id=music_id).first()
+
+    if not music :
+        return Response (
+            {
+                "error" : "Acune musique trouvé."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
     
+    #on récupère les données de la musique
+    title: str = request.data.get("title")
+    category_id:str = request.data.get('category_id')
+
+#Si un champs est manquant on renvoi un message d'erreur
+    if not title or not category_id : 
+        return Response(
+            {
+                "error": "Un champ est manquant."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    #On initialise le serializer
+    serializer = UpdateMusicSerializer(
+        data = {
+            "id": music.id,
+            "title": title
+        }
+    )
+
+    if not serializer.is_valid() :
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    try :
+        music.title = serializer.validated_data["title"]
+        music.category_id = category_id
+        music.save()
+            
+
+    except Exception as e: 
+        return Response(
+            {
+                "error" : f"Impossible de modifier la musique: {e}" 
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    return Response(
+        {
+            "success" : "Musique modifier avec succès"
+        },
+        status=status.HTTP_200_OK
+    )
+
     
 
 

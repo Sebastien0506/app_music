@@ -247,6 +247,29 @@ class CreateCategorySerializer(serializers.Serializer) :
         return category
     
 
+class UpdateMusicSerializer(serializers.Serializer) :
+    
+    title = serializers.CharField(max_length=50)
+#On nettoie les données
+    def cleant_input(self, value):
+        return html.escape(value)
+    
+
+#On vérifie que le champ title ne comporte aucun caractèer interdit
+     
+    def validate_title(self, value) :
+        cleaned_input = self.cleant_input(value)
+
+        if not all(char.isalnum() or char in ["-", " "] for char in cleaned_input) :
+            raise serializers.ValidationError("Le champ 'Titre' contient des caractères non autorisée.")
+        
+        return cleaned_input
+    
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get("title", instance.title)
+
+        instance.save()
+        return instance
 
 
 
