@@ -32,7 +32,11 @@ EMAIL_HOST_USER = '4ca8af744e1d16'
 EMAIL_HOST_PASSWORD = 'dadea22d5ccb6b'
 EMAIL_PORT = '2525'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8080",
+]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",

@@ -18,7 +18,7 @@ export class ConnexionService {
 
   //On crée la requête
   sendRequestLogin(data: any): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>('http://localhost:8000/api/login/', data, {
+    return this.http.post<LoginResponse>('/api/login/', data, {
       withCredentials: true
     });
   }

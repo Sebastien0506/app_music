@@ -14,7 +14,7 @@ export class AuthServiceService {
   constructor(private http:HttpClient) { }
   //On fait la requête pour demander les données de l'utilisateur
   getCsrfToken(){
-    return this.http.get('http://localhost:8000/get_csrf', {
+    return this.http.get('api/get_csrf/', {
       withCredentials: true
     });
   }
