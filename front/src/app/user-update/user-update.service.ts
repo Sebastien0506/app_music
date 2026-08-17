@@ -14,7 +14,7 @@ export class UserUpdateService {
   constructor(private http: HttpClient) { }
 
   sendRequestUpdateUser(data: any): Observable<ResponseUpdateUser>{
-    return this.http.put<ResponseUpdateUser>('http://localhost:8000/api/update_user/', data, {
+    return this.http.put<ResponseUpdateUser>('/api/update_user/', data, {
       withCredentials: true
     })
   }

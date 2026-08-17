@@ -25,7 +25,7 @@ export class LoggedService {
 
   checkLogin(): void {
     this.http.get<MeResponse>(
-      'http://localhost:8000/api/me/',
+      '/api/me/',
       {withCredentials: true}
     ).subscribe({
       next: (user) => {

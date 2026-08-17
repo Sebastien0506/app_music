@@ -9,7 +9,7 @@ export class ResetPasswordService {
   constructor(private http: HttpClient) { }
 
   resetPassword(data: {token: string; password: string}){
-    return this.http.post('http://localhost:8000/api/password_reset/confirm/', data, {
+    return this.http.post('/api/password_reset/confirm/', data, {
       withCredentials: true
     });
   };

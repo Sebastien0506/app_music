@@ -29,7 +29,7 @@ export class UpdateMusicService {
   }
 
   updateMusic(id: number, data: any): Observable<ResponseUpdateMusic>{
-    return this.http.put<ResponseUpdateMusic>(`http://localhost:8000/api/update_music/${id}/`, data, {
+    return this.http.put<ResponseUpdateMusic>(`/api/update_music/${id}/`, data, {
       withCredentials: true,
       
     });

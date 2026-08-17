@@ -22,7 +22,7 @@ export class NavBarService {
 
   //On fait la requête vers le backend
   logoutUser(): Observable<LogoutMessage>{
-    return this.http.post<LogoutMessage>('http://localhost:8000/api/logout/', null, {
+    return this.http.post<LogoutMessage>('/api/logout/', null, {
       withCredentials: true
     })
 
@@ -30,7 +30,7 @@ export class NavBarService {
 
   //On fait la requête vers le backend pour récupérer toutes les musiques et leur informations
   getAllMusic(): Observable<Music[]>{
-    return this.http.get<Music[]>('http://localhost:8000/api/get_all_music/', {
+    return this.http.get<Music[]>('/api/get_all_music/', {
       withCredentials:true
     });
   };

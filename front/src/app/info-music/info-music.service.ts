@@ -15,6 +15,10 @@ export interface Music{
 export interface DeleteMusic{
   success: string;
 }
+
+export interface AddfavoriteMusicResponse{
+  message: string;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -24,11 +28,18 @@ export class InfoMusicService {
 
   //On récupère la musique
   getMusic(id: number): Observable<Music>{
-    return this.http.get<Music>(`http://localhost:8000/api/get_one_music/${id}`,
+    return this.http.get<Music>(`/api/get_one_music/${id}`,
       {
         withCredentials: true
       }
     );
+  }
+
+  //On envoi la requête pour ajouter la musique au favori
+  addMusicFavorite(id: number): Observable<AddfavoriteMusicResponse>{
+    return this.http.post<AddfavoriteMusicResponse>(`/api/add_favorite_music/${id}/`, null, {
+      withCredentials: true
+    });
   }
 
   

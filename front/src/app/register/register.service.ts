@@ -16,7 +16,7 @@ export class RegisterService {
   constructor(private http: HttpClient) { }
 
   requestRegister(data: any): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>('http://localhost:8000/api/register/', data, {
+    return this.http.post<RegisterResponse>('/api/register/', data, {
       withCredentials: true
     })
   }

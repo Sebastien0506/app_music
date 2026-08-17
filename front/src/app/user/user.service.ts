@@ -19,7 +19,7 @@ export class UserService {
 
   // On fait la requête pour récupérer les informations de l'utilisateur
   sendRequestUser(): Observable<User>{
-    return this.http.get<User>('http://localhost:8000/api/me', {
+    return this.http.get<User>('/api/me', {
       withCredentials: true
     });
   };

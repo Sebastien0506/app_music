@@ -1,10 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { AllMusic, GetAllMusicService } from './get-all-music.service';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { LoggedService } from '../logged.service';
 import { Router } from '@angular/router';
-
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -19,14 +19,25 @@ export class GetAllMusicComponent {
   displayedColumns: string[] = ['title', 'duration', 'category', 'actions'];
 
   constructor(private getAllMusic: GetAllMusicService, private loggedService: LoggedService, private router: Router){}
+  private snackBar = inject(MatSnackBar);
+
+  successDeleteMessage = signal('');
+  errorMessage = signal('');
   //on initialise la varaible AllMusic a un tableau vide 
   AllMusic : AllMusic[] = [];
+  
+  minutes: number = 0;
+  secondes: number = 0;
   user = signal<Boolean>(false);
   //Au chargement de la page on fait la requête
   ngOnInit(){
      this.getAllMusic.getAllMusic().subscribe({
       next: (data) => {
         this.AllMusic = data;
+        for(const music of this.AllMusic) {
+           this.minutes = Math.floor(music.duration / 60);
+           this.secondes = music.duration % 60
+        }
         console.log(this.AllMusic);
         // const user = this.loggedService.isStaff();
         this.user.set(this.loggedService.isStaff());
@@ -42,19 +53,26 @@ export class GetAllMusicComponent {
     this.router.navigate(['/info_music', id]);
   }
 
-  // //On crée la fonction pour supprimer une musique
-  // deleteMusic(id: number) {
-  //   this.infoMusic.deleteMusic(id).subscribe({
-  //     next: (res) => {
-  //       this.deleteMessage.set(res);
-  //       this.music = this.music.filter(
-  //         music => music.id !== id
-  //       );
-  //     },
-  //     error: (err) => {
-  //       this.errorMessage.set("Erreur lors de suppression");
-  //     }
-  //   });
-  // }
+  //On crée la fonction pour supprimer une musique
+  deleteMusic(id: number) {
+    this.getAllMusic.removeMusic(id).subscribe({
+      next: (res) => {
+        this.successDeleteMessage.set('Suppression de la musique réussi.');
+        this.AllMusic = this.AllMusic.filter(
+          music => music.id !== id
+        );
+        this.snackBar.open(
+          this.successDeleteMessage(),
+          'Fermer',
+          {
+            duration: 3000
+          }
+        );
+      },
+      error: (err) => {
+        this.errorMessage.set("Erreur lors de suppression");
+      }
+    });
+  }
 
 }

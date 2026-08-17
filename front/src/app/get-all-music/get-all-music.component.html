@@ -1,3 +1,6 @@
+<!-- @if(successDeleteMessage()){
+    <p>{{successDeleteMessage()}}</p>
+} -->
 <table mat-table [dataSource]="AllMusic" class="mat-shadow-2">
     <ng-container matColumnDef="title">
         <th mat-header-cell *matHeaderCellDef>Title</th>
@@ -6,7 +9,7 @@
     
     <ng-container matColumnDef="duration">
         <th mat-header-cell *matHeaderCellDef>Duré</th>
-        <td mat-cell *matCellDef="let music"> {{music.duration}}</td>
+        <td mat-cell *matCellDef="let music"> <p>{{minutes}} min {{secondes}} sec</p></td>
     </ng-container>
     <ng-container matColumnDef="category">
         <th mat-header-cell *matHeaderCellDef>Catégorie</th>
@@ -19,7 +22,7 @@
             <td mat-cell *matCellDef="let music">
                 <button mat-button (click)="viewMusic(music.id)">Afficher la musique</button>
                 <!-- <button mat-button>Modifier</button> -->
-                <!-- <button mat-button (click)="deleteMusic(music.id)">Supprimer</button> -->
+                <button mat-button (click)="deleteMusic(music.id)">Supprimer</button>
 
             </td>
         }

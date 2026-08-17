@@ -15,9 +15,18 @@
         <audio #audioOption [src]="'http://localhost:8000' + infoMusic?.file">
             <!-- <source [src]="'http://localhost:8000' + infoMusic?.file" type="audio/mp3"> -->
         </audio>
-        <button mat-button (click)="onAudioPlayer()">Lire la musique</button>
+        @if(playMusic()){
+            <button mat-button (click)="stopAudioPlayer()">Stopper la musique</button>
+        }
+        @else {
+            <button mat-button (click)="onAudioPlayer()">Lire la musique</button>
+            
+        }
         <button mat-button>Télécharger la musique</button>
-        <button mat-button>Favoris</button>
+        @if(infoMusic){
+            <button mat-button (click)="addFavorite(infoMusic.id)"><mat-icon [class.favorite]="isFavorite()">favorite</mat-icon></button>
+            
+        }
 
         @if(user()) {
             <button mat-button (click)="openDialog()">Modifier la musique</button>

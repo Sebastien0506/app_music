@@ -13,7 +13,7 @@ export class FormsResetPasswordService {
   constructor(private http: HttpClient) { }
 
   requestResetPassword(data: any): Observable<ResetResponse> {
-    return this.http.post<ResetResponse>('http://localhost:8000/api/password_reset/', data, {
+    return this.http.post<ResetResponse>('/api/password_reset/', data, {
       withCredentials: true
     });
   }

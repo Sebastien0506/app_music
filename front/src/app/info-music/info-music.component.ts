@@ -6,23 +6,31 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { UpdateMusicComponent } from '../update-music/update-music.component';
 import { LoggedService } from '../logged.service';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-info-music',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule, MatDialogModule],
+  imports: [MatButtonModule, MatCardModule, MatDialogModule, MatIconModule],
   templateUrl: './info-music.component.html',
   styleUrl: './info-music.component.css'
 })
 export class InfoMusicComponent {
-  constructor(private getOneMusic: InfoMusicService, private router: ActivatedRoute, private isLogged: LoggedService){}
+  constructor(private getOneMusic: InfoMusicService, private router: ActivatedRoute, private isLogged: LoggedService, private addMusicFavorite: InfoMusicService){}
 
   private dialog = inject(MatDialog);
+
+  private snackBar = inject(MatSnackBar);
 
   errorMessage = signal('');
   minutes: number = 0;
   seconds: number = 0;
   size: number = 0;
+  isFavorite = signal<boolean>(false);
+  
+  playMusic = signal<boolean>(false);
 
+  successMessage = signal('');
   infoMusic: Music | null = null;
 
   user = signal<boolean>(false);
@@ -49,12 +57,43 @@ export class InfoMusicComponent {
 
   }
 
+  // On met la musique en favori
+addFavorite(id: number): void {
+  this.addMusicFavorite.addMusicFavorite(id).subscribe({
+    next: (res) => {
+      this.isFavorite.set(true);
+
+      this.successMessage.set(
+        'Musique ajoutée aux favoris avec succès.'
+      );
+
+      this.snackBar.open(
+        this.successMessage(),
+        'Fermer',
+        {
+          duration: 3000
+        }
+      );
+    },
+    error: (err) => {
+      console.error(err);
+    }
+  });
+}
   @ViewChild('audioOption') audioPlayerRef!: ElementRef<HTMLAudioElement>;
 
+  //On joue la musique 
   onAudioPlayer(): void {
     this.audioPlayerRef.nativeElement.play();
+    this.playMusic.set(true);
   }
 
+  //On stop la musique
+  stopAudioPlayer(): void {
+    this.audioPlayerRef.nativeElement.pause();
+    this.audioPlayerRef.nativeElement.currentTime = 0;
+    this.playMusic.set(false);
+  }
   openDialog(): void {
     const dialogRef = this.dialog.open(UpdateMusicComponent, {
       data: {

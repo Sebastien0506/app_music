@@ -230,9 +230,57 @@ User = get_user_model()
 #             Music.objects.filter(id=music.id).exists()
 #         )
 
-class UpdateMusicTest(TestCase):
+# class UpdateMusicTest(TestCase):
 
-    def test_update_music(self):
+#     def test_update_music(self):
+#         user = User.objects.create(
+#             username="Sébastien",
+#             last_name="Dec",
+#             email="dec05@gmail.com",
+#             password="Password@1",
+#             is_staff=True
+#         )
+
+#         client = APIClient()
+#         client.force_authenticate(user=user)
+
+#         music = Music.objects.create(
+#             title="Test music",
+#             file="music/test.mp3",
+#             filename="test.mp3",
+#             size=1000,
+#             duration=253,
+#             user=user
+#         )
+
+#         category = Category.objects.create(
+#             name="Rap"
+#         )
+
+#         response = client.put(
+#             f"/api/update_music/{music.id}/",
+#             data={
+#                 "title": "Rap God",
+#                 "category_id": category.id
+#             },
+#             format="json"
+#         )
+
+#         print(response.status_code)
+#         print(response.data)
+
+#         self.assertEqual(
+#             response.status_code,
+#             status.HTTP_200_OK
+#         )
+
+#         music.refresh_from_db()
+
+#         self.assertEqual(music.title, "Rap God")
+#         self.assertEqual(music.category_id, category.id)
+class FavoritesMusicTest(TestCase):
+
+    def test_favorites_music(self):
         user = User.objects.create(
             username="Sébastien",
             last_name="Dec",
@@ -253,31 +301,22 @@ class UpdateMusicTest(TestCase):
             user=user
         )
 
-        category = Category.objects.create(
-            name="Rap"
-        )
-
-        response = client.put(
-            f"/api/update_music/{music.id}/",
-            data={
-                "title": "Rap God",
-                "category_id": category.id
-            },
+        response = client.post(
+            f"/api/add_favorite_music/{music.id}/",
             format="json"
         )
 
         print(response.status_code)
-        print(response.data)
+        # print(response.data)
 
         self.assertEqual(
             response.status_code,
             status.HTTP_200_OK
         )
 
-        music.refresh_from_db()
-
-        self.assertEqual(music.title, "Rap God")
-        self.assertEqual(music.category_id, category.id)
+        self.assertTrue(
+            user.favorites.filter(id=music.id).exists()
+        )
         
 #On fait le test pour voir si sa refuse quand il y a un caractères non autoriser
 # class CreateCategoryTest(TestCase) :

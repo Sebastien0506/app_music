@@ -7,6 +7,7 @@ class User(AbstractUser) :
     username = models.CharField(max_length=50, unique=False)
     last_name = models.CharField(max_length=50)
     email = models.EmailField(max_length=50, unique=True)
+    favorites = models.ManyToManyField('Music', blank=True, related_name="favorited_by")
     
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -19,8 +20,11 @@ class Music(models.Model) :
     duration = models.PositiveIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey('Category', on_delete=models.SET_NULL, null=True)
+    
 
 class Category(models.Model) :
     name = models.CharField(max_length=50)
+
+
 
 

@@ -16,7 +16,7 @@ export class CreateCategoryService {
 
   //On envoi la requête pour crée la catégorie
   sendRequestCreateCategory(data: any): Observable<ResponseCreateCategory> {
-    return this.http.post<ResponseCreateCategory>('http://localhost:8000/api/create_category/', data, {
+    return this.http.post<ResponseCreateCategory>('/api/create_category/', data, {
       withCredentials: true
     })
   }

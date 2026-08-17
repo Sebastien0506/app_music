@@ -25,20 +25,20 @@ export class GetCategoryService {
   constructor(private http: HttpClient) { }
 
   getCtegoryAll(): Observable<Category[]> {
-    return this.http.get<Category[]>('http://localhost:8000/api/get_all_category/', {
+    return this.http.get<Category[]>('/api/get_all_category/', {
       withCredentials: true
     })
   }
 
   getMusicCategory(category_id: number): Observable<MusicCategory[]>{
-    return this.http.get<MusicCategory[]>(`http://localhost:8000/api/get_music_category/${category_id}`, {
+    return this.http.get<MusicCategory[]>(`/api/get_music_category/${category_id}`, {
       withCredentials: true
     });
   }
 
   //On fait la requête pour la suppression de la catégorie
   deleteCategory(id: number): Observable<DeleteCategoryResponse>{
-    return this.http.delete<DeleteCategoryResponse>(`http://localhost:8000/api/delete_category/${id}/`, {
+    return this.http.delete<DeleteCategoryResponse>(`/api/delete_category/${id}/`, {
       withCredentials: true
     });
   }

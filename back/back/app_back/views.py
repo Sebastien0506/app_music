@@ -640,6 +640,33 @@ def update_music(request, music_id) :
         status=status.HTTP_200_OK
     )
 
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def add_favorite_music(request, music_id):
+
+    #On récupère l'utilisateur
+    user = request.user
+
+    #On récupère la musique par son id
+    music = Music.objects.filter(id=music_id).first()
+
+    if not music :
+        return Response(
+            {
+                "error" : "Aucune musique trouvé."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    user.favorites.add(music)
+    return Response(
+        {
+            "success": "Musique ajoutée au favori."
+        },
+        status=status.HTTP_200_OK
+    )
+    
+
     
 
 

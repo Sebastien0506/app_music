@@ -15,7 +15,7 @@ export class LogoutService {
 
   //On fait la requête vers le backend
   logoutUser(): Observable<LogoutMessage>{
-    return this.http.post<LogoutMessage>('http://localhost:8000/api/logout/', null, {
+    return this.http.post<LogoutMessage>('/api/logout/', null, {
       withCredentials: true
     })
 

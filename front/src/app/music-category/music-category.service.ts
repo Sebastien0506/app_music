@@ -17,7 +17,7 @@ export class MusicCategoryService {
 
   //On fait la requête pour récuperer les musiques
   getMusiccategory(id: number): Observable<MusicCategory[]>{
-    return this.http.get<MusicCategory[]>(`http://localhost:8000/api/get_music_category/${id}`, {
+    return this.http.get<MusicCategory[]>(`/api/get_music_category/${id}`, {
       withCredentials: true
     });
   }

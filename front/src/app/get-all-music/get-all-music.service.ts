@@ -10,6 +10,10 @@ export interface AllMusic{
   size: number;
   category: string | null;
 }
+
+export interface DeleteMusicMessage{
+  message: string;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -19,7 +23,13 @@ export class GetAllMusicService {
 
   //on fait la requête pour demander toutes les musiques
   getAllMusic(): Observable<AllMusic[]>{
-    return this.http.get<AllMusic[]>('http://localhost:8000/api/get_all_music/', {
+    return this.http.get<AllMusic[]>('/api/get_all_music/', {
+      withCredentials: true
+    });
+  }
+
+  removeMusic(id: number): Observable<DeleteMusicMessage>{
+    return this.http.delete<DeleteMusicMessage>(`/api/delete_music/${id}/`, {
       withCredentials: true
     });
   }
