@@ -665,7 +665,36 @@ def add_favorite_music(request, music_id):
         },
         status=status.HTTP_200_OK
     )
-    
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_all_music_favorites(request) :
+
+    #On récupère l'utilisateur
+    user = request.user
+
+    #On récupère toutes les musiques favorites de l'utilisateur
+    favorites_music = user.favorites.all()
+
+    #On pour chaque musique on récupère son titre
+    music_favorites = [] 
+    for music in favorites_music :
+        music_favorites.append(
+            {
+                "id": music.id,
+                "title": music.title,
+                "size": music.size,
+                "duration": music.duration,
+                'file': music.file.url,
+                'category': music.category.name if music.category else None,
+            }
+        ) 
+
+    #On retourne la réponse
+    return Response(
+        music_favorites,
+        status=status.HTTP_200_OK
+    )
 
     
 
