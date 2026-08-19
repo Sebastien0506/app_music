@@ -10,6 +10,7 @@ import { GetCategoryComponent } from './get-category/get-category.component';
 import { MusicCategoryComponent } from './music-category/music-category.component';
 import { GetAllMusicComponent } from './get-all-music/get-all-music.component';
 import { DisplayFavoriteComponent } from './display-favorite/display-favorite.component';
+import { GetAllMusicCategoryComponent } from './get-all-music-category/get-all-music-category.component';
 
 export const routes: Routes = [
     {path: 'reset_password', component: ResetPasswordComponent},
@@ -21,7 +22,8 @@ export const routes: Routes = [
     {path: 'get_category', component: GetCategoryComponent},
     {path: 'category/:id/musics', component: MusicCategoryComponent},
     {path: 'get_all_music', component: GetAllMusicComponent},
-    {path: 'favorites', component: DisplayFavoriteComponent}
+    {path: 'favorites', component: DisplayFavoriteComponent},
+    {path: 'get_all_music_category/:id', component: GetAllMusicCategoryComponent},
     
     // {path: 'admin-dashboard', component: AdminDashboardComponent},
 ];

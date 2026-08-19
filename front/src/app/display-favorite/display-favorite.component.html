@@ -27,10 +27,10 @@
 
         </audio>
             <td mat-cell *matCellDef="let music">
-                @if(playMusic()){
-                    <button mat-button (click)="onPauseMusic()">Stopper la musique</button>
+                @if(playingMusicId() === music.id){
+                    <button mat-button (click)="stopAudioMusic(audioOption)">Stopper la musique</button>
                 } @else {
-                   <button mat-button (click)="onPlayMusic()">Lire la musique</button>
+                    <button mat-button (click)="playAudioMusic(audioOption, music.id)">Lire la musique</button>
                 }
                 
                 <button mat-button (click)="downloadMusic(music.id)">Télécharger la musique</button>

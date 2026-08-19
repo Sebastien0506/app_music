@@ -13,7 +13,7 @@
     <ng-container matColumnDef="actions">
          <th mat-header-cell *matHeaderCellDef>Actions</th>
          <td mat-cell *matCellDef="let category">
-            <button mat-button (click)="viewMusic()">
+            <button mat-button (click)="viewAllMusicCategory(category.id)">
                 Voir les musiques
             </button>
             <button mat-button (click)="deleteCategory(category.id)">

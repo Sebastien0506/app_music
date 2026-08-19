@@ -9,7 +9,7 @@
     
     <ng-container matColumnDef="duration">
         <th mat-header-cell *matHeaderCellDef>Duré</th>
-        <td mat-cell *matCellDef="let music"> <p>{{minutes}} min {{secondes}} sec</p></td>
+        <td mat-cell *matCellDef="let music">{{formaDuration(music.duration)}}</td>
     </ng-container>
     <ng-container matColumnDef="category">
         <th mat-header-cell *matHeaderCellDef>Catégorie</th>

@@ -721,6 +721,48 @@ def download_music(request, music_id) :
         filename=download_name
     )
 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_all_music_category(request, category_id):
+
+    category = Category.objects.filter(id=category_id).first()
+
+    if not category :
+        return Response({
+            "error" :"Aucune catégorie trouvée."
+        }, status=status.HTTP_400_BAD_REQUEST)
+    #On récupère l'identifiant de la catégorie
+    musics = Music.objects.filter(category_id=category_id)
+    
+    if not musics :
+        return Response(
+            {
+                "error" : "Aucune musique dans la catégorie"
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    #On initialise music_category a un tableau vide
+    music_category = []
+
+    #Pour chaque musique present dans la catégorie on récupère son id, son titre, son fichier, sa taille et sa durer
+    for music in musics :
+        music_category.append(
+            {
+                'id': music.id,
+                "title" : music.title,
+                "duration": music.duration,
+                "file": music.file.url,
+                "size": music.size,
+                "category": music.category.name,
+            }
+        )
+    #On renvoi la réponse
+    return Response(
+        music_category,
+        status=status.HTTP_200_OK
+    )
+
     
 
 

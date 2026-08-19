@@ -23,7 +23,7 @@ export class UpdateMusicService {
 
   //On fait la requête pour récuperer les catégories
   getCategory(): Observable<Category[]> {
-    return this.http.get<Category[]> ('http://localhost:8000/api/get_all_category/', {
+    return this.http.get<Category[]> ('/api/get_all_category/', {
       withCredentials: true
     });
   }

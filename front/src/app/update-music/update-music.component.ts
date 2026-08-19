@@ -36,6 +36,7 @@ export class UpdateMusicComponent {
     this.updateMusicService.getCategory().subscribe({
       next: (data) => {
          this.allCategory = data;
+         this.titleInput.set(this.data.dataMusic.title);
       },
       error: (err) => {
         console.error(err);
@@ -94,26 +95,28 @@ export class UpdateMusicComponent {
   }
 
   sendRequest(id: number): void {
-
+    console.log('fonction appelée.');
     //on vérifie les données
     const verifydata = this.verifyInput();
-
+    console.log(verifydata);
     if(!verifydata) {
       this.errorMessage.set("un champ est manquant.");
       return;
     }
 
     //On vérifie qu'une catégorie est été sélectionné
-    if(this.selectedCategoryId){
+    if(this.selectedCategoryId === null){
       this.errorMessage.set("Aucune catégorie n'a été sélectionnée.");
       return;
     }
+    console.log(this.selectedCategoryId);
     const data = {
       title: this.titleInput(),
       category_id: this.selectedCategoryId
     };
+    console.log(data);
     //On envoie la requête
-    this.updateMusicService.updateMusic(this.data.dataMusic.id, data).subscribe({
+    this.updateMusicService.updateMusic(id, data).subscribe({
         next: (res) => {
           this.successMessage.set("La musique à bien été mis a jour.");
           console.log(res);

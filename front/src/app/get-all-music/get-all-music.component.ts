@@ -26,18 +26,14 @@ export class GetAllMusicComponent {
   //on initialise la varaible AllMusic a un tableau vide 
   AllMusic : AllMusic[] = [];
   
-  minutes: number = 0;
-  secondes: number = 0;
+  
   user = signal<Boolean>(false);
   //Au chargement de la page on fait la requête
   ngOnInit(){
      this.getAllMusic.getAllMusic().subscribe({
       next: (data) => {
         this.AllMusic = data;
-        for(const music of this.AllMusic) {
-           this.minutes = Math.floor(music.duration / 60);
-           this.secondes = music.duration % 60
-        }
+        
         console.log(this.AllMusic);
         // const user = this.loggedService.isStaff();
         this.user.set(this.loggedService.isStaff());
@@ -75,4 +71,10 @@ export class GetAllMusicComponent {
     });
   }
 
+  formaDuration(duration: number): string{
+    const minutes = Math.floor(duration / 60);
+    const secondes = duration % 60;
+
+    return `${minutes}:${secondes.toString().padStart(2, '0')}`
+  }
 }

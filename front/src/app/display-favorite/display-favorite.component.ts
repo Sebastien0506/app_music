@@ -13,6 +13,8 @@ export class DisplayFavoriteComponent {
 
   constructor(private allMusicFavorites: DisplayFavoriteService){}
 
+  playingMusicId = signal<number | null>(null);
+
   displayedColumns: string[] = ['title', 'category', 'duration', 'size', 'actions'];
   musicFavorite: AllMusicFavorites[] = [];
   //On récupère les minutes
@@ -49,18 +51,17 @@ export class DisplayFavoriteComponent {
     });
   };
 
-  @ViewChild('audioOption') audioPlayerRef!: ElementRef<HTMLAudioElement>;
+ 
 
-  //On joue la musique 
-  onPlayMusic() {
-     this.audioPlayerRef.nativeElement.play();
-     this.playMusic.set(true);
-  
+  playAudioMusic(audio: HTMLAudioElement, id: number):void {
+    audio.play();
+    this.playingMusicId.set(id);
   }
 
-  onPauseMusic(){
-    this.audioPlayerRef.nativeElement.pause();
-    this.playMusic.set(false);
+  stopAudioMusic(audio: HTMLAudioElement): void {
+    audio.pause();
+    audio.currentTime = 0;
+    this.playingMusicId.set(null);
   }
 
   downloadMusic(id: number): void {

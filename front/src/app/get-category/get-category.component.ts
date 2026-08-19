@@ -50,8 +50,8 @@ export class GetCategoryComponent {
   }
 
 
-viewMusic(){
-  this.router.navigate(["/info_music"])
+viewAllMusicCategory(id: number){
+  this.router.navigate(["/get_all_music_category", id]);
 }
 
 
