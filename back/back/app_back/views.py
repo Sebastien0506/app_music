@@ -22,6 +22,7 @@ import magic
 from mutagen.mp3 import MP3
 import uuid
 from pathlib import Path
+from django.http.response import FileResponse
 # @api_view(["GET"])
 # @permission_classes([AllowAny])
 @ensure_csrf_cookie
@@ -694,6 +695,30 @@ def get_all_music_favorites(request) :
     return Response(
         music_favorites,
         status=status.HTTP_200_OK
+    )
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def download_music(request, music_id) :
+
+    #On récupère la musique par son id
+    music = Music.objects.filter(id=music_id).first()
+
+    if not music :
+        return Response(
+            {
+                "error": "Musique introuvable."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    extension = music.filename.split(".")[-1]
+
+    download_name = f"{music.title}.{extension}"
+
+    return FileResponse(
+        music.file.open('rb'),
+        as_attachment=True,
+        filename=download_name
     )
 
     

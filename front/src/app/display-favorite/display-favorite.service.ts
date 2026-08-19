@@ -25,4 +25,14 @@ export class DisplayFavoriteService {
       withCredentials: true
     });
   }
+  downloadMusic(id: number){
+    return this.http.get(
+      `/api/download_music/${id}/`,
+      {
+        responseType: 'blob',
+        observe: 'response',
+        withCredentials: true
+      }
+    );
+  }
 }

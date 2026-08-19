@@ -16,7 +16,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrl: './info-music.component.css'
 })
 export class InfoMusicComponent {
-  constructor(private getOneMusic: InfoMusicService, private router: ActivatedRoute, private isLogged: LoggedService, private addMusicFavorite: InfoMusicService){}
+  constructor(private getOneMusic: InfoMusicService, private router: ActivatedRoute, private isLogged: LoggedService, private addMusicFavorite: InfoMusicService, private downloadMusicService: InfoMusicService){}
 
   private dialog = inject(MatDialog);
 
@@ -102,6 +102,44 @@ addFavorite(id: number): void {
       width: "700px",
       height: "700px"
       
+    });
+  }
+  downloadMusic(id: number): void {
+    this.downloadMusicService.downloadMusic(id).subscribe({
+      next: (file) => {
+        if(!file.body){
+           return;
+        }
+
+        //On crée l'url temporaire
+        const url = window.URL.createObjectURL(file.body);
+
+        //On récupère le nom envoyée par Django
+        const disposition = file.headers.get('Content-Disposition');
+
+        let filename = 'music';
+
+        if(disposition) {
+          const match = disposition.match(/filename="([^"]+)"/);
+
+          if(match){
+            filename = match[1];
+          }
+        }
+        //On crée le lien temporairement 
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+
+        //On déclenche le téléchargement
+        link.click();
+
+        //On libère l'url temporaire
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error(err);
+      }
     });
   }
 }

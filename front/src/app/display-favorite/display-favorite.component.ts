@@ -63,4 +63,43 @@ export class DisplayFavoriteComponent {
     this.playMusic.set(false);
   }
 
+  downloadMusic(id: number): void {
+    this.allMusicFavorites.downloadMusic(id).subscribe({
+      next: (file) => {
+        if (!file.body) {
+          return;
+        }
+
+        //On crée une URL temporaire pour le fichier reçu
+        const url = window.URL.createObjectURL(file.body);
+
+        //On récupère le nom envoyé par Django
+        const disposition = file.headers.get('Content-Disposition');
+
+        let filename = 'music';
+
+        if(disposition) {
+          const match = disposition.match(/filename="([^"]+)"/);
+
+          if(match){
+            filename = match[1];
+          }
+        }
+        //On crée temporairement le lien de téléchargement
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+
+        //On déclenche le téléchargement
+        link.click();
+
+        //On libère l'URL temporaire
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
+
 }
