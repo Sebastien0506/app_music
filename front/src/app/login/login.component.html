@@ -2,22 +2,26 @@
     <p class="error-message">{{ errorMessage() }}</p>
 }
 
-@if(successMessage()){
-    <p class="success-message">{{ successMessage() }}</p>
-}
-<ng-container>
-    <mat-dialog-content>
-        <mat-form-field>
-            <mat-label>Email</mat-label>
-            <input matInput type="text" [(ngModel)]="emailInput">
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>Password</mat-label>
-            <input matInput type="password" [(ngModel)]="passwordInput">
-        </mat-form-field>
-    </mat-dialog-content>
-    <button mat-button (click)="sendRequest()">Se connecter</button>
-    <!-- <button mat-button><a routerLink="/forms_reset_password"> Mot de passe oublier ?</a></button> -->
-    <button mat-button (click)="redirectToFormsResetPassword()">Mot de passe oublier ?</button>
 
-</ng-container>
+<h6 class="title">Connexion</h6>
+<div class="loginForm">
+    <ng-container>
+        
+            <mat-dialog-content>
+                <mat-form-field>
+                    <mat-label>Email</mat-label>
+                    <input matInput type="text" [(ngModel)]="emailInput">
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Password</mat-label>
+                    <input matInput type="password" [(ngModel)]="passwordInput">
+                </mat-form-field>
+            </mat-dialog-content>
+        
+        <button mat-button (click)="sendRequest()">Se connecter</button>
+        <!-- <button mat-button><a routerLink="/forms_reset_password"> Mot de passe oublier ?</a></button> -->
+        <button mat-button (click)="redirectToFormsResetPassword()">Mot de passe oublier ?</button>
+    
+    </ng-container>
+</div>
+

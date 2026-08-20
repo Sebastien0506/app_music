@@ -8,6 +8,7 @@ import { MatInput } from "@angular/material/input";
 import { Category, UpdateMusicService } from './update-music.service';
 import { MatButtonModule } from "@angular/material/button";
 import { FormsModule } from '@angular/forms';
+import { GetAllMusicComponent } from '../get-all-music/get-all-music.component';
 
 @Component({
   selector: 'app-update-music',
@@ -20,7 +21,7 @@ export class UpdateMusicComponent {
 
   constructor(private updateMusicService: UpdateMusicService){}
 
-  private dialogRef = inject(MatDialogRef<InfoMusicComponent>);
+  private dialogRef = inject(MatDialogRef<GetAllMusicComponent>);
 
   
   isChecked: boolean = false;
@@ -31,7 +32,7 @@ export class UpdateMusicComponent {
   titleInput = signal('');
   errorMessage = signal('');
   successMessage = signal('');
-  selectedCategoryId: number | null = null;
+  selectedCategoryIds: number[] = [];
   ngOnInit(){
     this.updateMusicService.getCategory().subscribe({
       next: (data) => {
@@ -48,7 +49,7 @@ export class UpdateMusicComponent {
   verifyInput(): boolean {
     //On récupère le titre dans le formulaire
     const titleMusic = this.titleInput();
-    // console.log(titleMusic);
+    console.log(titleMusic);
     //Si aucun titre on renvoie un message d'erreur
     if(!titleMusic) {
      this.errorMessage.set('Aucun titrre n\'est renseigner.');
@@ -68,6 +69,7 @@ export class UpdateMusicComponent {
         !(code >= 97 && code <= 122) && //a - z
         !(code >= 65 && code <= 90) && // A - Z
         !(code >= 192 && code <= 376) && // À - Ÿ
+        !(code >= 48 && code <= 57) && // 0 - 9
         code != 45 &&// -
         code != 32 // espace 
       ) {
@@ -82,16 +84,18 @@ export class UpdateMusicComponent {
 
 //On vérifie qu'une catégorie à bien été sélectionner
   onCheckBoxValidate(event: Event): void {
-      //on récupère l'évènement dans le html
-      const checkBoxInput = event.target as HTMLInputElement;
+      //On récupère l'identifiant des checkbox 
+      const checkboxInput = event.target as HTMLInputElement;
+      const categoryId = Number(checkboxInput.value);
 
-      //on vérifie qu'une checkbox est été sélectionner
-      if(!checkBoxInput.checked) {
-         this.selectedCategoryId = null;
-         this.errorMessage.set('Aucune catégorie n\'a été sélectionner.');
-         return;
+      if (checkboxInput.checked) {
+        this.selectedCategoryIds.push(categoryId);
+      } else {
+        this.selectedCategoryIds = this.selectedCategoryIds.filter(
+          id => id !== categoryId
+        );
       }
-      this.selectedCategoryId = Number(checkBoxInput.value);
+      console.log(this.selectedCategoryIds);
   }
 
   sendRequest(id: number): void {
@@ -105,14 +109,13 @@ export class UpdateMusicComponent {
     }
 
     //On vérifie qu'une catégorie est été sélectionné
-    if(this.selectedCategoryId === null){
+    if (this.selectedCategoryIds.length === 0) {
       this.errorMessage.set("Aucune catégorie n'a été sélectionnée.");
       return;
     }
-    console.log(this.selectedCategoryId);
     const data = {
       title: this.titleInput(),
-      category_id: this.selectedCategoryId
+      category_ids: this.selectedCategoryIds
     };
     console.log(data);
     //On envoie la requête

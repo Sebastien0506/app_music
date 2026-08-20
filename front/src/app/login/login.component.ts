@@ -8,6 +8,7 @@ import { AuthServiceService } from '../auth-service.service';
 import { LoggedService } from '../logged.service';
 import { Router, RouterLink } from '@angular/router';
 import { MatButton } from "@angular/material/button";
+import { MatSnackBar } from '@angular/material/snack-bar';
   
 @Component({
   selector: 'app-login',
@@ -20,6 +21,7 @@ export class LoginComponent implements OnInit{
   constructor(private connexionService: ConnexionService, private authService: AuthServiceService, private logedService: LoggedService, private router: Router){}
   private dialogRef = inject(MatDialogRef<LoginComponent>);
 
+  private snackBar = inject(MatSnackBar);
   
   ngOnInit(): void {
       this.authService.getCsrfToken().subscribe({
@@ -149,6 +151,13 @@ export class LoginComponent implements OnInit{
       },
       error: (error) => {
         this.errorMessage.set('Erreur lors de la connexion.');
+        this.snackBar.open(
+          this.errorMessage(),
+          'Fermer',
+          {
+            duration: 3000
+          }
+        );
         console.error('Erreur lors de la connexion :', error);
       }
     });

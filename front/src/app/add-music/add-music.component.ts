@@ -22,7 +22,8 @@ export class AddMusicComponent {
   
 
   category: Category[] = [];
-  selectedCategoryId: number | null = null;
+  //On récupère l'id des categories séléctionner
+  selectedCategoryId: number [] = [];
   
   errorMessage = signal('');
   successMessage = signal('');
@@ -44,14 +45,15 @@ export class AddMusicComponent {
     console.log('fonction appelée.');
     //On récupère l'évènement dans le html
     const checkboxInput = event.target as HTMLInputElement;
+    const categoryId = Number(checkboxInput.value);
     //On vérifie qu'une checkbox est été sélectionner
-    if (!checkboxInput.checked) {
-      this.selectedCategoryId = null;
-      this.errorMessage.set('Une categori n\'a pas été sélectionner');
-      return;
+    if (checkboxInput.checked){
+      this.selectedCategoryId.push(categoryId)
+    }else{
+      this.selectedCategoryId = this.selectedCategoryId.filter(
+        id => id !== categoryId
+      );
     }
-    this.selectedCategoryId = Number(checkboxInput.value);
-    console.log(this.selectedCategoryId);
   }
    
   //Fichier sélectionné par l'utilisateur
@@ -155,10 +157,13 @@ export class AddMusicComponent {
     const formData = new FormData;
     //On lui met le fichier
     formData.append("music", this.selectedFile!);
-    formData.append(
-      "category_id",
-      this.selectedCategoryId.toString()
-    );
+    //Pour chaque catégorie on ajoute son id
+    for (const categoryId of this.selectedCategoryId) {
+      formData.append(
+        'category_id', categoryId.toString()
+      )
+    }
+    
     console.log(formData);
 
 

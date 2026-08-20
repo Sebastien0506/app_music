@@ -305,10 +305,10 @@ def add_music(request) :
         return Response({"error": "Aucun fichier"}, status=status.HTTP_400_BAD_REQUEST)
     
     #On récupère l'id
-    category_id = request.data.get('category_id')
+    category_ids = request.data.getlist('category_id')
 
     #Si aucune catégorie on renvoi un message d'erreur
-    if not category_id :
+    if not category_ids :
         return Response({
             "error": "Aucun catégorie a été fournis."
         }, status=status.HTTP_400_BAD_REQUEST)
@@ -372,8 +372,11 @@ def add_music(request) :
         size=file.size,
         duration=int(duration),
         user=user,
-        category_id=category_id
+        
     )
+    #On enregistre les catégories de la musique
+    categories = Category.objects.filter(id__in=category_ids)
+    music.category.set(categories)
     #On retourne un reponse
     return Response(
         {
@@ -552,7 +555,7 @@ def delete_music(request, music_id):
         status=status.HTTP_200_OK
     )
 
-
+#Permet de récupérer les info d'une musique
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_one_music(request, music_id):
@@ -567,13 +570,26 @@ def get_one_music(request, music_id):
             status=status.HTTP_400_BAD_REQUEST
         )
     
+    categories = music.category.all()
+
+    music_category = []
+
+    for category in categories :
+        music_category.append(
+            {
+                "id": category.id,
+                "name": category.name,
+            }
+        )
+    
+
     return Response(
         {
             "id": music.id,
             "title": music.title,
             "duration": music.duration,
             "size": music.size,
-            "category": music.category.name if music.category else None,
+            "category": music_category,
             "file": music.file.url,
         },
         status=status.HTTP_200_OK
@@ -597,16 +613,17 @@ def update_music(request, music_id) :
     
     #on récupère les données de la musique
     title: str = request.data.get("title")
-    category_id:str = request.data.get('category_id')
+    category_ids: list[str] = request.data.get('category_ids')
 
 #Si un champs est manquant on renvoi un message d'erreur
-    if not title or not category_id : 
+    if not title or not category_ids : 
         return Response(
             {
                 "error": "Un champ est manquant."
             },
             status=status.HTTP_400_BAD_REQUEST
         )
+    
     
     #On initialise le serializer
     serializer = UpdateMusicSerializer(
@@ -623,8 +640,10 @@ def update_music(request, music_id) :
         )
     try :
         music.title = serializer.validated_data["title"]
-        music.category_id = category_id
         music.save()
+
+        categories = Category.objects.filter(id__in=category_ids)
+        music.category.set(categories)
             
 
     except Exception as e: 

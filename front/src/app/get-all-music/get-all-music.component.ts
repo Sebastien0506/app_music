@@ -5,7 +5,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { LoggedService } from '../logged.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { MatDialog } from '@angular/material/dialog';
+import { UpdateMusicComponent } from '../update-music/update-music.component';
 
 @Component({
   selector: 'app-get-all-music',
@@ -21,11 +22,12 @@ export class GetAllMusicComponent {
   constructor(private getAllMusic: GetAllMusicService, private loggedService: LoggedService, private router: Router){}
   private snackBar = inject(MatSnackBar);
 
+  private dialog = inject(MatDialog);
   successDeleteMessage = signal('');
   errorMessage = signal('');
   //on initialise la varaible AllMusic a un tableau vide 
   AllMusic : AllMusic[] = [];
-  
+  infoMusic : AllMusic | undefined;
   
   user = signal<Boolean>(false);
   //Au chargement de la page on fait la requête
@@ -76,5 +78,25 @@ export class GetAllMusicComponent {
     const secondes = duration % 60;
 
     return `${minutes}:${secondes.toString().padStart(2, '0')}`
+  }
+
+  dataInfoMusic(id: number){
+   //On récupère les informations de la musique
+    this.infoMusic = this.AllMusic.find(
+      music => music.id === id
+    );
+    console.log(this.infoMusic);
+    
+    
+  }
+  openDialog(id: number){
+    this.dataInfoMusic(id);
+    this.dialog.open(UpdateMusicComponent, {
+      data: {
+        dataMusic: this.infoMusic
+      },
+      width: '700px',
+      height: '700px',
+    })
   }
 }
