@@ -398,18 +398,30 @@ def get_all_music(request) :
         return Response({
             "error": "Aucun musiques enregistrer."
         }, status=status.HTTP_400_BAD_REQUEST)
-
+    
     data = []
-    #Pour toutes les musiques on récupère ces information
-    for musique in musiques : 
+
+    for music in musiques :
+        categories = []
+
+        for category in music.category.all() :
+            
+            categories.append(
+                {
+                    "id": category.id,
+                    "name": category.name
+                }
+            )
+        
+    
 
         data.append(
             {
-                "id": musique.id,
-                "title": musique.title,
-                "duration": musique.duration,
-                "size": musique.size,
-                "category": musique.category.name if musique.category else None
+                "id": music.id,
+                "title": music.title,
+                "duration": music.duration,
+                "size": music.size,
+                "category": categories,
             }
         )
     return Response(data, status=status.HTTP_200_OK)

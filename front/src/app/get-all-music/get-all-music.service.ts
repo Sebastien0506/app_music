@@ -8,7 +8,10 @@ export interface AllMusic{
   title: string;
   duration: number;
   size: number;
-  category: string | null;
+  category: {
+    id: number;
+    name: string;
+  }[]
 }
 
 export interface DeleteMusicMessage{

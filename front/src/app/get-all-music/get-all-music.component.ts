@@ -35,7 +35,7 @@ export class GetAllMusicComponent {
      this.getAllMusic.getAllMusic().subscribe({
       next: (data) => {
         this.AllMusic = data;
-        
+      
         console.log(this.AllMusic);
         // const user = this.loggedService.isStaff();
         this.user.set(this.loggedService.isStaff());
@@ -73,6 +73,7 @@ export class GetAllMusicComponent {
     });
   }
 
+  
   formaDuration(duration: number): string{
     const minutes = Math.floor(duration / 60);
     const secondes = duration % 60;
