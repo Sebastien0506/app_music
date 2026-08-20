@@ -27,10 +27,6 @@
             <button mat-button (click)="addFavorite(infoMusic.id)"><mat-icon [class.favorite]="isFavorite()">favorite</mat-icon></button>
             
         }
-
-        @if(user()) {
-            <button mat-button (click)="openDialog()">Modifier la musique</button>
-        }
     </mat-card-content>
 </mat-card>
 

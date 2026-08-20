@@ -94,16 +94,7 @@ addFavorite(id: number): void {
     this.audioPlayerRef.nativeElement.currentTime = 0;
     this.playMusic.set(false);
   }
-  openDialog(): void {
-    const dialogRef = this.dialog.open(UpdateMusicComponent, {
-      data: {
-        dataMusic: this.infoMusic
-      },
-      width: "700px",
-      height: "700px"
-      
-    });
-  }
+  
   downloadMusic(id: number): void {
     this.downloadMusicService.downloadMusic(id).subscribe({
       next: (file) => {
