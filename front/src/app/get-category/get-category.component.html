@@ -1,28 +1,47 @@
-@if(user()){
-   <button mat-button (click)="openForms()">Créer une nouvel catégorie</button>
-}
+<div class="category-page">
 
-
-<table mat-table [dataSource]="category">
-    <ng-container matColumnDef="category_name">
-        <th mat-header-cell *matHeaderCellDef> Name</th>
-        <td mat-cell *matCellDef="let category">{{ category.name }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="actions">
-         <th mat-header-cell *matHeaderCellDef>Actions</th>
-         <td mat-cell *matCellDef="let category">
+    <div class="category-card">
+  
+      @if(user()){
+        <div class="category-header">
+          <button mat-raised-button (click)="openForms()">
+            Créer une nouvelle catégorie
+          </button>
+        </div>
+      }
+  
+      <table mat-table [dataSource]="category">
+  
+        <ng-container matColumnDef="category_name">
+          <th mat-header-cell *matHeaderCellDef>Nom</th>
+          <td mat-cell *matCellDef="let category">
+            {{ category.name }}
+          </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+  
+          <td mat-cell *matCellDef="let category">
+  
             <button mat-button (click)="viewAllMusicCategory(category.id)">
-                Voir les musiques
+              Voir les musiques
             </button>
+  
             @if(user()){
-                <button mat-button (click)="deleteCategory(category.id)">
-                    Supprimer
-                </button>
+              <button mat-button (click)="deleteCategory(category.id)">
+                Supprimer
+              </button>
             }
-            
-         </td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
+  
+          </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  
+      </table>
+  
+    </div>
+  
+  </div>

@@ -1,0 +1,38 @@
+.category-page {
+    min-height: 100vh;
+    padding-top: 50px;
+
+    display: flex;
+    justify-content: center;
+}
+
+.category-card {
+    width: 70%;
+    height: fit-content;
+
+    padding: 25px;
+
+    background-color: whitesmoke;
+
+    border-radius: 12px;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.category-header {
+    margin-bottom: 25px;
+}
+
+table {
+    width: 100%;
+    background-color: transparent;
+}
+
+th {
+    font-weight: bold;
+}
+
+td,
+th {
+    padding: 15px;
+}

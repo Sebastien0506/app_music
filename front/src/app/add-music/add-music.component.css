@@ -1,0 +1,24 @@
+.form {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    width: 400px;
+    padding: 30px;
+
+    background-color: whitesmoke;
+    border-radius: 12px;
+}
+
+.add_music {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+mat-form-field {
+    width: 100%;
+}

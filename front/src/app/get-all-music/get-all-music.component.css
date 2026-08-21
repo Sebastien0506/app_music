@@ -1,0 +1,50 @@
+.music-page {
+    min-height: 100vh;
+    padding-top: 50px;
+
+    display: flex;
+    justify-content: center;
+}
+
+.music-card {
+    width: 85%;
+    height: fit-content;
+
+    padding: 25px;
+
+    background-color: whitesmoke;
+
+    border-radius: 12px;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.music-card h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+table {
+    width: 100%;
+    background-color: transparent;
+}
+
+th {
+    font-weight: bold;
+}
+
+td,
+th {
+    padding: 15px;
+}
+
+.category-name {
+    display: inline-block;
+
+    margin-right: 8px;
+    padding: 4px 10px;
+
+    background-color: #e0e0e0;
+
+    border-radius: 10px;
+}

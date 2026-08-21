@@ -1,45 +1,67 @@
 <!--AFFICHE TOUTES LES MUSIQUES PEUT IMPORTE LEUR CATÉGORIES-->
-<table mat-table [dataSource]="AllMusic" class="mat-shadow-2">
-    <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef>Title</th>
-        <td mat-cell *matCellDef="let music"> {{music.title}}</td>
-    </ng-container>
-    
-    <ng-container matColumnDef="duration">
-        <th mat-header-cell *matHeaderCellDef>Duré</th>
-        <td mat-cell *matCellDef="let music">{{formaDuration(music.duration)}}</td>
-    </ng-container>
-    <ng-container matColumnDef="category">
-        <th mat-header-cell *matHeaderCellDef>Catégorie</th>
-        
-        <td mat-cell *matCellDef="let music">
-            
-            @for (category of music.category; track category.id){
-                /{{  category.name }} 
-            }
-        </td>
-    </ng-container>
 
-    <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>Actions</th>
-        <td mat-cell *matCellDef="let music">
+<div class="music-page">
+
+    <div class="music-card">
+  
+      <h2>Musiques</h2>
+  
+      <table mat-table [dataSource]="AllMusic">
+  
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef>Titre</th>
+          <td mat-cell *matCellDef="let music">
+            {{ music.title }}
+          </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="duration">
+          <th mat-header-cell *matHeaderCellDef>Durée</th>
+          <td mat-cell *matCellDef="let music">
+            {{ formaDuration(music.duration) }}
+          </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef>Catégorie</th>
+  
+          <td mat-cell *matCellDef="let music">
+            @for (category of music.category; track category.id) {
+              <span class="category-name">
+                {{ category.name }}
+              </span>
+            }
+          </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+  
+          <td mat-cell *matCellDef="let music">
+  
             <button mat-button (click)="viewMusic(music.id)">
-                Afficher la musique
+              Afficher
             </button>
-
+  
             @if(user()){
-                <button mat-button (click)="openDialog(music.id)">
-                    Modifier
-                </button>
-                <button mat-button (click)="deleteMusic(music.id)">
-                    Supprimer
-                </button>
+              <button mat-button (click)="openDialog(music.id)">
+                Modifier
+              </button>
+  
+              <button mat-button (click)="deleteMusic(music.id)">
+                Supprimer
+              </button>
             }
-        </td>
-    </ng-container>
-
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
+  
+          </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  
+      </table>
+  
+    </div>
+  
+  </div>
 

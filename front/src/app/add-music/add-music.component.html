@@ -1,49 +1,54 @@
-<input
-  #fileInput
-  type="file"
-  hidden
-  accept="audio/*"
-  (change)="onFileSelected($event)"
->
+<!--PAGE POUR AFFICHER LE FORMULAIRE D'AJOUT DE MUSIQUE-->
+<div class="form">
+  <div class="card">
+    <div class="add_music">
+          <input
+          #fileInput
+          type="file"
+          hidden
+          accept="audio/*"
+          (change)="onFileSelected($event)"
+        >
 
-<mat-form-field appearance="outline">
-  <mat-label>Musique</mat-label>
+        <mat-form-field appearance="outline">
+          <mat-label>Musique</mat-label>
 
-  <input
-    matInput
-    readonly
-    [value]="selectedFile?.name ?? ''"
-    placeholder="Aucun fichier sélectionné"
-  >
-</mat-form-field>
-<!-- <section class="exemple-section">
-  <mat-checkbox class="exemple-margin"> Check me!</mat-checkbox>
-  <mat-checkbox class="exemple-margin" [disabled]="true">Disbaled</mat-checkbox>
-</section> -->
+          <input
+            matInput
+            readonly
+            [value]="selectedFile?.name ?? ''"
+            placeholder="Aucun fichier sélectionné"
+          >
+        </mat-form-field>
 
-@for (category of category; track category.id) {
-  <div class="form-check">
-    <input class="form-check-input" type="checkbox" [value]="category.id" (click)="onCheckBoxValidate($event)">
-    <label class="form-check-label" for="checkDefault">
-      {{category.name}}
-    </label>
+        @for (category of category; track category.id) {
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" [value]="category.id" (click)="onCheckBoxValidate($event)">
+            <label class="form-check-label" for="checkDefault">
+              {{category.name}}
+            </label>
+          </div>
+        }
+
+
+
+        @if (selectedFile) {
+            <button mat-raised-button type="button" (click)="sendRequest()">Enregistrez la musique</button>
+        }
+        @else {
+            <button
+            mat-raised-button
+            type="button"
+            (click)="fileInput.click()"
+          >
+            Choisir une musique
+          </button>
+        }
+    </div>
+        
   </div>
-}
+</div>
 
-
-
-@if (selectedFile) {
-    <button mat-raised-button type="button" (click)="sendRequest()">Enregistrez la musique</button>
-}
-@else {
-    <button
-    mat-raised-button
-    type="button"
-    (click)="fileInput.click()"
-  >
-    Choisir une musique
-  </button>
-}
 
 <!-- @if (selectedFile) {
     <button>Enregistrez la musique</button>
