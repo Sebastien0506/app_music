@@ -7,7 +7,10 @@ export interface Music{
   id: number;
   title: string;
   duration: number;
-  category: string | null;
+  category: {
+    id: number;
+    name: string;
+  }[];
   size: number;
   file: string;
 }

@@ -41,6 +41,7 @@ export class InfoMusicComponent {
       next: (data) => {
 
         this.infoMusic = data;
+        console.log(this.infoMusic);
        //On converti la duré en minute et secondes
         this.minutes = Math.floor(this.infoMusic.duration / 60);
         this.seconds = this.infoMusic.duration % 60;
@@ -57,6 +58,7 @@ export class InfoMusicComponent {
 
   }
 
+  
   // On met la musique en favori
 addFavorite(id: number): void {
   this.addMusicFavorite.addMusicFavorite(id).subscribe({
