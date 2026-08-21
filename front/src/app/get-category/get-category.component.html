@@ -1,8 +1,7 @@
-<button mat-button (click)="openForms()">Créer une nouvel catégorie</button>
+@if(user()){
+   <button mat-button (click)="openForms()">Créer une nouvel catégorie</button>
+}
 
-<!-- @for (category of categories; track category.id) {
-    <p>{{ category.name}}</p>
-} -->
 
 <table mat-table [dataSource]="category">
     <ng-container matColumnDef="category_name">
@@ -16,9 +15,12 @@
             <button mat-button (click)="viewAllMusicCategory(category.id)">
                 Voir les musiques
             </button>
-            <button mat-button (click)="deleteCategory(category.id)">
-                Supprimer
-            </button>
+            @if(user()){
+                <button mat-button (click)="deleteCategory(category.id)">
+                    Supprimer
+                </button>
+            }
+            
          </td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

@@ -1,5 +1,8 @@
 <!---AFFICHE LES MUSIQUES D'UNE CATÉGORIE-->
-<h3 class="nameCategory">{{nameCategory}}</h3>
+<h3 class="nameCategory">
+    <p>{{ nameCategory }}</p>
+</h3>
+
 <table mat-table [dataSource]="allMusic" class="mat-shadow-2">
     <ng-container matColumnDef="title">
         <th mat-header-cell *matHeaderCellDef>Titre</th>

@@ -34,10 +34,13 @@ export class GetAllMusicCategoryComponent {
     this.getAllMusicCategoryService.getAllMusicCategory(id).subscribe({
       next: (data) => {
         this.allMusic = data;
-  
+        // this.nameCategory = data.category.name;
+        
         if (data.length > 0) {
-          this.nameCategory = data[0].category;
+          this.nameCategory = data[0].category.name;
+          
         }
+        console.log(this.allMusic);
       },
       error: (err) => {
         console.error(err);

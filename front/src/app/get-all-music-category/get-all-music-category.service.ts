@@ -9,7 +9,10 @@ export interface GetAllMusicCategory{
   file: string;
   duration: number;
   size: number;
-  category: string;
+  category: {
+    id: number;
+    name: string;
+  }
 }
 @Injectable({
   providedIn: 'root'

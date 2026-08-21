@@ -9,7 +9,10 @@ export interface AllMusicFavorites{
   duration: number;
   size: number;
   file: string;
-  category: string;
+  category: {
+    id: number;
+    name: string;
+  }[]
 }
 
 @Injectable({

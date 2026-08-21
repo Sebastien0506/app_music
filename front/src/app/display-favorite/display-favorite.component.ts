@@ -18,12 +18,10 @@ export class DisplayFavoriteComponent {
   displayedColumns: string[] = ['title', 'category', 'duration', 'size', 'actions'];
   musicFavorite: AllMusicFavorites[] = [];
   //On récupère les minutes
-  minutes: number = 0;
-  //On récupère les secondes
-  secondes: number = 0;
+  
   musicFile: string = ('');
   //On récupère la taille 
-  size: number = 0;
+  // size: number = 0;
 
   playMusic = signal<boolean>(false);
   //Au chargement on récupère les musiques
@@ -32,27 +30,26 @@ export class DisplayFavoriteComponent {
       next: (data) => {
         //On récpère les données.
         this.musicFavorite = data;
-        //Pour chaque musiques présente dans data on converti la duré en minute
-        for (const music of this.musicFavorite) {
-          this.minutes = Math.floor(music.duration / 60);
-          this.secondes = music.duration % 60;
-          //On converti la taille du fichier en MO
-          this.size = Number(
-            (music.size / (1024 * 1024)).toFixed(2)
-          );
-          this.musicFile = music.file;
-        }
+        console.log(this.musicFavorite);
         
-        console.log(data);
       },
       error: (err) => {
         console.error(err);
       }
     });
   };
-
- 
-
+//On converti la durée en minutes et secondes
+ formatDuration(duration: number): string {
+    const minutes = Math.floor(duration / 60);
+    const secondes = duration % 60;
+    return `${minutes}:${secondes.toString().padStart(2, '0')}`
+ }
+//On converti la taille en MO
+ formatSize(size: number): string {
+  const sizeFile = Math.floor(size / (1024 * 1024));
+  return `${sizeFile.toFixed(2)}`
+  
+ }
   playAudioMusic(audio: HTMLAudioElement, id: number):void {
     audio.play();
     this.playingMusicId.set(id);

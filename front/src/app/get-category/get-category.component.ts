@@ -5,6 +5,7 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { CreateCategoryComponent } from '../create-category/create-category.component';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
+import { LoggedService } from '../logged.service';
 
 @Component({
   selector: 'app-get-category',
@@ -15,7 +16,7 @@ import { Router } from '@angular/router';
 })
 export class GetCategoryComponent {
 
-  constructor(private getCategory: GetCategoryService, private dialogRef: MatDialog, private router: Router){}
+  constructor(private getCategory: GetCategoryService, private dialogRef: MatDialog, private router: Router, private loggedService: LoggedService){}
 
   category: Category[] = [];
   displayedColumns: string[] = ['category_name', 'actions'];
@@ -23,6 +24,7 @@ export class GetCategoryComponent {
   successMessage = signal('');
   errorMessage = signal('');
 
+  user = signal<boolean>(false);
   openForms(){
     this.dialogRef.open(CreateCategoryComponent, {
       height: '700px',
@@ -42,10 +44,14 @@ export class GetCategoryComponent {
         
         this.category = data;
         console.log(this.category);
-        //On récupère le nom des catégorie
+        //On vérifie si l'utilisateur est bien un mebre du staff
+        this.user.set(this.loggedService.isStaff());
         
+      },
+      error: (err) => {
+        console.error(err);
       }
-    })
+    });
 
   }
 
