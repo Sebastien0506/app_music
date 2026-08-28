@@ -4,7 +4,11 @@
   <p class="success-message">{{ successMessage() }}</p>
 }
 @if (user(); as currentUser) {
+  <div class="info-user">
+    <h6>Mes informations</h6>
+
     <mat-card>
+
       <mat-card-content>
         <p>Prénom : {{ currentUser.username }} </p>
         <p>Nom : {{ currentUser.last_name }}  </p>
@@ -12,6 +16,8 @@
         <button mat-button (click)="openDialog()">Modifier</button>
       </mat-card-content>
     </mat-card>
+  </div>
+    
   } @else {
     <p>Chargement...</p>
   }

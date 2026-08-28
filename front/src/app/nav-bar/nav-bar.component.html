@@ -48,8 +48,9 @@
                   <mat-icon>settings</mat-icon>
                   <span>Paramètres</span>
                 </button>
+              <button mat-button (click)="logout()">Déconnexion</button>
+
             </mat-menu>
-            <button mat-button (click)="logout()">Déconnexion</button>
           } @else {
             <button mat-button (click)="ouvrirFormulaireLogin()">Connexion</button>
             <button mat-button (click)="ouvrirFormulaireRegister()">Inscription</button>
