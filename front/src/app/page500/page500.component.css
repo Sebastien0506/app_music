@@ -1,0 +1,33 @@
+.page500 {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card_message{
+    display: flex;
+    background-color: whitesmoke;
+    width: 50%;
+    height: 300px;
+    border-radius: 10px;
+    border: 2px solid black;
+    box-shadow: 2px 2px 2px 2px gray;
+    justify-content: center;
+    align-items: center;
+}
+
+.message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+span {
+    margin-top: 2%;
+}
+
+button {
+    margin-top: 5%;
+}
