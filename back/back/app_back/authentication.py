@@ -35,7 +35,9 @@ class CookieJWTAuthentication(JWTAuthentication) :
             )
     
 class IsStaff(BasePermission) :
+    message = "Vous n'avez pas les permissions nécessaires."
     def has_permission(self, request, view):
+        
         return request.user.is_authenticated and request.user.is_staff
 
     

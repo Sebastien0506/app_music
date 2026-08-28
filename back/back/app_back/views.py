@@ -520,6 +520,8 @@ def delete_category(request, category_id):
 @permission_classes([IsAuthenticated, IsStaff])
 def delete_music(request, music_id):
 
+    
+
     #On récupère la musique par sont id 
     music = Music.objects.filter(id=music_id)
 

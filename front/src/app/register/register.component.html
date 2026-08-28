@@ -1,22 +1,31 @@
+<h6 class="title">Inscription</h6>
+<div class="formRegister">
+    <ng-container>
+        <div class="form">
+            <mat-dialog-content>
+                <div class="formField">
+                    <mat-form-field>
+                        <mat-label>Nom</mat-label>
+                        <input matInput type="text" [(ngModel)]="usernameInput">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Prénom</mat-label>
+                        <input matInput type="text" [(ngModel)]="last_nameInput">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Email</mat-label>
+                        <input matInput type="text" [(ngModel)]="emailInput">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Password</mat-label>
+                        <input matInput type="password" [(ngModel)]="passwordInput">
+                    </mat-form-field>
+                </div>
+                
+            </mat-dialog-content>
+            <button mat-button (click)="sendRequestRegister()">S'inscrire</button>
+        </div>
+        
+    </ng-container>
+</div>
 
-<ng-container>
-    <mat-dialog-content>
-        <mat-form-field>
-            <mat-label>Nom</mat-label>
-            <input matInput type="text" [(ngModel)]="usernameInput">
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>Prénom</mat-label>
-            <input matInput type="text" [(ngModel)]="last_nameInput">
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>Email</mat-label>
-            <input matInput type="text" [(ngModel)]="emailInput">
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>Password</mat-label>
-            <input matInput type="password" [(ngModel)]="passwordInput">
-        </mat-form-field>
-    </mat-dialog-content>
-    <button (click)="sendRequestRegister()">Se connecter</button>
-</ng-container>
