@@ -1,32 +1,41 @@
 <!--AFFICHE LES INFORMATION D'UNE SEULE MUSIQUE-->
-<mat-card class="exemple-card" appearance="outlined">
-    <mat-card-header>
-        <mat-card-title>{{ infoMusic?.title }}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-        <p>Durée: {{ minutes }} min {{ seconds }} sec</p>
-
-        <p><strong>Catégories:</strong>
-            @for(category of infoMusic?.category; track category.id) {
-                <p> {{category?.name}}</p>
-            }
-        </p>
-        <p>Taille du fichier: {{ size }} MO</p>
-    </mat-card-content>
-    <mat-card-content>
-        <audio #audioOption [src]="'http://localhost:8000' + infoMusic?.file">
-            <!-- <source [src]="'http://localhost:8000' + infoMusic?.file" type="audio/mp3"> -->
-        </audio>
-        @if(playMusic()){
-            <button mat-button (click)="stopAudioPlayer()">Stopper la musique</button>
-        }
-        @else {
-            <button mat-button (click)="onAudioPlayer()">Lire la musique</button>
-        }
-        <button mat-button>Télécharger la musique</button>
-        @if(infoMusic){
-            <button mat-button (click)="addFavorite(infoMusic.id)"><mat-icon [class.favorite]="isFavorite()">favorite</mat-icon></button>
-        }
-    </mat-card-content>
-</mat-card>
+<div class="pageInfo">
+    <mat-card class="card" appearance="outlined">
+        <mat-card-header>
+            <mat-card-title>{{ infoMusic?.title }}</mat-card-title>
+        </mat-card-header>
+        <div class="infoMusic">
+            <mat-card-content>
+                <p>Durée: {{ minutes }} min {{ seconds }} sec</p>
+        
+                <p><strong>Catégories:</strong>
+                    @for(category of infoMusic?.category; track category.id) {
+                        <p> {{category?.name}}</p>
+                    }
+                </p>
+                <p>Taille du fichier: {{ size }} MO</p>
+            </mat-card-content>
+            
+                <mat-card-content class="actions">
+                    <audio #audioOption [src]="'http://localhost:8000' + infoMusic?.file">
+                        <!-- <source [src]="'http://localhost:8000' + infoMusic?.file" type="audio/mp3"> -->
+                    </audio>
+                    @if(playMusic()){
+                        <button mat-button (click)="stopAudioPlayer()">Stopper la musique</button>
+                    }
+                    @else {
+                        <button mat-button (click)="onAudioPlayer()">Lire la musique</button>
+                    }
+                    <button mat-button>Télécharger la musique</button>
+                    @if(infoMusic){
+                        <button mat-button (click)="addFavorite(infoMusic.id)"><mat-icon [class.favorite]="isFavorite()">favorite</mat-icon></button>
+                    }
+                </mat-card-content>
+            
+            
+        </div>
+        
+    </mat-card>
+    
+</div>
 
