@@ -18,7 +18,7 @@ import { MatInput } from "@angular/material/input";
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { map, Observable, startWith } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
-
+import { SettingsComponent } from '../settings/settings.component';
 
 
 
@@ -135,6 +135,12 @@ export class NavBarComponent implements OnInit{
       ariaLabel: 'Share on social media'
     });
     
+  }
+
+  openSettingBottomSheet() {
+    const bottomSheetRef = this.bottomSheet.open(SettingsComponent, {
+      ariaLabel: 'Share on social media'
+    });
   }
 
 

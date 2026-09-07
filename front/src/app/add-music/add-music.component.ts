@@ -153,7 +153,7 @@ export class AddMusicComponent {
       return;
     }
     console.log(this.verifyFile());
-    //On déclare la varianle forData
+    //On déclare la variable forData
     const formData = new FormData;
     //On lui met le fichier
     formData.append("music", this.selectedFile!);
