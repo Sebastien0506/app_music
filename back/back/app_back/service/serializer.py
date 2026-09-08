@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from back.app_back.models import User, Category
+from back.app_back.models import User, Category, Avatar
 import html
 
 
@@ -270,6 +270,34 @@ class UpdateMusicSerializer(serializers.Serializer) :
 
         instance.save()
         return instance
+
+class AvatarSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = Avatar
+        fields = [
+            "file",
+            "filename",
+            "size"
+        ]
+
+    #On clean les données
+    def clean_input(self, value):
+        return html.escape(value)
+    
+    #On vérifie le nom
+    def validate_name(self, value):
+        #On appel la fonction pour nettoyer les données
+        cleaned_input = self.clean_input(value)
+
+        #On vérifie que le champ contient uniquement des caractères autorisé
+        if not all(char.isalnum or char in ["-", "_", " "] for char in cleaned_input) :
+            raise serializers.ValidationError("Le nom contient des caractères non autorisé.")
+        
+        return cleaned_input
+    
+    
+        
+    
 
 
 

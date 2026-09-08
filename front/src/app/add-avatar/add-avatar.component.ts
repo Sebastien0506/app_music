@@ -17,6 +17,9 @@ export class AddAvatarComponent {
   //On déclare le fichier sélectionner a null
   selectedFile: File | null = null;
 
+  //On déclare successMessage
+  successMessage = signal('');
+
   //On déclare errorMessage
   errorMessage = signal('');
 
@@ -124,6 +127,7 @@ export class AddAvatarComponent {
     //On fait la requête
     this.addAvatarService.sendAvatar(formData).subscribe({
       next: (res) => {
+        this.successMessage.set("Avatar envoyer avec succès");
         console.log(res);
       },
       error: (err) => {

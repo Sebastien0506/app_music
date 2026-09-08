@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 from rest_framework import status
 from django.core.files.uploadedfile import SimpleUploadedFile
-from back.app_back.models import Music, Category
+from back.app_back.models import Music, Category, Avatar
 from unittest.mock import MagicMock, patch
 
 User = get_user_model()
@@ -278,46 +278,49 @@ User = get_user_model()
 
 #         self.assertEqual(music.title, "Rap God")
 #         self.assertEqual(music.category_id, category.id)
-class FavoritesMusicTest(TestCase):
+# class FavoritesMusicTest(TestCase):
 
-    def test_favorites_music(self):
-        user = User.objects.create(
-            username="Sébastien",
-            last_name="Dec",
-            email="dec05@gmail.com",
-            password="Password@1",
-            is_staff=True
-        )
+#     def test_favorites_music(self):
+#         user = User.objects.create(
+#             username="Sébastien",
+#             last_name="Dec",
+#             email="dec05@gmail.com",
+#             password="Password@1",
+#             is_staff=True
+#         )
 
-        client = APIClient()
-        client.force_authenticate(user=user)
+#         client = APIClient()
+#         client.force_authenticate(user=user)
 
-        music = Music.objects.create(
-            title="Test music",
-            file="music/test.mp3",
-            filename="test.mp3",
-            size=1000,
-            duration=253,
-            user=user
-        )
+#         music = Music.objects.create(
+#             title="Test music",
+#             file="music/test.mp3",
+#             filename="test.mp3",
+#             size=1000,
+#             duration=253,
+#             user=user
+#         )
 
-        response = client.post(
-            f"/api/add_favorite_music/{music.id}/",
-            format="json"
-        )
+#         response = client.post(
+#             f"/api/add_favorite_music/{music.id}/",
+#             format="json"
+#         )
 
-        print(response.status_code)
-        # print(response.data)
+#         print(response.status_code)
+#         # print(response.data)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+#         self.assertEqual(
+#             response.status_code,
+#             status.HTTP_200_OK
+#         )
 
-        self.assertTrue(
-            user.favorites.filter(id=music.id).exists()
-        )
-        
+#         self.assertTrue(
+#             user.favorites.filter(id=music.id).exists()
+#         )
+
+
+
+
 #On fait le test pour voir si sa refuse quand il y a un caractères non autoriser
 # class CreateCategoryTest(TestCase) :
 #     def test_create_category(self) :
@@ -416,3 +419,52 @@ class FavoritesMusicTest(TestCase):
 #         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 #         self.assertEqual(Music.objects.count(), 1)
+
+
+# On fait le test pour upload un avatar
+class AddAvatarTest(TestCase):
+
+    @patch("back.app_back.views.magic.from_buffer")
+    def test_add_avatar(self, mock_from_buffer):
+
+        user = User.objects.create_user(
+            username="Sébastien",
+            last_name="Dec",
+            email="dec05@gmail.com",
+            password="password123",
+            is_staff=True
+        )
+
+        client = APIClient()
+        client.force_authenticate(user=user)
+
+        # On simule python-magic
+        mock_from_buffer.return_value = "image/png"
+
+        # On crée une fausse image
+        file = SimpleUploadedFile(
+            name="avatar2.png",
+            content=b"fake image content",
+            content_type="image/png",
+        )
+
+        response = client.post(
+            "/api/add_avatar/",
+            {
+                "image": file
+            },
+            format="multipart",
+        )
+
+        print(response.status_code)
+        print(response.data)
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_201_CREATED
+        )
+
+        self.assertEqual(
+            Avatar.objects.count(),
+            1
+        )

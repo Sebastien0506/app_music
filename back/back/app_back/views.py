@@ -2,12 +2,12 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import ensure_csrf_cookie
-from back.app_back.models import User, Music, Category
+from back.app_back.models import User, Music, Category, Avatar
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .authentication import IsStaff
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response 
-from back.app_back.service.serializer import UserSerializer, LoginSerializer, UpdateUserSerializer, CreateCategorySerializer, UpdateMusicSerializer
+from back.app_back.service.serializer import UserSerializer, LoginSerializer, UpdateUserSerializer, CreateCategorySerializer, UpdateMusicSerializer, AvatarSerializer
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
@@ -23,6 +23,8 @@ from mutagen.mp3 import MP3
 import uuid
 from pathlib import Path
 from django.http.response import FileResponse
+
+
 # @api_view(["GET"])
 # @permission_classes([AllowAny])
 @ensure_csrf_cookie
@@ -775,7 +777,149 @@ def get_all_music_category(request, category_id):
         status=status.HTTP_200_OK
     )
 
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated, IsStaff])
+def add_avatar(request) :
+
+    #On récupère l'image dans la requête
+    file = request.FILES.get('image')   
+
+    #On vérifie si un fichier est bien présent
+    if not file :
+        return Response(
+            {
+                'error' : "Aucun fichier"
+            }, status=status.HTTP_400_BAD_REQUEST
+        )
     
+    #On vérifie la taille du fichier
+    max_size = 20 * 1024 * 1024
+
+    if file.size > max_size :
+        return Response(
+            {
+                "error" : "Fichier trop volumineux."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    #On lit le début du contenu du fichier 
+    file_content = file.read(2048)
+
+    #On détecte le vrai type MIME à partir du contenu
+    mime = magic.from_buffer(file_content, mime=True)
+
+    #On remet le curseur au début
+    file.seek(0)
+
+    allowed_mime_type = [
+        "image/png",
+        "image/webp",
+        "image/jpeg",
+    ]
+
+    if not mime in allowed_mime_type : 
+        return Response(
+            {
+                "error" : "Le type mime n'est pas autorisée."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    #On déclare les type extention autorisée
+    allowed_extension_type = [
+        "jpg",
+        "jpeg",
+        "webp",
+        "png"
+    ]
+    #On récupère l'extention du fichier
+    extension_file = file.name.split(".")[-1].lower()
+    print(extension_file )
+    #On vérifie que l'extention est autorisée.
+    if extension_file not in allowed_extension_type :
+        return Response(
+            {
+                "error" : "L'extention du fichier n'est pas autorisée."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    #On récupère le nom du fichier 
+    filename = file.name.split(".")[0]
+
+    #On initialise un serializer
+    serializer = AvatarSerializer(data={
+        "file": file,
+        "filename": filename,
+        "size": file.size
+    })
+
+    #On vérifie que le sierilizer est bien valide
+    if serializer.is_valid() :
+
+        try :
+            
+            #On récupère l'ancien avatar dans la base de données
+            old_avatar = Avatar.objects.first()
+                
+            new_avatar = serializer.save()
+
+            if old_avatar : 
+                #On supprime l'ancien avatar dans le dossier
+                old_avatar.file.delete(save=False)
+                #On supprime l'ancien avatar
+                old_avatar.delete()
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+
+        except Exception as e :
+            return Response (
+                {
+                    f"Impossible de supprimé l'ancien avatar {e}"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    return Response(
+        serializer.errors, 
+        status=status.HTTP_400_BAD_REQUEST
+    )
+
+#On récupère l'avatar du site
+@api_view(["GET"])
+def get_avatar(request):
+
+    #On récupère l'avatar
+    avatar = Avatar.objects.first()
+
+    if not avatar : 
+        return Response (
+            {
+                "error" :"Aucune image trouvée."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    #On envoie l'avatar dans la variable data
+    data = {
+        "filename": avatar.filename,
+        "size" : avatar.size,
+        "file" : avatar.file.url
+    }
+
+    return Response(
+        data,
+        status=status.HTTP_200_OK
+    )
+    
+
+
+
+
+
+
+    
+
 
 
 

@@ -25,6 +25,13 @@ class Music(models.Model) :
 class Category(models.Model) :
     name = models.CharField(max_length=50)
 
+class Avatar(models.Model) : 
+    file = models.FileField(upload_to="image/")
+    filename = models.CharField(max_length=50, unique=True)
+    size = models.PositiveIntegerField()
+    
+
+
 
 
 

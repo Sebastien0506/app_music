@@ -13,7 +13,7 @@ export class AddAvatarService {
   constructor(private http: HttpClient) { }
 
   sendAvatar(formData: any): Observable<ResponseAddAvatar>{
-    return this.http.post<ResponseAddAvatar>('', formData, {
+    return this.http.post<ResponseAddAvatar>('/api/add_avatar/', formData, {
       withCredentials: true
     });
   }

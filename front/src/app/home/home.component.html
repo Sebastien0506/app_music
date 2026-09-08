@@ -1,4 +1,9 @@
+
+
 <div class="pageHome">
+    @if(avatar){
+        <img [src]="'http://localhost:8000' + avatar.file" class="image">
+    }
     <div class="presentation">
         <p>bonjour, je m'appel gabriel et je fait des live tiktok ainsi que twitch, je fait des live sur les jeux video 
                 ainsi que de la création de musique.

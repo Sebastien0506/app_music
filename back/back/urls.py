@@ -20,7 +20,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView
 )
-from back.app_back.views import get_all_music_category, download_music, get_all_music_favorites, add_favorite_music, get_csrf, register, login, me, logout, user_update, add_music, get_all_music, create_category, get_all_category, delete_category, get_all_music, delete_music, get_one_music, update_music
+from back.app_back.views import get_avatar, add_avatar, get_all_music_category, download_music, get_all_music_favorites, add_favorite_music, get_csrf, register, login, me, logout, user_update, add_music, get_all_music, create_category, get_all_category, delete_category, get_all_music, delete_music, get_one_music, update_music
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -47,6 +47,8 @@ urlpatterns = [
     path('api/get_all_music_favorites/', get_all_music_favorites),
     path('api/download_music/<int:music_id>/', download_music),
     path('api/get_all_music_category/<int:category_id>/', get_all_music_category),
+    path('api/add_avatar/', add_avatar),
+    path('api/get_avatar/', get_avatar),
 ]
 
 
