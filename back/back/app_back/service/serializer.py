@@ -250,6 +250,7 @@ class CreateCategorySerializer(serializers.Serializer) :
 class UpdateMusicSerializer(serializers.Serializer) :
     
     title = serializers.CharField(max_length=50)
+    image_filename = serializers.CharField(max_length=50)
 #On nettoie les données
     def cleant_input(self, value):
         return html.escape(value)
@@ -265,8 +266,18 @@ class UpdateMusicSerializer(serializers.Serializer) :
         
         return cleaned_input
     
+    def validate_filename(self, value) :
+        #On appel la fonction pour nettoyer les données
+        cleaned_input = self.cleant_input(value)
+
+        if not all(char.isalnum() or not char in ["-", " "] for char in cleaned_input) :
+            raise serializers.ValidationError("Le nom du fichier contient des caractères invalide.")
+        
+        return cleaned_input
+    
     def update(self, instance, validated_data):
         instance.title = validated_data.get("title", instance.title)
+        instance.image_filename = validated_data.get("filename", instance.image_filename)
 
         instance.save()
         return instance

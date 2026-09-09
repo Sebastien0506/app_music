@@ -20,6 +20,8 @@ class Music(models.Model) :
     duration = models.PositiveIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ManyToManyField('Category', blank=True)
+    image_file = models.FileField(upload_to="image/", null=True, blank=True)
+    image_filename = models.CharField(max_length=50, null=True, blank=True)
     
 
 class Category(models.Model) :

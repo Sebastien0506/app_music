@@ -593,6 +593,7 @@ def update_music(request, music_id) :
     #on récupère l'id de la musique
     music = Music.objects.filter(id=music_id).first()
 
+
     if not music :
         return Response (
             {
@@ -604,9 +605,10 @@ def update_music(request, music_id) :
     #on récupère les données de la musique
     title: str = request.data.get("title")
     category_ids: list[int] = request.data.get('category_ids')
+    file = request.FILES.get("image")
 
 #Si un champs est manquant on renvoi un message d'erreur
-    if not title or not category_ids : 
+    if not title or not category_ids or not file: 
         return Response(
             {
                 "error": "Un champ est manquant."
@@ -614,28 +616,84 @@ def update_music(request, music_id) :
             status=status.HTTP_400_BAD_REQUEST
         )
     
+    #On vérifie la taille du fichier
+    max_size = 20 * 1024 * 1024
+    if file.size > max_size :
+        return Response(
+            {
+                "error" : "Fichier trop volumineux."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    #On lit le début du contenu du fichier 
+    file_content = file.read(2048)
+
+    #On détecte le vrai type MIME à partir du contenu
+    mime = magic.from_buffer(file_content, mime=True)
+
+    #On remet le curseur au début
+    file.seek(0)
+
+    allowed_mime_type = [
+        "image/png",
+        "image/webp",
+        "image/jpeg",
+    ]
+
+    if not mime in allowed_mime_type : 
+        return Response(
+            {
+                "error" : "Le type mime n'est pas autorisée."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    #On déclare les type extention autorisée
+    allowed_extension_type = [
+        "jpg",
+        "jpeg",
+        "webp",
+        "png"
+    ]
+    #On récupère l'extention du fichier
+    extension_file = file.name.split(".")[-1].lower()
+    print(extension_file )
+    #On vérifie que l'extention est autorisée.
+    if extension_file not in allowed_extension_type :
+        return Response(
+            {
+                "error" : "L'extention du fichier n'est pas autorisée."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    #On récupère le nom du fichier 
+    image_filename = file.name.split(".")[0]
+    
     
     #On initialise le serializer
     serializer = UpdateMusicSerializer(
         data = {
             "id": music.id,
-            "title": title
+            "title": title,
+            "image_filename": image_filename,
         }
     )
-
+    #Si le serializer n'est pas valide on renvoi un message d'erreur
     if not serializer.is_valid() :
         return Response(
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+    #On sauvegarde les données
     try :
         music.title = serializer.validated_data["title"]
+        music.image_filename = serializer.validated_data["image_filename"]
+        music.image_file = file
         music.save()
 
         categories = Category.objects.filter(id__in=category_ids)
         music.category.set(categories)
             
-
+    #Si une erreur se produit on envoi un message
     except Exception as e: 
         return Response(
             {
