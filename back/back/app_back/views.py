@@ -427,6 +427,7 @@ def get_all_music(request) :
                 "duration": music.duration,
                 "size": music.size,
                 "category": categories,
+                "image_file": music.image_file.url if music.image_file else None
             }
         )
     #On envoi la reponse 
@@ -685,13 +686,21 @@ def update_music(request, music_id) :
         )
     #On sauvegarde les données
     try :
+        #On récupère l'ancienne image 
+        old_image = music.image_file
+
         music.title = serializer.validated_data["title"]
         music.image_filename = serializer.validated_data["image_filename"]
         music.image_file = file
         music.save()
 
+        if old_image : 
+            old_image.delete(save=False)
+
         categories = Category.objects.filter(id__in=category_ids)
         music.category.set(categories)
+
+        
             
     #Si une erreur se produit on envoi un message
     except Exception as e: 
