@@ -24,6 +24,8 @@ export class AddMusicComponent {
   category: Category[] = [];
   //On récupère l'id des categories séléctionner
   selectedCategoryId: number [] = [];
+  //On déclare la variable qui va être utilisé pour stocker l'image de la musique
+  selectedImageFile: File | null = null; 
   
   errorMessage = signal('');
   successMessage = signal('');
@@ -40,6 +42,19 @@ export class AddMusicComponent {
      });
   }
   
+  //On fait la fonction qui permet de renseigner l'image
+  onSelectedImageFile(event: Event) {
+    //On récupère le fichier dans le html
+    const input = event.target as HTMLInputElement;
+
+    //On vérifie le fichier
+    if (input.files && input.files.length > 0) {
+      //On set le fichier à selectedImageFile
+      this.selectedImageFile = input.files[0];
+
+      console.log(this.selectedImageFile);
+    }
+  }
   
   onCheckBoxValidate(event: Event): void {
     console.log('fonction appelée.');
@@ -73,11 +88,20 @@ export class AddMusicComponent {
   }
 
   verifyFile(): boolean {
+    console.log("Fonction verifyFile appelée");
     //Si aucun fichier on envoi un message d'erreur
     if(!this.selectedFile) {
+      
       this.errorMessage.set('Aucun fichier sélectionné.');
       return false
     }
+    console.log("Nom de la musique:", this.selectedFile);
+    //Si aucune image n'est sélectionner on renvoi un messsage d'erreur
+    if(!this.selectedImageFile){
+      this.errorMessage.set("Aucune image sélectionné.");
+      return false;
+    }
+    console.log("Nom de l'image:", this.selectedImageFile);
     //On récupère le nom du fichier
     const filename = this.selectedFile.name
 
@@ -88,6 +112,18 @@ export class AddMusicComponent {
       this.errorMessage.set("Le nom de fichier est invalide.");
       return false;
     }
+    const normalizedName = filename.normalize("NFC");
+    //ON fait le regex pour vérifie le nom du fichier audio
+    const regexAudioFile = /^[\p{L}\p{N}._ '’-]+$/u;
+
+    //On vérifi si le nom de l'audio ne contient pas de caractères non autorisée.
+    if(!regexAudioFile.test(normalizedName)){
+      console.log("Resultat du test pour le nom de l'audio");
+      this.errorMessage.set("Le nom de la musique contient des caractères non autorisée.");
+      return false;
+    }
+    
+
     //On détermine la taille maximal accepter
     const maxSize = 20 * 1024 * 1024;
     if (this.selectedFile.size > maxSize) {
@@ -135,6 +171,71 @@ export class AddMusicComponent {
       this.errorMessage.set("L'extension du fichier n'est pas autorisée.");
       return false
     }
+
+    //CODE POUR VÉRIFIE L'IMAGE 
+    //On récupère le nom du fichier
+    const imageFile = this.selectedImageFile;
+
+    //On vérifie la taille du fichier
+    const maxSizeImage = 20 * 1024 * 1024;
+    if (imageFile.size > maxSizeImage) {
+      this.errorMessage.set("L'image est trop volumineux.");
+      return false;
+    }
+
+    //On récupère le nom du fichier
+    const imageFilename = this.selectedImageFile.name
+    //On récupère son nom avant l'extension
+    const nameImageWithoutExtension = imageFilename.substring(0, imageFilename.lastIndexOf("."));
+    //Si aucun nom est trouvée on renvoi un message d'erreur
+    if(!nameImageWithoutExtension) {
+      this.errorMessage.set("L'image n'a pas de nom");
+      return false;
+    }
+
+    //On normalize le nom de l'image 
+    const normalizedImageName = imageFilename.normalize("NFC");
+    //On vérifie si nom ne contient pas des caractère non autorisée.
+    const regexImage = /^[\p{L}\p{N}._ '’-]+$/u;
+
+    //On vérifie que le nom correspond
+    if(!regexImage.test(normalizedImageName)){
+      this.errorMessage.set("Le nom de l'image contient des caractères non autorisée.");
+      return false;
+    }
+
+
+    //on définit les types autorisée.
+    const allowedTypeImages = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp"
+    ]
+
+    //On vérifie que le type est bien autorisée
+    if(!allowedTypeImages.includes(imageFile.type)){
+        this.errorMessage.set("Le type de l'image n'est pas autorisé.");
+        return false;
+    }
+
+    //On récupère l'extension du fichier
+    const extensionImage = this.selectedImageFile.name.split(".").pop()?.toLocaleLowerCase();
+
+    //On définit les types autorisée
+    const allowedExtensionImage = [
+      "jpeg",
+      "png",
+      "jpg",
+      "webp"
+    ]
+
+    if(!allowedExtensionImage.includes(extensionImage ?? "")){
+      this.errorMessage.set("L'extension de l'image n'est pas autorisée.");
+      return false;
+    }
+
+
     return true
 
     
@@ -142,10 +243,13 @@ export class AddMusicComponent {
 
   //On envoi la requête
   sendRequest(): void {
+    console.log('fonction sendRequest appelée.');
+
     //On vérifie le fichier
     if(!this.verifyFile()){
       return;
     }
+    console.log(this.verifyFile());
     
     //On vérifie que selectedId n'est pas null
     if (this.selectedCategoryId === null) {
@@ -157,6 +261,8 @@ export class AddMusicComponent {
     const formData = new FormData;
     //On lui met le fichier
     formData.append("music", this.selectedFile!);
+    //On donne à formData l'image
+    formData.append("image", this.selectedImageFile!);
     //Pour chaque catégorie on ajoute son id
     for (const categoryId of this.selectedCategoryId) {
       formData.append(
@@ -165,13 +271,7 @@ export class AddMusicComponent {
     }
     
     console.log(formData);
-
-
-
-    //On déclare la variable data pour stocker l'id
     
-
-
     //On envoi la requête
     this.addMusicService.uploadMusic(formData).subscribe({
       next:(res) => {

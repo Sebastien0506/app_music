@@ -28,8 +28,8 @@ export class UpdateMusicService {
     });
   }
 
-  updateMusic(id: number, data: any): Observable<ResponseUpdateMusic>{
-    return this.http.put<ResponseUpdateMusic>(`/api/update_music/${id}/`, data, {
+  updateMusic(id: number, formData: any): Observable<ResponseUpdateMusic>{
+    return this.http.put<ResponseUpdateMusic>(`/api/update_music/${id}/`, formData, {
       withCredentials: true,
       
     });

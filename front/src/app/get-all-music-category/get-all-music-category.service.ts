@@ -13,6 +13,7 @@ export interface GetAllMusicCategory{
     id: number;
     name: string;
   }
+  
 }
 @Injectable({
   providedIn: 'root'

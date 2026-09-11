@@ -12,6 +12,7 @@ export interface AllMusic{
     id: number;
     name: string;
   }[]
+  image_file: string | null;
 }
 
 export interface DeleteMusicMessage{

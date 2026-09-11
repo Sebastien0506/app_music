@@ -7,11 +7,13 @@ import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateMusicComponent } from '../update-music/update-music.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-get-all-music',
   standalone: true,
-  imports: [MatTableModule, MatButtonModule],
+  imports: [MatTableModule, MatButtonModule, MatCardModule, MatIconModule],
   templateUrl: './get-all-music.component.html',
   styleUrl: './get-all-music.component.css'
 })
@@ -30,6 +32,12 @@ export class GetAllMusicComponent {
   infoMusic : AllMusic | undefined;
   
   user = signal<Boolean>(false);
+
+  imageError: Record<number, boolean> = {};
+
+  onImageError(musicId: number): void {
+    this.imageError[musicId] = true;
+  }
   //Au chargement de la page on fait la requête
   ngOnInit(){
      this.getAllMusic.getAllMusic().subscribe({
@@ -47,6 +55,7 @@ export class GetAllMusicComponent {
      });
   }
 
+  
   viewMusic(id: number){
     this.router.navigate(['/info_music', id]);
   }

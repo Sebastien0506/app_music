@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from back.app_back.models import User, Category, Avatar
+from back.app_back.models import User, Category, Avatar, Music
 import html
-
+import unicodedata
 
 class UserSerializer(serializers.ModelSerializer) :
     class Meta:
@@ -305,6 +305,56 @@ class AvatarSerializer(serializers.ModelSerializer) :
             raise serializers.ValidationError("Le nom contient des caractères non autorisé.")
         
         return cleaned_input
+    
+class AddMusicSerializer(serializers.ModelSerializer) :
+    class Meta :
+        model = Music
+        fields = [
+            "title",
+            "image_filename"
+        ]
+    #On nettoie les données
+    def clean_input(self, value) :
+        return html.escape(value)
+    
+    #On vérifie le titre de la musique
+    def validate_title(self, value) :
+        #On appel la fonction pour valider les données
+        cleaned_input = self.clean_input(value)
+
+        #On vérifie que le titre ne contient pas des caractères non autorisée
+        if not all(char.isalnum() or char in ["-", "_"] for char in cleaned_input) : 
+            raise serializers.ValidationError("Le champ 'Titre' contient des caractères non autorisée.")
+        
+        cleaned_input = cleaned_input.strip()
+        
+        #On vérifie que le titre contient au moin un caractère
+        if not cleaned_input :
+            raise serializers.ValidationError("Le champ 'Titre' est vide.")
+        
+        return cleaned_input
+    
+    def validate_image_filename(self, value) :
+        #On appel la fonction pour nettoyer les données
+        cleaned_input = self.clean_input(value)
+        cleaned_input = unicodedata.normalize("NFC", cleaned_input)
+
+        cleaned_input = cleaned_input.strip()
+
+        if not cleaned_input :
+            raise serializers.ValidationError("Le nom de l'image est vide.")
+        
+
+        
+        if not all(char.isalnum() or char in ["-", "_", ".", " ", "'", "’"] for char in cleaned_input) :
+            raise serializers.ValidationError("Le nom de l'image contient des caractères non autorisée.")
+        
+        return cleaned_input
+
+
+
+        
+
     
     
         

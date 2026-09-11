@@ -33,6 +33,9 @@ export class UpdateMusicComponent {
   errorMessage = signal('');
   successMessage = signal('');
   selectedCategoryIds: number[] = [];
+  //On déclare la variable our sélectionner le fichier
+  selectedFile: File | null = null;
+
   ngOnInit(){
     this.updateMusicService.getCategory().subscribe({
       next: (data) => {
@@ -45,10 +48,24 @@ export class UpdateMusicComponent {
     });
   }
 
+  onFileSelected(event: Event) {
+    //On récupère le fichier depuis le navigateur
+    const input  = event.target as HTMLInputElement;
+
+    //On vérifie si le fichier n'est pas vide
+    if(input.files && input.files.length > 0) {
+      //On donne à selectedFile le fichier
+      this.selectedFile = input.files[0];
+
+      console.log(this.selectedFile);
+    }
+  }
+
   //On vérifie les données
   verifyInput(): boolean {
     //On récupère le titre dans le formulaire
     const titleMusic = this.titleInput();
+
     console.log(titleMusic);
     //Si aucun titre on renvoie un message d'erreur
     if(!titleMusic) {
@@ -65,6 +82,7 @@ export class UpdateMusicComponent {
     //On vérifie que le titre contient uniquement des caractères autorisé.
     for(let i = 0; i < titleMusic.length; i++) {
       const code = titleMusic.charCodeAt(i);
+      
       if (
         !(code >= 97 && code <= 122) && //a - z
         !(code >= 65 && code <= 90) && // A - Z
@@ -72,10 +90,93 @@ export class UpdateMusicComponent {
         !(code >= 48 && code <= 57) && // 0 - 9
         code != 45 &&// -
         code != 32 // espace 
+
       ) {
         this.errorMessage.set("Le champs 'Titre' contient des caractère non autorisé");
         return false;
       }
+      
+    }
+
+    //CODE POUR VÉRIFIER L'IMAGE
+    if(!this.selectedFile){
+      this.errorMessage.set("Aucune image sélectionner.");
+      return false
+    }
+
+    //On récupère le nom du fichier
+    const filename = this.selectedFile.name;
+
+    //On récupere le nom avant le point
+    const nameWithoutExtension = filename.substring(0, filename.lastIndexOf("."));
+
+    const normalizedName = nameWithoutExtension.normalize("NFC");
+    console.log("Nom normalizer :", normalizedName);
+    //On vérifie qu'il est bien un nom
+    if (!nameWithoutExtension){
+      this.errorMessage.set("L'image n'a pas de nom");
+      return false;
+    }
+    console.log("Nom de l'image: ", nameWithoutExtension);
+
+   //On définit le regex pour les caractère autorisée.
+   const imageRegex = /^[\p{L}\p{N}._ '’-]+$/u;
+  
+
+   //Si le nom de l'image ne match pas avec le regex on renvoi un message d'erreur
+   if(!imageRegex.test(normalizedName)){
+    this.errorMessage.set("Le nom du fichier contient des caractères non autorisée.");
+    console.log('test regex');
+    return false;
+   }
+
+    //On déclare les format autorisée.
+    const allowedTypes = [
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+      "image/webp"
+    ];
+   console.log("type accepter : ", allowedTypes);
+    //On vérifie si le type de fichier est bien autorisée.
+    if(!allowedTypes.includes(this.selectedFile.type)){
+      console.log('test type mimes');
+      console.log("ERROR MIMES : ", this.selectedFile.type);
+
+      this.errorMessage.set("Le type de fichier n'est pas autorisée.");
+      return false;
+    }
+
+
+    //On vérifie la taille du fichier
+    const maxSize = 20 * 1024 * 1024;
+    if(this.selectedFile.size > maxSize){
+      console.log("test max size");
+      console.log(this.selectedFile.size);
+
+      this.errorMessage.set("Le fichier est trop volumineux.");
+      return false;
+    }
+
+
+    //On récupère l'extension du fichier
+    const extension = this.selectedFile.name.split(".").pop()?.toLowerCase();
+    console.log("test extension");
+    console.log("EXTENSION :", extension);
+
+    //On définit les extension autorisée
+    const allowedExtensions = [
+      "jpeg",
+      "png",
+      "jpg",
+      "webp",
+    ];
+
+    //On vérifie que le fichier contient une extension
+    if(!allowedExtensions.includes(extension ?? "")){
+      console.log("test extension fichier", extension);
+      this.errorMessage.set("L'extension du fichier n'est pas autorisée.");
+      return false;
     }
 
 
@@ -101,30 +202,40 @@ export class UpdateMusicComponent {
   sendRequest(id: number): void {
     console.log('fonction appelée.');
     //on vérifie les données
-    const verifydata = this.verifyInput();
-    console.log(verifydata);
-    if(!verifydata) {
-      this.errorMessage.set("un champ est manquant.");
+    const verifyData = this.verifyInput();
+
+    console.log("Résultat verifyInput :", verifyData);
+
+    if(!verifyData) {
       return;
     }
-
+    
     //On vérifie qu'une catégorie est été sélectionné
     if (this.selectedCategoryIds.length === 0) {
       this.errorMessage.set("Aucune catégorie n'a été sélectionnée.");
       return;
     }
-    const data = {
-      title: this.titleInput(),
-      category_ids: this.selectedCategoryIds
-    };
-    console.log(data);
+    
+
+    //On déclare formData
+    const formData = new FormData;
+    //On donne a formData les données
+    formData.append('image', this.selectedFile!);
+    formData.append('title', this.titleInput());
+
+    for (const categoryId of this.selectedCategoryIds){
+      formData.append('category_ids', categoryId.toString())
+    }
+
     //On envoie la requête
-    this.updateMusicService.updateMusic(id, data).subscribe({
+    this.updateMusicService.updateMusic(id, formData).subscribe({
         next: (res) => {
           this.successMessage.set("La musique à bien été mis a jour.");
           console.log(res);
         },
         error: (err) => {
+          console.error("Status:", err.status);
+          console.error(" ERREUR BACK: ", err.error);
           console.error(err);
         }
     });

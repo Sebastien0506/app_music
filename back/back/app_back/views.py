@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from .authentication import IsStaff
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response 
-from back.app_back.service.serializer import UserSerializer, LoginSerializer, UpdateUserSerializer, CreateCategorySerializer, UpdateMusicSerializer, AvatarSerializer
+from back.app_back.service.serializer import UserSerializer, LoginSerializer, UpdateUserSerializer, CreateCategorySerializer, UpdateMusicSerializer, AvatarSerializer, AddMusicSerializer
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
@@ -289,8 +289,6 @@ def user_update(request) :
 @permission_classes([IsAuthenticated, IsStaff])
 def add_music(request) :
 
-    
-
     #On récupère l'utilisateur
     user = request.user
 
@@ -302,8 +300,11 @@ def add_music(request) :
     #On récupère le fichier dans la requête
     file = request.FILES.get("music")
 
+    #On récupère l'image
+    imageFile = request.FILES.get("image")
+
     #Si aucun fichier est trouvé on renvoi une erreur
-    if not file :
+    if not file or not imageFile :
         return Response({"error": "Aucun fichier"}, status=status.HTTP_400_BAD_REQUEST)
     
     #On récupère l'id
@@ -341,6 +342,21 @@ def add_music(request) :
                 {"error": "Le type du fichier n'est pas autorisé."},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        #On récupère l'extension du fichier audio
+        extenion_audio_file = file.name.rsplit(".", 1)[-1].lower()
+
+        #On définit les extension autorisée.
+        allowed_extension_type_audio = [
+            "mpeg",
+            "wav",
+            "x-wav",
+            "flac",
+            "mp3",
+            "mp4"
+        ]
+
+        if extenion_audio_file not in allowed_extension_type_audio :
+            return Response({"error" : "L'extension du fichier audio n'est pas autorisée."}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e :
         return Response(
             {"error": f"Impossible d'identifier le fichier: {e}"},
@@ -368,6 +384,69 @@ def add_music(request) :
             "error": f"Erreur lors de la génération du nom aleatoire. {e}"
         }, status=status.HTTP_400_BAD_REQUEST)
     
+    #CODE POUR VÉRIFIER L'IMAGE
+    #On vérifie la taille de l'image 
+
+    max_size_image = 20 * 1024 * 1024
+
+    if imageFile.size > max_size_image :
+        return Response(
+            {
+                "error" : "La taille de l'image est trop volumineux."
+            }, status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    #On vérifie l'extension du fichier
+    allowed_extension_file_image = [
+        "jpeg",
+        "png",
+        "jpg",
+        "webp"
+    ]
+    extension_file = imageFile.name.rsplit('.', 1)[-1].lower()
+
+    if extension_file not in allowed_extension_file_image :
+        return Response({"error" : "L'extension de l'image n'est pas autorisé."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    #On vérifie que le fichier est accepter
+    try :
+        #On lit le fichier jusqu'a 2048 octet
+        mimeImage = magic.from_buffer(imageFile.read(2048), mime=True)
+        #On remet le fichier à zéro
+        imageFile.seek(0)
+
+       #On définit les types mime autorisée.
+        allowed_type_mime_image = [
+            "image/png",
+            "image/jpg",
+            "image/jpeg",
+            "image/webp"
+        ]
+        #Si le type mime de l'image n'est pas autorisée on renvoi un message d'erreur
+        if mimeImage not in allowed_type_mime_image : 
+            return Response ({"error": "Le type mime n'est pas autorisée."}, status=status.HTTP_400_BAD_REQUEST)
+        
+    except Exception as e :
+        return Response({"error" : f"Erreur lors de la vérification du fichier. {e}"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    #On récupère le nom des fichier
+    imageFileName = imageFile.name.rsplit(".", 1)[0]
+    audioFileName = file.name.rsplit(".", 1)[0]
+
+    #On initialise le serializer
+    serializer = AddMusicSerializer(data={
+        "title": audioFileName,
+        "image_filename": imageFileName
+    })
+
+    #Si le serializer n'est pas valide on renvoi un message d'erreur
+    if not serializer.is_valid():
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
     #On sauvegarde tous
     music = Music.objects.create(
         title=original_name,
@@ -376,7 +455,8 @@ def add_music(request) :
         size=file.size,
         duration=int(duration),
         user=user,
-        
+        image_filename=imageFileName,
+        image_file=imageFile
     )
     #On enregistre les catégories de la musique
     categories = Category.objects.filter(id__in=category_ids)

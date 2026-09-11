@@ -1,7 +1,16 @@
 <!--PAGE POUR AFFICHER LE FORMULAIRE D'AJOUT DE MUSIQUE-->
+
+<!--Code pour ajouter une image à la musique-->
+
 <div class="form">
+  @if(selectedImageFile){
+    <p>{{selectedImageFile.name}}</p>
+  }
   <div class="card">
+
     <div class="add_music">
+        <input #fileImageInput type="file" hidden (change)="onSelectedImageFile($event)">
+
           <input
           #fileInput
           type="file"
@@ -9,10 +18,13 @@
           accept="audio/*"
           (change)="onFileSelected($event)"
         >
+        <mat-form-field appearance="outline">
+          <mat-label>Image</mat-label>
+          <input matInput readonly [value]="selectedImageFile?.name ?? ''" placeholder="Aucun fichier sélectionné">
+        </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Musique</mat-label>
-
           <input
             matInput
             readonly
@@ -32,6 +44,8 @@
 
 
 
+        <button mat-raised-button (click)="fileImageInput.click()" type="button">Ajoutez une image</button>
+
         @if (selectedFile) {
             <button mat-raised-button type="button" (click)="sendRequest()">Enregistrez la musique</button>
         }
@@ -49,7 +63,3 @@
   </div>
 </div>
 
-
-<!-- @if (selectedFile) {
-    <button>Enregistrez la musique</button>
-} -->
