@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { NavBarComponent } from "./nav-bar/nav-bar.component";
 import { LoggedService } from './logged.service';
 import { AuthServiceService } from './auth-service.service';
+import { ThemeService } from './theme.service';
 
 
 @Component({
@@ -15,7 +16,7 @@ import { AuthServiceService } from './auth-service.service';
 export class AppComponent {
   title = 'front';
 
-  constructor(private loggedService: LoggedService, private authService: AuthServiceService){}
+  constructor(private loggedService: LoggedService, private authService: AuthServiceService, private themeService: ThemeService){}
 
   
 

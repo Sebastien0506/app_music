@@ -4,4 +4,6 @@
             <mat-list-item><button mat-button (click)="openDialog()">Ajoutez un avatar pour le site</button></mat-list-item>
         </mat-list>
     }
+    <p><mat-slide-toggle [checked]="themeService.isDarkMode()" (change)="themeService.setDarkMode($event.checked)">Slide me!</mat-slide-toggle></p>
+    
 </div>

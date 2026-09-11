@@ -22,6 +22,7 @@ import { SettingsComponent } from '../settings/settings.component';
 
 
 
+
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
