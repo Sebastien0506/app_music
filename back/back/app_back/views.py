@@ -662,6 +662,7 @@ def get_one_music(request, music_id):
             "size": music.size,
             "category": music_category,
             "file": music.file.url,
+            "image_file": music.image_file.url if music.image_file else None
         },
         status=status.HTTP_200_OK
     )

@@ -12,7 +12,8 @@
 
 
 .card {
-    height: 50vh;
+    width: 350px;
+    min-height: 50vh;
     background-color: whitesmoke;
     box-shadow: 2px 2px 2px  black;
     display: flex;
@@ -33,6 +34,11 @@
     gap: 10px;
 }
 
+img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
 @media  screen and (max-width: 768px) {
     .actions  {
         flex-direction: column;

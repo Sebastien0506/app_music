@@ -2,8 +2,10 @@
 <div class="pageInfo">
     <mat-card class="card" appearance="outlined">
         <mat-card-header>
+
             <mat-card-title>{{ infoMusic?.title }}</mat-card-title>
         </mat-card-header>
+        <img [src]="'http://localhost:8000' + infoMusic?.image_file" alt="">
         <div class="infoMusic">
             <mat-card-content>
                 <p>Durée: {{ minutes }} min {{ seconds }} sec</p>

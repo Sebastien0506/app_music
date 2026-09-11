@@ -13,6 +13,7 @@ export interface Music{
   }[];
   size: number;
   file: string;
+  image_file: string | null;
 }
 
 export interface DeleteMusic{
