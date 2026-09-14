@@ -631,6 +631,8 @@ def delete_music(request, music_id):
 @permission_classes([IsAuthenticated])
 def get_one_music(request, music_id):
 
+    user = request.user
+
     music = Music.objects.filter(id=music_id).first()
 
     if not music :
@@ -653,6 +655,7 @@ def get_one_music(request, music_id):
             }
         )
     
+    favorite_music_user = user.favorites.filter(id=music.id).exists()
 
     return Response(
         {
@@ -662,7 +665,9 @@ def get_one_music(request, music_id):
             "size": music.size,
             "category": music_category,
             "file": music.file.url,
-            "image_file": music.image_file.url if music.image_file else None
+            "image_file": music.image_file.url if music.image_file else None,
+            "countLike": music.count_like,
+            "favoritesMusicUser": favorite_music_user
         },
         status=status.HTTP_200_OK
     )
@@ -804,9 +809,15 @@ def add_favorite_music(request, music_id):
 
     #On récupère l'utilisateur
     user = request.user
+    #On récupère le like
+    count_like = request.data.get("count_like")
 
     #On récupère la musique par son id
     music = Music.objects.filter(id=music_id).first()
+
+    
+
+   
 
     if not music :
         return Response(
@@ -816,6 +827,9 @@ def add_favorite_music(request, music_id):
             status=status.HTTP_400_BAD_REQUEST
         )
     
+    music.count_like += 1
+    music.save()
+
     user.favorites.add(music)
     return Response(
         {

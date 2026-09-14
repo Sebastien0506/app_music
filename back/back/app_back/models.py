@@ -22,6 +22,8 @@ class Music(models.Model) :
     category = models.ManyToManyField('Category', blank=True)
     image_file = models.FileField(upload_to="image/", null=True, blank=True)
     image_filename = models.CharField(max_length=50, null=True, blank=True)
+    count_like = models.PositiveIntegerField(default=0)
+    count_download = models.PositiveIntegerField(default=0)
     
 
 class Category(models.Model) :
