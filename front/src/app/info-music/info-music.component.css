@@ -39,6 +39,14 @@ img {
     height: 150px;
     object-fit: cover;
 }
+
+mat-card-title {
+    color: black;
+}
+
+mat-card-content p {
+    color: black;
+}
 @media  screen and (max-width: 768px) {
     .actions  {
         flex-direction: column;

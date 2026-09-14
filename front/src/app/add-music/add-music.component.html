@@ -6,7 +6,7 @@
   @if(selectedImageFile){
     <p>{{selectedImageFile.name}}</p>
   }
-  <div class="card">
+  <div class="card" data-bs-theme="light">
 
     <div class="add_music">
         <input #fileImageInput type="file" hidden (change)="onSelectedImageFile($event)">

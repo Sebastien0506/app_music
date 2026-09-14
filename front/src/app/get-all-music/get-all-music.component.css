@@ -22,6 +22,8 @@
     flex-direction: column;
 
     overflow: hidden;
+    background-color: whitesmoke;
+    color: black;
 }
 
 .music-image {
@@ -46,12 +48,19 @@
 
 .no-image mat-icon {
     transform: scale(2);
+    color: black;
 }
 
 mat-card-header {
     padding-top: 20px;
 }
+.music-card mat-card-title {
+    color: black;
+}
 
+.music mat-card-subtitle {
+    color: black;
+}
 .category {
     margin-right: 8px;
 }

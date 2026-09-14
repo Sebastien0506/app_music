@@ -1,4 +1,37 @@
 /* You can add global styles to this file, and also import other style files */
-
+/* 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body.dark-mode {
+    background-color: #121212;
+    color: black;
+} */
+
+:root {
+    --background: white;
+    --text-color: black;
+    --field-background: white;
+}
+
+body.dark-mode {
+    --background: #121212;
+    --text-color: white;
+    --field-background: #1e1e1e;
+}
+
+
+body {
+    background-color: var(--background);
+    color: var(--text-color);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-color);
+}
+
+input,
+textarea,
+select {
+    background-color: var(--field-background);
+    color: var(--text-color);
+}
