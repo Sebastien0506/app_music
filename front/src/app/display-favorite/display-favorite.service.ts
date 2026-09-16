@@ -15,6 +15,11 @@ export interface AllMusicFavorites{
   }[]
 }
 
+//On crée l'interface pour mettre la reponse lors de la suppression de la musique des favoris
+export interface DeleteMusicFavoritesResponse{
+  success?: string;
+  error?: string;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -37,5 +42,12 @@ export class DisplayFavoriteService {
         withCredentials: true
       }
     );
+  }
+
+  //On crée la requête pour supprimer la musique des favorites
+  deleteMusicFavorites(id: number): Observable<DeleteMusicFavoritesResponse> {
+    return this.http.delete<DeleteMusicFavoritesResponse>(`/api/delete_music_favorites/${id}/`, {
+      withCredentials: true
+    });
   }
 }

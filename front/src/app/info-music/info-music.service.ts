@@ -14,6 +14,8 @@ export interface Music{
   size: number;
   file: string;
   image_file: string | null;
+  countLike: number;
+  favoritesMusicUser: boolean;
 }
 
 export interface DeleteMusic{
@@ -21,7 +23,8 @@ export interface DeleteMusic{
 }
 
 export interface AddfavoriteMusicResponse{
-  message: string;
+  message?: string;
+  error?: string; 
 }
 @Injectable({
   providedIn: 'root'

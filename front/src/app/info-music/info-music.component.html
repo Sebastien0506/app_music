@@ -16,6 +16,15 @@
                     }
                 </p>
                 <p>Taille du fichier: {{ size }} MO</p>
+
+                <p>Like: {{infoMusic?.countLike}}</p>
+
+                <!-- @if(infoMusic?.countLike){
+                    <p>Like: {{infoMusic.countLike}}</p>
+                }
+                @else {
+                    <p>Like: 0</p>
+                } -->
             </mat-card-content>
             
                 <mat-card-content class="actions">
@@ -30,8 +39,14 @@
                     }
                     <button mat-button>Télécharger la musique</button>
                     @if(infoMusic){
-                        <button mat-button (click)="addFavorite(infoMusic.id)"><mat-icon [class.favorite]="isFavorite()">favorite</mat-icon></button>
+                        <button mat-button (click)="addFavorite(infoMusic.id)">
+                            @if(isFavorite() == true){<mat-icon style="color: red;">favorite</mat-icon> }
+                            @else{
+                                <mat-icon>favorite_border</mat-icon>
+                            }
+                        </button>
                     }
+                    
                 </mat-card-content>
             
             

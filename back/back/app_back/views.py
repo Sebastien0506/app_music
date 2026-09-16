@@ -656,6 +656,8 @@ def get_one_music(request, music_id):
         )
     
     favorite_music_user = user.favorites.filter(id=music.id).exists()
+    
+
 
     return Response(
         {
@@ -815,10 +817,6 @@ def add_favorite_music(request, music_id):
     #On récupère la musique par son id
     music = Music.objects.filter(id=music_id).first()
 
-    
-
-   
-
     if not music :
         return Response(
             {
@@ -826,7 +824,17 @@ def add_favorite_music(request, music_id):
             },
             status=status.HTTP_400_BAD_REQUEST
         )
+    #On récupère les musique favorites de l'utilisateur
+    favorite_music_user = user.favorites.filter(id=music.id).exists()
     
+     #Si l'utilisateur à déjà la musique en favoris on renvoi un message d'erreur
+    if favorite_music_user : 
+        return Response(
+            {
+                "error": "Vous avez déjà cette musique en favoris."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
     music.count_like += 1
     music.save()
 
@@ -836,6 +844,49 @@ def add_favorite_music(request, music_id):
             "success": "Musique ajoutée au favori."
         },
         status=status.HTTP_200_OK
+    )
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_music_favorites(request, music_id) :
+    #On récupère l'utilisateur
+    user = request.user
+
+    if not user :
+        return Response(
+            {
+                "error": "Utilisateur non connecter."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    #On récupère la musique
+    music = Music.objects.filter(id=music_id).first()
+
+    #On vérifie si la musique est bien dans les favoris de l'utilisateur
+    music_favorites_user = user.favorites.filter(id=music.id).exists()
+
+    if not music_favorites_user : 
+        return Response(
+            {
+                "error": "Cette musique n'est pas dans vos favoris"
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    #Si la musique est bien dans les favoris de l'utilisateur on la supprime
+    user.favorites.remove(music)
+    
+    #On vérifie que le compteur de like de la musique n'est pas à 0
+    if music.count_like > 0:
+        music.count_like -= 1
+        music.save()
+    
+
+    return Response(
+        {
+            "success": "La musique à bien été supprimer de vos favoris"
+        }, status=status.HTTP_200_OK
     )
 
 @api_view(["GET"])

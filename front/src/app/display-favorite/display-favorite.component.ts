@@ -1,7 +1,8 @@
-import { Component, signal, ViewChild, ElementRef } from '@angular/core';
-import { AllMusicFavorites, DisplayFavoriteService } from './display-favorite.service';
+import { Component, signal, ViewChild, ElementRef, inject } from '@angular/core';
+import { AllMusicFavorites, DeleteMusicFavoritesResponse, DisplayFavoriteService } from './display-favorite.service';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-display-favorite',
   standalone: true,
@@ -13,9 +14,15 @@ export class DisplayFavoriteComponent {
 
   constructor(private allMusicFavorites: DisplayFavoriteService){}
 
+  private snackBar = inject(MatSnackBar);
+
   playingMusicId = signal<number | null>(null);
 
+  //On ajoute le signal
+  deleteFavoritesMusicMessage = signal<DeleteMusicFavoritesResponse | null>(null);
+
   displayedColumns: string[] = ['title', 'category', 'duration', 'size', 'actions'];
+
   musicFavorite: AllMusicFavorites[] = [];
   //On récupère les minutes
   
@@ -98,6 +105,40 @@ export class DisplayFavoriteComponent {
         console.error(err);
       }
     });
+  }
+
+  //On supprime la musique des favoris de l'utilisateur
+  deleteMusicFavorites(id: number): void {
+      //On appel la fonction pour supprimer la musique des favoris
+      this.allMusicFavorites.deleteMusicFavorites(id).subscribe({
+        next: (res) => {
+          //On récupère la reponse du serveur
+          this.deleteFavoritesMusicMessage.set(res);
+
+          //On supprime la musique du tableau
+          this.musicFavorite = this.musicFavorite.filter( music => music.id !== id);
+         //On ouvre la snackBar 
+          this.snackBar.open(
+            //On lui donne le success
+            this.deleteFavoritesMusicMessage()!.success!,
+            'Fermer', 
+            {
+              duration: 3000
+            },
+          )
+
+        },
+        error: (err) => {
+          this.deleteFavoritesMusicMessage.set(err);
+          this.snackBar.open(
+            this.deleteFavoritesMusicMessage()!.error!,
+            'Fermer',
+            {
+              duration: 300
+            }
+          )
+        },
+      })
   }
 
 }

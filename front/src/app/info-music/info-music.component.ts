@@ -1,6 +1,6 @@
 import { Component, signal, ElementRef, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DeleteMusic, InfoMusicService, Music } from './info-music.service';
+import { AddfavoriteMusicResponse, DeleteMusic, InfoMusicService, Music } from './info-music.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -32,6 +32,7 @@ export class InfoMusicComponent {
 
   successMessage = signal('');
   infoMusic: Music | null = null;
+  errorMessageAddFavorites = signal<AddfavoriteMusicResponse | null>(null);
 
   user = signal<boolean>(false);
   ngOnInit(): void {
@@ -41,6 +42,8 @@ export class InfoMusicComponent {
       next: (data) => {
 
         this.infoMusic = data;
+        //Au chargement de la page on récupère les favoris de l'utilisateur
+        this.isFavorite.set(this.infoMusic.favoritesMusicUser);
         console.log(this.infoMusic);
        //On converti la duré en minute et secondes
         this.minutes = Math.floor(this.infoMusic.duration / 60);
@@ -61,10 +64,13 @@ export class InfoMusicComponent {
   
   // On met la musique en favori
 addFavorite(id: number): void {
+  
   this.addMusicFavorite.addMusicFavorite(id).subscribe({
     next: (res) => {
+      console.log("AVANT:", this.isFavorite());
       this.isFavorite.set(true);
 
+      console.log("APRES :", this.isFavorite());
       this.successMessage.set(
         'Musique ajoutée aux favoris avec succès.'
       );
@@ -78,10 +84,21 @@ addFavorite(id: number): void {
       );
     },
     error: (err) => {
+      this.errorMessageAddFavorites.set(err.error);
+
+      this.snackBar.open(
+        this.errorMessageAddFavorites()!.error!,
+        'Fermer',
+        {
+          duration: 3000
+        }
+      )
       console.error(err);
     }
   });
 }
+
+
   @ViewChild('audioOption') audioPlayerRef!: ElementRef<HTMLAudioElement>;
 
   //On joue la musique 
