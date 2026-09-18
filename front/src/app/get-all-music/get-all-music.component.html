@@ -1,6 +1,12 @@
 <!-- AFFICHE TOUTES LES MUSIQUES PEU IMPORTE LEUR CATÉGORIE -->
 <div class="display_music">
 
+  <button mat-raised-button [matMenuTriggerFor]="menu">Filtrer les musiques</button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="filterMusicByLike()">Les musiques les plus like</button>
+    <button mat-menu-item>Les musiques les plus télécharger</button>
+  </mat-menu>
+
   @for (music of AllMusic; track music.id) {
 
     <mat-card class="music-card" appearance="outlined">
@@ -30,6 +36,12 @@
               {{ category.name }}
             </span>
           }
+        </mat-card-subtitle>
+        <mat-card-subtitle>
+          <p><mat-icon>favorite_border</mat-icon>{{music.countLike}}</p>
+        </mat-card-subtitle>
+        <mat-card-subtitle>
+          <p><mat-icon>get_app</mat-icon>{{music.countDownload}}</p>
         </mat-card-subtitle>
       </mat-card-header>
 

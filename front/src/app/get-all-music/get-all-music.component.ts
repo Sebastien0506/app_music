@@ -9,11 +9,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { UpdateMusicComponent } from '../update-music/update-music.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-
+import { MatMenuModule } from '@angular/material/menu';
 @Component({
   selector: 'app-get-all-music',
   standalone: true,
-  imports: [MatTableModule, MatButtonModule, MatCardModule, MatIconModule],
+  imports: [MatTableModule, MatButtonModule, MatCardModule, MatIconModule, MatMenuModule],
   templateUrl: './get-all-music.component.html',
   styleUrl: './get-all-music.component.css'
 })
@@ -30,8 +30,10 @@ export class GetAllMusicComponent {
   //on initialise la varaible AllMusic a un tableau vide 
   AllMusic : AllMusic[] = [];
   infoMusic : AllMusic | undefined;
-  
   user = signal<Boolean>(false);
+
+  //On initialise un signal pour le cas ou il n'y a pas de musique liké
+  notMusicLike = signal('');
 
   imageError: Record<number, boolean> = {};
 
@@ -96,9 +98,8 @@ export class GetAllMusicComponent {
       music => music.id === id
     );
     console.log(this.infoMusic);
-    
-    
   }
+
   openDialog(id: number){
     this.dataInfoMusic(id);
     this.dialog.open(UpdateMusicComponent, {
@@ -108,5 +109,31 @@ export class GetAllMusicComponent {
       width: '700px',
       height: '700px',
     })
+  }
+
+  filterMusicByLike(){
+    this.getAllMusic.getMusicByLike().subscribe({
+      next: (data) => {
+         
+         if(data.length > 0){
+          console.log("test fonction filter");
+          this.AllMusic = data;
+          console.log(this.AllMusic);
+          
+         } else {
+          this.notMusicLike.set("Aucune musique n'a de like.");
+          this.snackBar.open(
+            this.notMusicLike(),
+            'Fermer',
+            {
+              duration: 3000
+            }
+          );
+         }
+      },
+      error: (err) => {
+        console.error(err);
+      },
+    });
   }
 }

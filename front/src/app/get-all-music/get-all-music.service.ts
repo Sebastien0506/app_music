@@ -13,6 +13,9 @@ export interface AllMusic{
     name: string;
   }[]
   image_file: string | null;
+  countLike: number;
+  countDownload: number;
+  isFavorites: boolean;
 }
 
 export interface DeleteMusicMessage{
@@ -37,4 +40,10 @@ export class GetAllMusicService {
       withCredentials: true
     });
   }
+
+  getMusicByLike(): Observable<AllMusic[]>{
+    return this.http.get<AllMusic[]>('api/filter_music_by_like/', {
+      withCredentials: true
+    })
+  };
 }

@@ -475,6 +475,7 @@ def add_music(request) :
 @api_view(["GET"])
 def get_all_music(request) :
     
+    user = request.user
     #On récupère toutes les musiques
     musiques = Music.objects.all()
 
@@ -498,7 +499,11 @@ def get_all_music(request) :
                 }
             )
         
-    
+        favoriteMusicUser = False
+
+        if user.is_authenticated :
+            favoriteMusicUser = user.favorites.filter(id=music.id).exists()
+            
         #On donne à la variable data toutes les informations des musiques
         data.append(
             {
@@ -507,7 +512,10 @@ def get_all_music(request) :
                 "duration": music.duration,
                 "size": music.size,
                 "category": categories,
-                "image_file": music.image_file.url if music.image_file else None
+                "image_file": music.image_file.url if music.image_file else None,
+                "countLike": music.count_like,
+                "countDownload": music.count_download,
+                "isFavorites": favoriteMusicUser,
             }
         )
     #On envoi la reponse 
@@ -1132,7 +1140,41 @@ def get_avatar(request):
         data,
         status=status.HTTP_200_OK
     )
-    
+
+#REQUÊTE QUI PERMET DE FILTRER LES MUSIQUES PAR LEUR NOMBRE DE LIKE
+@api_view(["GET"])
+# @permission_classes(IsAuthenticated)
+def filter_music_by_like(request) :   
+
+    #On récupère les musiques par leur nombre de like
+    musics = Music.objects.all().order_by('-count_like')
+
+    #On déclare la variable data
+    data = []
+    for music in musics :
+        #Si les musiques on plus de 0 like on les envoies
+        if music.count_like > 0 :
+            #On donne à data les données des musiques
+            data.append(
+                {
+                    "id": music.id,
+                    "title": music.title,
+                    "category": [
+                        {
+                            "id": category.id,
+                            "name": category.name
+                        }
+                        for category in music.category.all()
+                    ],
+                    "countLike": music.count_like
+                }
+            )
+    return Response(
+        data,
+        status=status.HTTP_200_OK
+    )
+
+
 
 
 
