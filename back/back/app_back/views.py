@@ -669,7 +669,9 @@ def get_one_music(request, music_id):
             "file": music.file.url,
             "image_file": music.image_file.url if music.image_file else None,
             "countLike": music.count_like,
-            "favoritesMusicUser": favorite_music_user
+            "favoritesMusicUser": favorite_music_user,
+            "countDownload": music.count_download
+
         },
         status=status.HTTP_200_OK
     )
@@ -939,9 +941,15 @@ def download_music(request, music_id) :
             },
             status=status.HTTP_400_BAD_REQUEST
         )
+    #On ajoute +1 au nombre de téléchargement
+    music.count_download += 1
+    music.save()
+    #On récupère sont extension
     extension = music.filename.split(".")[-1]
 
     download_name = f"{music.title}.{extension}"
+
+    
 
     return FileResponse(
         music.file.open('rb'),

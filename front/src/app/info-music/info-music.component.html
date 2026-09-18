@@ -19,12 +19,7 @@
 
                 <p>Like: {{infoMusic?.countLike}}</p>
 
-                <!-- @if(infoMusic?.countLike){
-                    <p>Like: {{infoMusic.countLike}}</p>
-                }
-                @else {
-                    <p>Like: 0</p>
-                } -->
+                <p>Nombre de téléchargement: {{infoMusic?.countDownload}}</p>
             </mat-card-content>
             
                 <mat-card-content class="actions">
@@ -37,8 +32,8 @@
                     @else {
                         <button mat-button (click)="onAudioPlayer()">Lire la musique</button>
                     }
-                    <button mat-button>Télécharger la musique</button>
                     @if(infoMusic){
+                        <button mat-button (click)="downloadMusic(infoMusic.id)">Télécharger la musique</button>
                         <button mat-button (click)="addFavorite(infoMusic.id)">
                             @if(isFavorite() == true){<mat-icon style="color: red;">favorite</mat-icon> }
                             @else{

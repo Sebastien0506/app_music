@@ -16,6 +16,7 @@ export interface Music{
   image_file: string | null;
   countLike: number;
   favoritesMusicUser: boolean;
+  countDownload: number;
 }
 
 export interface DeleteMusic{
@@ -50,7 +51,7 @@ export class InfoMusicService {
   }
 
   downloadMusic(id: number){
-    return this.http.get(`/api/download_music/${id}`, {
+    return this.http.get(`/api/download_music/${id}/`, {
       responseType: 'blob',
       observe: 'response',
       withCredentials: true
