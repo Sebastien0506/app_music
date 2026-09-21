@@ -1149,9 +1149,26 @@ def filter_music_by_like(request) :
     #On récupère les musiques par leur nombre de like
     musics = Music.objects.all().order_by('-count_like')
 
+    #On récupère l'utilisateur 
+    user = request.user
+
+    
+
     #On déclare la variable data
     data = []
     for music in musics :
+
+        #On déclare les musique favorites a false
+        favorites_music_user = False
+
+        #Si l'utilisateur est connecté on récupère ces musiques favorites
+        if user.is_authenticated :
+            #Si l'utilisateur à des musiques favorites 
+            if user.favorites.filter(id=music.id).exists() :
+                favorites_music_user = True
+            # favorites_music_user = user.favorites.filter(id=music.id).exists()
+
+
         #Si les musiques on plus de 0 like on les envoies
         if music.count_like > 0 :
             #On donne à data les données des musiques
@@ -1166,13 +1183,62 @@ def filter_music_by_like(request) :
                         }
                         for category in music.category.all()
                     ],
-                    "countLike": music.count_like
+                    "image_file": music.image_file.url if music.image_file else None,
+                    "countLike": music.count_like,
+                    "isFavorites": favorites_music_user,
                 }
             )
     return Response(
         data,
         status=status.HTTP_200_OK
     )
+
+#ON FAIT LA VUE POUR FILTRER LES MUSIQUES PAR NOMBRE DE TÉLÉCHARGEMENT
+@api_view(["GET"])
+def filter_music_by_download(request):
+
+    #On récupère les musique par nombre de téléchargement
+    musics = Music.objects.all().order_by("-count_download")
+
+    #Si l'utilisateur est connecté on le récupère
+    user = request.user
+
+    #On déclare la variable data à un tableau vide pour stocker toutes les musiques
+    data = []
+
+    #Pour chaque music dans musics on récupère ces données
+    for music in musics :
+
+        favorites_music_user = False
+
+        if user.is_authenticated :
+            favorites_music_user = user.favorites.filter(id=music.id).exists()
+        #Si le nombre de téléchargement de la musique est au dessus de zéro on l'ajoute
+        if music.count_download > 0 :
+            data.append(
+            {
+                "id": music.id,
+                "title": music.title,
+                "category": [
+                        {
+                            "id": category.id,
+                            "name": category.name
+                        }
+                        for category in music.category.all()
+                    ],
+                "image_file": music.image_file.url if music.image_file else None,
+                "isFavorites": favorites_music_user,
+                "countLike": music.count_like,
+                "countDownload": music.count_download
+            }
+        )
+    #On renvoie les données dans la réponse       
+    return Response(
+        data, 
+        status=status.HTTP_200_OK
+    )
+
+        
 
 
 

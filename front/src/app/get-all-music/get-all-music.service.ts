@@ -46,4 +46,11 @@ export class GetAllMusicService {
       withCredentials: true
     })
   };
+
+  //On crée la requête pour récupérer les musiques par leur nombre de téléchargement
+  getMusicByDownload(): Observable<AllMusic[]>{
+    return this.http.get<AllMusic[]>('api/filter_music_by_download/', {
+      withCredentials: true
+    })
+  };
 }

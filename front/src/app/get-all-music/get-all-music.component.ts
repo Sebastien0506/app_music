@@ -35,6 +35,9 @@ export class GetAllMusicComponent {
   //On initialise un signal pour le cas ou il n'y a pas de musique liké
   notMusicLike = signal('');
 
+  //On initialise un signal pour le cas ou il n'y a pas de musique télécharger
+  notDownloadMusic = signal('');
+
   imageError: Record<number, boolean> = {};
 
   onImageError(musicId: number): void {
@@ -135,5 +138,31 @@ export class GetAllMusicComponent {
         console.error(err);
       },
     });
+  }
+
+  //On créé la focntion pour récuperer les musique par leur nombre de téléchargement
+  filterMusicByDownload(){
+    this.getAllMusic.getMusicByDownload().subscribe({
+      next: (data) => {
+        //Si data contient au moins une données on l'affiche
+        if(data.length > 0) {
+          this.AllMusic = data;
+          console.log(this.AllMusic);
+        } else {
+          this.notDownloadMusic.set('Aucune musique n\'a été télécharger pour le moment.');
+          //On met le message dans la snackbar
+          this.snackBar.open(
+            this.notDownloadMusic(),
+            "Fermer", 
+            {
+              duration: 3000
+            }
+          )
+        };
+      },
+      error : (err) => {
+        console.error(err);
+      }
+    })
   }
 }
