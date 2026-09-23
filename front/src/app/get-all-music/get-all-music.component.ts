@@ -10,6 +10,7 @@ import { UpdateMusicComponent } from '../update-music/update-music.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { InfoMusicService } from '../info-music/info-music.service';
 @Component({
   selector: 'app-get-all-music',
   standalone: true,
@@ -23,6 +24,8 @@ export class GetAllMusicComponent {
 
   constructor(private getAllMusic: GetAllMusicService, private loggedService: LoggedService, private router: Router){}
   private snackBar = inject(MatSnackBar);
+
+  private addFavorite = inject(InfoMusicService);
 
   private dialog = inject(MatDialog);
   successDeleteMessage = signal('');
@@ -164,5 +167,73 @@ export class GetAllMusicComponent {
         console.error(err);
       }
     })
+  }
+
+  addFavoritesMusic(id: number){
+    this.addFavorite.addMusicFavorite(id).subscribe({
+      next: (res) => {
+        console.log(res);
+
+        const music = this.AllMusic.find(
+          music => music.id === id
+        );
+
+        if (music) {
+          music.isFavorites = true;
+          music.countLike++;
+        }
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    })
+  }
+
+  addDownloadMusic(id : number) {
+    this.addFavorite.downloadMusic(id).subscribe({
+      next: (file) => {
+        console.log(file);
+
+        if(!file.body) {
+           return 
+        }
+        //On crée l'url temporaire
+        const url = window.URL.createObjectURL(file.body);
+
+        //On récupère le nom envoyer par django
+        const disposition = file.headers.get("Content-Disposition");
+
+        let filename = "music";
+
+        if(disposition) {
+          const match = disposition.match(/filename="([^"]+)"/);
+
+          if (match) {
+            filename = match[1];
+          }
+        }
+
+        //On crée le lien temporaire
+        const link = document.createElement('a');
+
+        link.href = url;
+        link.download = filename;
+
+        //On déclenche le téléchargement
+        link.click();
+
+        //On libère l'url temporaire
+        window.URL.revokeObjectURL(url);
+
+        const music = this.AllMusic.find(music => music.id === id);
+
+        if(music?.countDownload){
+          music.countDownload++;
+        }
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
   }
 }

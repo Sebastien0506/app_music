@@ -38,10 +38,20 @@
           }
         </mat-card-subtitle>
         <mat-card-subtitle>
-          <p><mat-icon>favorite_border</mat-icon>{{music.countLike}}</p>
+          <button mat-button class="like-bottom" (click)="addFavoritesMusic(music.id)">
+            @if(music.isFavorites == true){ <mat-icon class="favorite">favorite</mat-icon>}
+            @else{
+                <mat-icon>favorite_border</mat-icon>
+            }
+            <span>{{music.countLike}}</span>
+        </button>
+          
         </mat-card-subtitle>
         <mat-card-subtitle>
-          <p><mat-icon>get_app</mat-icon>{{music.countDownload}}</p>
+          <button mat-button class="like-bottom" (click)="addDownloadMusic(music.id)">
+            <mat-icon>get_app</mat-icon>
+            <span>{{music.countDownload}}</span>
+          </button>
         </mat-card-subtitle>
       </mat-card-header>
 

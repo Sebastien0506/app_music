@@ -73,3 +73,13 @@ mat-card-header {
 
     gap: 5px;
 }
+
+.like-button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.favorite {
+    color: red;
+}
