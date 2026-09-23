@@ -21,6 +21,10 @@ export interface AllMusic{
 export interface DeleteMusicMessage{
   message: string;
 }
+
+export interface Message {
+  error: string;
+}
 @Injectable({
   providedIn: 'root'
 })

@@ -52,6 +52,7 @@ urlpatterns = [
     path('api/delete_music_favorites/<int:music_id>/', delete_music_favorites),
     path('api/filter_music_by_like/', filter_music_by_like),
     path('api/filter_music_by_download/', filter_music_by_download),
+   
 ]
 
 
