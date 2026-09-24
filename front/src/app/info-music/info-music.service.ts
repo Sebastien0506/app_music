@@ -36,7 +36,7 @@ export class InfoMusicService {
 
   //On récupère la musique
   getMusic(id: number): Observable<Music>{
-    return this.http.get<Music>(`/api/get_one_music/${id}`,
+    return this.http.get<Music>(`/api/get_one_music/${id}/`,
       {
         withCredentials: true
       }

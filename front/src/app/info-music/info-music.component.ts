@@ -3,11 +3,13 @@ import { ActivatedRoute } from '@angular/router';
 import { AddfavoriteMusicResponse, DeleteMusic, InfoMusicService, Music } from './info-music.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { UpdateMusicComponent } from '../update-music/update-music.component';
 import { LoggedService } from '../logged.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MessageDialogComponent } from '../message-dialog/message-dialog.component';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-info-music',
   standalone: true,
@@ -21,6 +23,8 @@ export class InfoMusicComponent {
   private dialog = inject(MatDialog);
 
   private snackBar = inject(MatSnackBar);
+
+  private route = inject(Router);
 
   errorMessage = signal('');
   minutes: number = 0;
@@ -55,7 +59,17 @@ export class InfoMusicComponent {
         this.user.set(this.isLogged.isStaff());
       },
       error: (err) => {
-        console.log(err);
+        this.errorMessage.set(err.error.error);
+       const dialogRef =  this.dialog.open(MessageDialogComponent, {
+          data: {
+            message: this.errorMessage()
+          },
+          
+          width: '300px'
+        });
+        dialogRef.afterClosed().subscribe(() => {
+          this.route.navigate(['/get_all_music']);
+        })
       }
     });
 

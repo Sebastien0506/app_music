@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 interface Response {
-  message: string;
+  success: string;
 }
 
 export interface Category{

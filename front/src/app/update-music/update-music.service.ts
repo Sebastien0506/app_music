@@ -12,7 +12,7 @@ export interface Category{
 }
 
 export interface ResponseUpdateMusic {
-  message: string;
+  success: string;
 }
 @Injectable({
   providedIn: 'root'

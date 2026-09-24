@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog';
 import { InfoMusicComponent } from '../info-music/info-music.component';
 import { Music } from '../info-music/info-music.service';
@@ -9,7 +9,8 @@ import { Category, UpdateMusicService } from './update-music.service';
 import { MatButtonModule } from "@angular/material/button";
 import { FormsModule } from '@angular/forms';
 import { GetAllMusicComponent } from '../get-all-music/get-all-music.component';
-
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MessageDialogComponent } from '../message-dialog/message-dialog.component';
 @Component({
   selector: 'app-update-music',
   standalone: true,
@@ -23,8 +24,10 @@ export class UpdateMusicComponent {
 
   private dialogRef = inject(MatDialogRef<GetAllMusicComponent>);
 
-  
+  private dialog = inject(MatDialog);
   isChecked: boolean = false;
+
+  private snackBar = inject(MatSnackBar);
 
   data = inject<{dataMusic: Music}>(MAT_DIALOG_DATA);
   allCategory: Category[] = [];
@@ -210,18 +213,14 @@ export class UpdateMusicComponent {
       return;
     }
     
-    //On vérifie qu'une catégorie est été sélectionné
-    if (this.selectedCategoryIds.length === 0) {
-      this.errorMessage.set("Aucune catégorie n'a été sélectionnée.");
-      return;
-    }
-    
+    console.log(this.selectedCategoryIds);
 
     //On déclare formData
     const formData = new FormData;
     //On donne a formData les données
     formData.append('image', this.selectedFile!);
     formData.append('title', this.titleInput());
+    console.log("FormData", formData);
 
     for (const categoryId of this.selectedCategoryIds){
       formData.append('category_ids', categoryId.toString())
@@ -230,10 +229,23 @@ export class UpdateMusicComponent {
     //On envoie la requête
     this.updateMusicService.updateMusic(id, formData).subscribe({
         next: (res) => {
-          this.successMessage.set("La musique à bien été mis a jour.");
+          this.successMessage.set(res.success);
+          this.snackBar.open(this.successMessage(),
+          "Fermer",
+          {
+            duration: 3000
+          }
+        )
           console.log(res);
         },
         error: (err) => {
+          this.errorMessage.set(err.error.error);
+          const dialogRef = this.dialog.open(MessageDialogComponent, {
+            data: {
+              message: this.errorMessage(),
+            },
+            width: "200px"
+          });
           console.error("Status:", err.status);
           console.error(" ERREUR BACK: ", err.error);
           console.error(err);

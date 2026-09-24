@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, inject } from '@angular/core';
 import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -6,7 +6,10 @@ import { MatInputModule } from '@angular/material/input';
 import { max } from 'rxjs';
 import { AddMusicService, Category } from './add-music.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-
+import { MatDialog } from '@angular/material/dialog';
+import { MessageDialogComponent } from '../message-dialog/message-dialog.component';
+import { Router } from '@angular/router';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-add-music',
@@ -17,7 +20,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 })
 export class AddMusicComponent {
 
-  constructor(private addMusicService: AddMusicService, private getCategory: AddMusicService){}
+  constructor(private addMusicService: AddMusicService, private getCategory: AddMusicService, private dialog: MatDialog, private router: Router){}
 
   
 
@@ -26,6 +29,8 @@ export class AddMusicComponent {
   selectedCategoryId: number [] = [];
   //On déclare la variable qui va être utilisé pour stocker l'image de la musique
   selectedImageFile: File | null = null; 
+
+  private snackBar = inject(MatSnackBar);
   
   errorMessage = signal('');
   successMessage = signal('');
@@ -274,14 +279,29 @@ export class AddMusicComponent {
     
     //On envoi la requête
     this.addMusicService.uploadMusic(formData).subscribe({
-      next:(res) => {
-         this.successMessage.set('Musique Ajouter avec succès.');
+        next:(res) => {
+          this.successMessage.set(res.success);
+          this.snackBar.open(this.successMessage(), 
+            "Fermer",
+            {
+              duration: 300
+            }
+          )
          console.log(res);
-      },
-      error: (err) => {
-        this.errorMessage.set(" Erreur lors de l'ajout de la musique.");
-        console.log(err);
-      }
+        },
+        error: (err) => {
+
+          this.errorMessage.set(err.error.error);
+          //On ouvre le dialogue module
+          const dialogRef = this.dialog.open(MessageDialogComponent, {
+          data: {
+            message: this.errorMessage(),
+          },
+          width: '200px'
+          })
+        
+          console.log(err);
+        }
     });
 
   };

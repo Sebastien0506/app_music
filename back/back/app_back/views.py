@@ -636,7 +636,7 @@ def delete_music(request, music_id):
 
 #Permet de récupérer les info d'une musique
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def get_one_music(request, music_id):
 
     user = request.user
@@ -703,7 +703,8 @@ def update_music(request, music_id) :
     
     #on récupère les données de la musique
     title: str = request.data.get("title")
-    category_ids: list[int] = request.data.get('category_ids')
+    category_ids = request.data.getlist('category_ids')
+    print(category_ids, flush=True)
     file = request.FILES.get("image")
 
 #Si un champs est manquant on renvoi un message d'erreur
@@ -791,12 +792,13 @@ def update_music(request, music_id) :
         music.image_filename = serializer.validated_data["image_filename"]
         music.image_file = file
         music.save()
-
+        
         if old_image : 
             old_image.delete(save=False)
 
         categories = Category.objects.filter(id__in=category_ids)
         music.category.set(categories)
+
 
         
             
