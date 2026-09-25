@@ -629,7 +629,7 @@ def delete_music(request, music_id):
 
     return Response(
         {
-            "succès" : "Musique supprimer avec succès."
+            "success" : "Musique supprimer avec succès."
         },
         status=status.HTTP_200_OK
     )

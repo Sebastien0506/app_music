@@ -11,6 +11,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { InfoMusicService } from '../info-music/info-music.service';
+import { MessageDialogComponent } from '../message-dialog/message-dialog.component';
 @Component({
   selector: 'app-get-all-music',
   standalone: true,
@@ -72,10 +73,13 @@ export class GetAllMusicComponent {
   deleteMusic(id: number) {
     this.getAllMusic.removeMusic(id).subscribe({
       next: (res) => {
-        this.successDeleteMessage.set('Suppression de la musique réussi.');
+        //On donne à successMessage la réponse du serveur
+        this.successDeleteMessage.set(res.success);
+        //On met à jour les musiques
         this.AllMusic = this.AllMusic.filter(
           music => music.id !== id
         );
+        //On ouvre une snackBar pour afficher le message du serveur
         this.snackBar.open(
           this.successDeleteMessage(),
           'Fermer',
@@ -85,7 +89,16 @@ export class GetAllMusicComponent {
         );
       },
       error: (err) => {
-        this.errorMessage.set("Erreur lors de suppression");
+        //On donne à errorMessage le message d'erreur du serveur
+        this.errorMessage.set(err.error.error);
+
+        //On ouvre la boite de dialogue et on lui donne le message
+        const dialogRef = this.dialog.open(MessageDialogComponent, {
+          data: {
+            message: this.errorMessage(),
+          },
+          width: "200px"
+        });
       }
     });
   }

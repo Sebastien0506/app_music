@@ -19,7 +19,7 @@ export interface AllMusic{
 }
 
 export interface DeleteMusicMessage{
-  message: string;
+  success: string;
 }
 
 export interface Message {
