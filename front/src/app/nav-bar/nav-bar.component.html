@@ -55,29 +55,11 @@
             <button mat-button (click)="ouvrirFormulaireLogin()">Connexion</button>
             <button mat-button (click)="ouvrirFormulaireRegister()">Inscription</button>
           }
-          
-          <!-- <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Dropdown
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
-            </ul>
-          </li> -->
         </ul>
         <form class="d-flex" role="search">
-          <input class="form-control me-2" type="text" placeholder="Search"  matInput  [formControl]="searchControl" (focus)="sendRequest()"[matAutocomplete]="auto">
-          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectMusic($event)">
-            @for(music of fileteredMusic | async; track music.id){
+          <input class="form-control me-2" type="text" placeholder="Cherchez"  matInput (input)="filterMusic()"  [formControl]="searchControl" (focus)="sendRequest()"[matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete" >
+            @for(music of fileteredMusic; track music.id){
                 <mat-option [value]="music">{{music.title}}</mat-option>
             }
           </mat-autocomplete>

@@ -35,29 +35,26 @@ export class NavBarComponent implements OnInit{
 
 
   searchControl = new FormControl('', { nonNullable: true});
-  allMusic = signal<Music[]>([]);
+  allMusic : Music[] =[];
 
   //On crée le signal searchInput
-  searchInput = '';
+  searchInput = signal('');
+
   //On crée un signal pour filtrer les musiques
-  fileteredMusic!: Observable<Music[]>;
+  fileteredMusic: Music[] = [];
 
   constructor(private authservice: AuthServiceService, 
     private dialog: MatDialog, private navBarService: NavBarService, 
-    private router: Router, private bottomSheet: MatBottomSheet) {
-      this.fileteredMusic = this.searchControl.valueChanges.pipe(
-        startWith('' as string | Music),
-        map((value) => this.filterMusic(value))
-      );
-    }
+    private router: Router, private bottomSheet: MatBottomSheet) {}
+    
     sendRequest(): void {
-      if (this.allMusic().length > 0) {
+      if (this.allMusic.length > 0) {
         return;
       }
 
       this.navBarService.getAllMusic().subscribe({
-        next: (res) => {
-          this.allMusic.set(res);
+        next: (data) => {
+          this.allMusic = data;
 
           this.searchControl.setValue(this.searchControl.value);
         },
@@ -66,18 +63,41 @@ export class NavBarComponent implements OnInit{
         }
       });
     }
-    private filterMusic(value: string | Music | null): Music[] {
-      let search = '';
-    
-      if (typeof value === 'string') {
-        search = value.trim().toLowerCase();
-      } else if (value) {
-        search = value.title.trim().toLowerCase();
-      }
-    
-      return this.allMusic().filter((music) =>
-        music.title.toLowerCase().includes(search)
-      );
+    //On fait l'event pour chercher la musique
+    filterMusic() {
+      console.log("fonction appelé.");
+        let searchInput = this.searchControl.value.toLowerCase();
+
+        const musicTitle: string[] = [];
+
+         console.log("Test de recherche de musique:", searchInput);
+
+         if(!searchInput) {
+          this.fileteredMusic = [];
+          return;
+         }
+         this.fileteredMusic = [];
+         //On normalise le titre rechercher pour inclure les lettre avec accent
+        const normalizeNameMusic = searchInput.normalize("NFC");
+        console.log(normalizeNameMusic);
+
+        //On fait le regex
+        const regex = /^[\p{L}\p{N}_ '’-]+$/u;
+      
+        if(!regex.test(normalizeNameMusic)){
+          return;
+        }
+        //Pour chaque musique present dans allMusic on vérifie si les lettre correspond
+        for( const music of this.allMusic) {
+          console.log("Test du for");
+          if(music.title.includes(normalizeNameMusic)){
+            this.fileteredMusic.push(music);
+            console.log("Test du if", music.title);
+          }
+          
+        }
+
+      
     }
   
   private loggedService = inject(LoggedService);
