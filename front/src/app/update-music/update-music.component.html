@@ -1,34 +1,72 @@
+<input
+  #fileInput
+  type="file"
+  accept="image/*"
+  hidden
+  (change)="onFileSelected($event)">
 
-<input #fileInput type="file" accept="image/*" hidden (change)="onFileSelected($event)">
+<div class="body">
 
-<button mat-raised-button type="button" (click)="fileInput.click()">Choisir une image</button>
-@if(selectedFile){
-  <p>{{selectedFile.name}}</p>
-}
-
-<mat-form-field>
-  
+  <mat-form-field appearance="outline">
     <mat-label>Titre</mat-label>
-    <input matInput type="text" [value]="data.dataMusic.title" [ngModel]="titleInput()" (ngModelChange)="titleInput.set($event)">
-</mat-form-field>
-<div class="form-check">
-    
-  @for (category of allCategory; track category.id) {
-    <div class="checkbox" data-bs-theme="light">
+    <input
+      matInput
+      type="text"
+      [ngModel]="titleInput()"
+      (ngModelChange)="titleInput.set($event)">
+  </mat-form-field>
+
+  <div class="image-field">
+    <mat-form-field appearance="outline">
+      <mat-label>Image</mat-label>
       <input
-        class="form-check-input"
-        type="checkbox"
-        [value]="category.id"
-        [id]="'check-' + category.id"
-        (change)="onCheckBoxValidate($event)">
-  
-      <label
-        class="form-check-label"
-        [for]="'check-' + category.id">
-        {{ category.name }}
-      </label>
+        matInput
+        type="text"
+        [value]="selectedFile?.name || 'Aucune image sélectionnée'"
+        readonly>
+    </mat-form-field>
+  </div>
+
+  <div class="categories">
+    <p class="categories-title">Catégories</p>
+
+    <div class="categories-list">
+      @for (category of allCategory; track category.id) {
+        <div class="checkbox" data-bs-theme="light">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            [value]="category.id"
+            [id]="'check-' + category.id"
+            (change)="onCheckBoxValidate($event)">
+
+          <label
+            class="form-check-label"
+            [for]="'check-' + category.id">
+            {{ category.name }}
+          </label>
+        </div>
+      }
     </div>
-  }
-<button mat-button (click)="sendRequest(data.dataMusic.id)">Enregistrez</button>
+  </div>
+
+  <div class="actions">
+
+    <button mat-raised-button type="button" (click)="fileInput.click()">
+      <mat-icon>image</mat-icon>
+      {{selectedFile ? "Changer l'image" : "Choisir une image" }}
+    </button>
+
+    @if (selectedFile) {
+      <button
+        mat-raised-button
+        (click)="sendRequest(data.dataMusic.id)">
+        <mat-icon>save</mat-icon>
+        Enregistrer
+      </button>
+    } 
+  </div>
+
 </div>
+
   

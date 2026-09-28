@@ -1,7 +1,62 @@
-.checkbox {
-    color: black;
-}
-p {
-    color: black;
-}
-
+.body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  
+    width: 100%;
+    max-width: 550px;
+    margin: 20px auto;
+    padding: 25px;
+  
+    box-sizing: border-box;
+  }
+  
+  mat-form-field {
+    width: 100%;
+  }
+  
+  .image-field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .image-field mat-form-field {
+    flex: 1;
+  }
+  
+  .categories {
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  .categories-title {
+    margin: 0 0 15px;
+    font-weight: 500;
+    font-size: 16px;
+  }
+  
+  .categories-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 25px;
+  }
+  
+  .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  
+  .form-check-input,
+  .form-check-label {
+    cursor: pointer;
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+  }

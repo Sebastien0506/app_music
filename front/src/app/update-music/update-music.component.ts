@@ -11,10 +11,11 @@ import { FormsModule } from '@angular/forms';
 import { GetAllMusicComponent } from '../get-all-music/get-all-music.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MessageDialogComponent } from '../message-dialog/message-dialog.component';
+import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-update-music',
   standalone: true,
-  imports: [MatFormFieldModule, MatInput, MatButtonModule, FormsModule],
+  imports: [MatFormFieldModule, MatInput, MatButtonModule, FormsModule, MatIconModule],
   templateUrl: './update-music.component.html',
   styleUrl: './update-music.component.css'
 })
