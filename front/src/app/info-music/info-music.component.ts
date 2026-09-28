@@ -40,39 +40,45 @@ export class InfoMusicComponent {
 
   user = signal<boolean>(false);
   ngOnInit(): void {
-    const id = Number(this.router.snapshot.paramMap.get('id'));
-     console.log("Test de la reception de l'id avec infoMusic :", id);
-    this.getOneMusic.getMusic(id).subscribe({
-      next: (data) => {
+    //On fait la requête pour récupérer l'id de la musique
+    this.router.paramMap.subscribe(params => {
+      //On récupère l'id de la musique
+      const id = Number(params.get('id'));
 
-        this.infoMusic = data;
-        //Au chargement de la page on récupère les favoris de l'utilisateur
-        this.isFavorite.set(this.infoMusic.favoritesMusicUser);
-        console.log("nouvelle music :", this.infoMusic);
-       //On converti la duré en minute et secondes
-        this.minutes = Math.floor(this.infoMusic.duration / 60);
-        this.seconds = this.infoMusic.duration % 60;
-        //On converti la taille du fichier en MO
-        this.size = Number(
-          (this.infoMusic.size / (1024 * 1024)).toFixed(2)
-        );
-        this.user.set(this.isLogged.isStaff());
-      },
-      error: (err) => {
-        this.errorMessage.set(err.error.error);
-       const dialogRef =  this.dialog.open(MessageDialogComponent, {
-          data: {
-            message: this.errorMessage()
-          },
-          
-          width: '300px'
-        });
-        dialogRef.afterClosed().subscribe(() => {
-          this.route.navigate(['/get_all_music']);
-        })
-      }
-    });
+      console.log("Nouvel id", id);
 
+      //On fait la requête
+      this.getOneMusic.getMusic(id).subscribe({
+        next: (data) => {
+  
+          this.infoMusic = data;
+          //Au chargement de la page on récupère les favoris de l'utilisateur
+          this.isFavorite.set(this.infoMusic.favoritesMusicUser);
+          console.log("nouvelle music :", this.infoMusic);
+         //On converti la duré en minute et secondes
+          this.minutes = Math.floor(this.infoMusic.duration / 60);
+          this.seconds = this.infoMusic.duration % 60;
+          //On converti la taille du fichier en MO
+          this.size = Number(
+            (this.infoMusic.size / (1024 * 1024)).toFixed(2)
+          );
+          this.user.set(this.isLogged.isStaff());
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error.error);
+         const dialogRef =  this.dialog.open(MessageDialogComponent, {
+            data: {
+              message: this.errorMessage()
+            },
+            
+            width: '300px'
+          });
+          dialogRef.afterClosed().subscribe(() => {
+            this.route.navigate(['/get_all_music']);
+          })
+        }
+      });
+    })
   }
 
   
