@@ -12,25 +12,27 @@
           <!-- <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="#" (click)="ouvrirFormulaireLogin()">Connexion</a>
           </li> -->
+          <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="Ouvrir le menu utilisateur">
+            <mat-icon>person</mat-icon>
+          </button>
+          <mat-menu #userMenu="matMenu">
+            <button mat-menu-item routerLink="/get_all_music">
+              <mat-icon>music_video</mat-icon>
+              <span>Musiques</span>
+            </button>
           @if (isLogged()) {
             <!-- @if(isStaff()) {
               <a href="">AdminDashboard</a>
                
             } -->
-            <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="Ouvrir le menu utilisateur">
-              <mat-icon>person</mat-icon>
-            </button>
-            <mat-menu #userMenu="matMenu">
+            
               @if (isStaff()) {
                 <button mat-menu-item (click)="openBottomSheet()">
                   <mat-icon>dashboard</mat-icon>
                   <span>AdminDashboard</span>
                 </button>
               }
-                <button mat-menu-item routerLink="/get_all_music">
-                  <mat-icon>music_video</mat-icon>
-                  <span>Musiques</span>
-                </button>
+                
                 <button mat-menu-item routerLink="/get_category">
                   <mat-icon>folder</mat-icon>
                   <span>Catégories</span>
@@ -48,13 +50,17 @@
                   <mat-icon>settings</mat-icon>
                   <span>Paramètres</span>
                 </button>
-              <button mat-button (click)="logout()">Déconnexion</button>
+              <button mat-menu-item (click)="logout()"><mat-icon>logout</mat-icon><span>Déconnexion</span></button>
 
-            </mat-menu>
           } @else {
-            <button mat-button (click)="ouvrirFormulaireLogin()">Connexion</button>
-            <button mat-button (click)="ouvrirFormulaireRegister()">Inscription</button>
+            <div class="button">
+              <button mat-menu-item (click)="ouvrirFormulaireLogin()"><mat-icon>login</mat-icon><span>Connection</span></button>
+              <button mat-menu-item (click)="ouvrirFormulaireRegister()"><mat-icon>person_add</mat-icon><span>Inscription</span></button>
+            </div>
+            
           }
+        </mat-menu>
+        
         </ul>
         <form class="d-flex" role="search">
           <input class="form-control me-2" type="text" placeholder="Cherchez"  matInput (input)="filterMusic()"  [formControl]="searchControl" (focus)="sendRequest()"[matAutocomplete]="auto">
