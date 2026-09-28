@@ -41,14 +41,14 @@ export class InfoMusicComponent {
   user = signal<boolean>(false);
   ngOnInit(): void {
     const id = Number(this.router.snapshot.paramMap.get('id'));
-     
+     console.log("Test de la reception de l'id avec infoMusic :", id);
     this.getOneMusic.getMusic(id).subscribe({
       next: (data) => {
 
         this.infoMusic = data;
         //Au chargement de la page on récupère les favoris de l'utilisateur
         this.isFavorite.set(this.infoMusic.favoritesMusicUser);
-        console.log(this.infoMusic);
+        console.log("nouvelle music :", this.infoMusic);
        //On converti la duré en minute et secondes
         this.minutes = Math.floor(this.infoMusic.duration / 60);
         this.seconds = this.infoMusic.duration % 60;

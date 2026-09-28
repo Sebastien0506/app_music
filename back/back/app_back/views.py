@@ -662,10 +662,11 @@ def get_one_music(request, music_id):
                 "name": category.name,
             }
         )
-    
-    favorite_music_user = user.favorites.filter(id=music.id).exists()
-    
-
+    #On initialise favorite_music_user à false
+    favorite_music_user = False
+    #Si l'utilisateur est authentifier on envoi ces favories
+    if user.is_authenticated:
+        favorite_music_user = user.favorites.filter(id=music.id).exists()
 
     return Response(
         {

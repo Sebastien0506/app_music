@@ -19,7 +19,7 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { map, Observable, startWith } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { SettingsComponent } from '../settings/settings.component';
-
+import { MatOptionSelectionChange } from '@angular/material/core';
 
 
 
@@ -42,6 +42,8 @@ export class NavBarComponent implements OnInit{
 
   //On crée un signal pour filtrer les musiques
   fileteredMusic: Music[] = [];
+
+  
 
   constructor(private authservice: AuthServiceService, 
     private dialog: MatDialog, private navBarService: NavBarService, 
@@ -71,11 +73,12 @@ export class NavBarComponent implements OnInit{
         const musicTitle: string[] = [];
 
          console.log("Test de recherche de musique:", searchInput);
-
+         //Si aucune recherche on initialise filteredMusic à un tableau vide 
          if(!searchInput) {
           this.fileteredMusic = [];
           return;
          }
+         //Pour chaque nouvelle recherche on initialise filetredMusic à un tableau vide
          this.fileteredMusic = [];
          //On normalise le titre rechercher pour inclure les lettre avec accent
         const normalizeNameMusic = searchInput.normalize("NFC");
@@ -84,9 +87,11 @@ export class NavBarComponent implements OnInit{
         //On fait le regex
         const regex = /^[\p{L}\p{N}_ '’-]+$/u;
       
+        //On vérifie que la recherche ne contient pas de caractère non autorisée.
         if(!regex.test(normalizeNameMusic)){
           return;
         }
+        
         //Pour chaque musique present dans allMusic on vérifie si les lettre correspond
         for( const music of this.allMusic) {
           console.log("Test du for");
@@ -164,14 +169,19 @@ export class NavBarComponent implements OnInit{
     });
   }
 
-
-  selectMusic(event: MatAutocompleteSelectedEvent): void {
-    const music = event.option.value as Music;
-
+//On fait la fonction pour récupérer la musique sélectionnée
+  selectMusic(event: MatOptionSelectionChange){
+    //On récupère la musique
+    const music = event.source.value;
+    
+    //On envoi son id à la page infoMusic
+    this.router.navigate(["/info_music", music.id]);
+    console.log("test de music.id apres la redirection:", music.id);
     console.log(music.id);
-    console.log(music.title);
+  }
 
-    this.router.navigate(['/info_music', music.id])
+  displayMusic(music: Music): string {
+    return music ? music.title : '';
   }
 
   // //On fait la fonction pour rediriger l'utilisateur quand il a sélectioner une musique

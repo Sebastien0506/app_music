@@ -58,9 +58,10 @@
         </ul>
         <form class="d-flex" role="search">
           <input class="form-control me-2" type="text" placeholder="Cherchez"  matInput (input)="filterMusic()"  [formControl]="searchControl" (focus)="sendRequest()"[matAutocomplete]="auto">
-          <mat-autocomplete #auto="matAutocomplete" >
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayMusic">
             @for(music of fileteredMusic; track music.id){
-                <mat-option [value]="music">{{music.title}}</mat-option>
+                <mat-option [value]="music" (onSelectionChange)="selectMusic($event)">{{music.title}}</mat-option>
+                 
             }
           </mat-autocomplete>
           <button class="btn btn-outline-success">Search</button>
