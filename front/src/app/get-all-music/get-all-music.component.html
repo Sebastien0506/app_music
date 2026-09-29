@@ -3,6 +3,9 @@
 
   <button mat-raised-button [matMenuTriggerFor]="menu">Filtrer les musiques</button>
   <mat-menu #menu="matMenu">
+    @if (isSelectedFilter()) {
+      <button mat-menu-item (click)="deletedFilter()">Enlever le filtre</button>
+    }
     <button mat-menu-item (click)="filterMusicByLike()">Les musiques les plus like</button>
     <button mat-menu-item (click)="filterMusicByDownload()">Les musiques les plus télécharger</button>
   </mat-menu>

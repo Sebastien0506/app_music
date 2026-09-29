@@ -1155,8 +1155,6 @@ def filter_music_by_like(request) :
     #On récupère l'utilisateur 
     user = request.user
 
-    
-
     #On déclare la variable data
     data = []
     for music in musics :

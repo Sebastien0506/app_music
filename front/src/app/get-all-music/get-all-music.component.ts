@@ -36,6 +36,8 @@ export class GetAllMusicComponent {
   infoMusic : AllMusic | undefined;
   user = signal<Boolean>(false);
 
+  //On déclare une variable si un filtre est sélectionner
+  isSelectedFilter = signal<boolean>(false);
   //On initialise un signal pour le cas ou il n'y a pas de musique liké
   notMusicLike = signal('');
 
@@ -47,6 +49,7 @@ export class GetAllMusicComponent {
   onImageError(musicId: number): void {
     this.imageError[musicId] = true;
   }
+
   //Au chargement de la page on fait la requête
   ngOnInit(){
      this.getAllMusic.getAllMusic().subscribe({
@@ -103,22 +106,15 @@ export class GetAllMusicComponent {
     });
   }
 
-  
-  formaDuration(duration: number): string{
-    const minutes = Math.floor(duration / 60);
-    const secondes = duration % 60;
-
-    return `${minutes}:${secondes.toString().padStart(2, '0')}`
-  }
-
   dataInfoMusic(id: number){
    //On récupère les informations de la musique
     this.infoMusic = this.AllMusic.find(
       music => music.id === id
     );
-    console.log(this.infoMusic);
+    
   }
-
+  
+  //Ouverture d'un module de dialogue pour modifier la musique sélectionner
   openDialog(id: number){
     this.dataInfoMusic(id);
     this.dialog.open(UpdateMusicComponent, {
@@ -130,6 +126,7 @@ export class GetAllMusicComponent {
     })
   }
 
+  //Fonction pour filtrer les musiques par nombre de like
   filterMusicByLike(){
     this.getAllMusic.getMusicByLike().subscribe({
       next: (data) => {
@@ -137,7 +134,10 @@ export class GetAllMusicComponent {
          if(data.length > 0){
           console.log("test fonction filter");
           this.AllMusic = data;
-          console.log(this.AllMusic);
+          
+
+          //On met isSelectedFilter a true
+          this.isSelectedFilter.set(true);
           
          } else {
           this.notMusicLike.set("Aucune musique n'a de like.");
@@ -163,7 +163,8 @@ export class GetAllMusicComponent {
         //Si data contient au moins une données on l'affiche
         if(data.length > 0) {
           this.AllMusic = data;
-          console.log(this.AllMusic);
+          this.isSelectedFilter.set(true);
+          
         } else {
           this.notDownloadMusic.set('Aucune musique n\'a été télécharger pour le moment.');
           //On met le message dans la snackbar
@@ -181,7 +182,29 @@ export class GetAllMusicComponent {
       }
     })
   }
-
+  //On crée la fonction pour supprimer les filtres
+  deletedFilter(){
+     this.getAllMusic.getAllMusic().subscribe({
+      next: (data) => {
+        //on récupère les données
+        this.AllMusic = data;
+        //On regarde si l'utilisateur est isStaff === true
+        this.user.set(this.loggedService.isStaff());
+        
+        //On remet isSelectedFilter à false
+        this.isSelectedFilter.set(false);
+        
+      },
+      error: (err) => {
+        const dialogRef = this.dialog.open(MessageDialogComponent, {
+          data: {
+            message: this.errorMessage.set(err.error.error)
+          },
+        });
+      }
+     })
+  }
+  //Ajout de la musique au favoris
   addFavoritesMusic(id: number){
     this.addFavorite.addMusicFavorite(id).subscribe({
       next: (res) => {
@@ -201,11 +224,12 @@ export class GetAllMusicComponent {
       }
     })
   }
-
+  
+  //Téléchargement de la musique
   addDownloadMusic(id : number) {
     this.addFavorite.downloadMusic(id).subscribe({
       next: (file) => {
-        console.log(file);
+        
 
         if(!file.body) {
            return 
