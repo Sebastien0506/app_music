@@ -1,0 +1,7 @@
+<form class="form-description">
+    <mat-form-field class="example-full-width">
+        <mat-label>Mettre une description</mat-label>
+        <textarea matInput placeholder="description" [formControl]="descriptionInput"></textarea>
+    </mat-form-field>
+    <button mat-raised-button (click)="sendRequest()">Enregistrer la description</button>
+</form>

@@ -6,6 +6,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AddAvatarComponent } from '../add-avatar/add-avatar.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ThemeService } from '../theme.service';
+import { DescriptionComponent } from '../description/description.component';
 @Component({
   selector: 'app-settings',
   standalone: true,
@@ -38,6 +39,13 @@ export class SettingsComponent {
     });
   }
 
+  openDialogDescription(){
+    //On ouvre le module de dialogue
+    const dialogRef = this.dialog.open(DescriptionComponent, {
+      width: '700px',
+      height: '700px'
+    });
+  }
  
  
 
