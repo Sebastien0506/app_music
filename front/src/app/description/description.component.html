@@ -3,5 +3,43 @@
         <mat-label>Mettre une description</mat-label>
         <textarea matInput placeholder="description" [formControl]="descriptionInput"></textarea>
     </mat-form-field>
-    <button mat-raised-button (click)="sendRequest()">Enregistrer la description</button>
+   @if(viewDiscordInput()){
+    <mat-form-field>
+        <mat-label>Lien Discord</mat-label>
+        <input type="text" matInput [formControl]="discordInput">
+    </mat-form-field>
+   }
+   @if(viewTwitchInput()){
+    <mat-form-field>
+        <mat-label>Lien Twitch</mat-label>
+        <input type="text" matInput [formControl]="twitchInput">
+    </mat-form-field>
+   }
+   @if(viewTikTokInput()){
+    <mat-form-field>
+        <mat-label>Lien TikTok</mat-label>
+        <input type="text" matInput [formControl]="tiktokInput">
+    </mat-form-field>
+   }
+   @if(viewYouTubeInput()){
+    <mat-form-field>
+        <mat-label>Lien YouTube</mat-label>
+        <input type="text" matInput [formControl]="youtubeInput">
+    </mat-form-field>
+   }
+    
+
+     
+     <div class="icons">
+        <img src="/discord-brands-solid-full.svg" alt="icons discord" (click)="viewDiscord()">
+        <img src="/twitch-brands-solid.svg" alt="icons twitch" (click)="viewTwitch()">
+        <img src="/tiktok-brands-solid.svg" alt="icons titkok" (click)="viewTikTok()">
+        <img src="/youtube-brands-solid.svg" alt="icons youtube" (click)="viewYouTube()">
+     </div>
+    
+    <!-- <button mat-raised-button (click)="checkLink()">Sauvegarder les lien</button> -->
+    
+    <button mat-raised-button (click)="sendRequest()">Sauvegarder</button>
 </form>
+
+
