@@ -33,6 +33,13 @@ class Avatar(models.Model) :
     file = models.FileField(upload_to="image/")
     filename = models.CharField(max_length=50, unique=True)
     size = models.PositiveIntegerField()
+
+class Website(models.Model) :
+    description = models.CharField(max_length=150)
+    discord_link = models.URLField(max_length=200, blank=True)
+    twitch_link = models.URLField(max_length=200, blank=True)
+    tiktok_link = models.URLField(max_length=200, blank=True)
+    youtube_link = models.URLField(max_length=200, blank=True)
     
 
 

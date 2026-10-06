@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from .authentication import IsStaff
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response 
-from back.app_back.service.serializer import UserSerializer, LoginSerializer, UpdateUserSerializer, CreateCategorySerializer, UpdateMusicSerializer, AvatarSerializer, AddMusicSerializer
+from back.app_back.service.serializer import UserSerializer, LoginSerializer, UpdateUserSerializer, CreateCategorySerializer, UpdateMusicSerializer, AvatarSerializer, AddMusicSerializer, WebsiteSerializer
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
@@ -23,7 +23,8 @@ from mutagen.mp3 import MP3
 import uuid
 from pathlib import Path
 from django.http.response import FileResponse
-
+from urllib.parse import urlparse
+from back.app_back.service.linkService import checkLink
 
 # @api_view(["GET"])
 # @permission_classes([AllowAny])
@@ -1238,6 +1239,57 @@ def filter_music_by_download(request):
         data, 
         status=status.HTTP_200_OK
     )
+
+@api_view(["POST"])
+# @permission_classes([IsAuthenticated, IsStaff])
+def add_description_and_link(request) :
+    #On récupère toutes les données
+    description = request.data.get("description")
+    discord_link = request.data.get("discord_link")
+    twitch_link = request.data.get("twitch_link")
+    tiktok_link = request.data.get("tiktok_link")
+    youtube_link = request.data.get("youtube_link")
+
+    print("Données reçut: ", discord_link, tiktok_link, twitch_link, youtube_link, flush=True)
+
+    check_link = checkLink(discord_link, twitch_link, tiktok_link, youtube_link)
+    print("Test de check_link", check_link, flush=True)
+   #Si aucune description n'a été fourni on renvoi un message d'erreur
+    if not description : 
+        return Response(
+            {
+                "error" : "Aucune description n'a été fourni."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    #Si check_link est false on renvoi une erreur
+    if check_link is not True :
+        return check_link
+    
+    serializer = WebsiteSerializer(data={
+        "discord_link" : discord_link, "twitch_link" : twitch_link, "tiktok_link" : tiktok_link, "youtube_link" : youtube_link,
+        "description" : description
+        })
+    print("Test serializer", serializer, flush=True)
+    if serializer.is_valid() :
+        print("Test du serializer si il est valide", serializer, flush=True)
+        serializer.save()
+    else :
+        print("Erreur serializer :", serializer.errors, flush=True)
+
+    return Response(
+        {
+            "success" : "La description et les liens ont bien été enregistrer."
+        },
+        status=status.HTTP_201_CREATED
+    )
+
+    
+    
+
+
+
 
 
      

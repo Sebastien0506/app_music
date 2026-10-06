@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from back.app_back.models import User, Category, Avatar, Music
+from back.app_back.models import User, Category, Avatar, Music, Website
 import html
 import unicodedata
 
@@ -350,6 +350,64 @@ class AddMusicSerializer(serializers.ModelSerializer) :
             raise serializers.ValidationError("Le nom de l'image contient des caractères non autorisée.")
         
         return cleaned_input
+    
+class WebsiteSerializer(serializers.ModelSerializer) :
+    class Meta :
+        model = Website
+        fields = ["discord_link", "twitch_link", "tiktok_link", "youtube_link", "description"]
+    
+    #On clean les données
+    def clean_input(self, value):
+        return html.escape(value)
+
+    def validate_discord_link(self, value) :
+        cleaned_input = self.clean_input(value)
+
+        if not all (char.isalnum() or char in [":", "/", "."] for char in value) :
+            raise serializers.ValidationError("Le lien discord est invalide.")
+        
+        return cleaned_input
+
+    def validate_twitch_link(self, value) :
+        cleaned_input = self.clean_input(value)
+
+        #On vérifie que la valeur a bien tous les caractère autorisé
+        if not all(char.isalnum() or char in [":", "/", "."] for char in value) :
+            raise serializers.ValidationError("Le lien twitch contient des caractères non autorisée.")
+        
+        return cleaned_input
+    
+    def validate_tiktok_link(self, value) :
+        cleaned_input = self.clean_input(value)
+
+        if not all(char.isalnum() or char in ["@", ":", "/", "."] for char in value) :
+            raise serializers.ValidationError("Le lien tiktok contient des caractères non autorisée.")
+        
+        return cleaned_input
+    
+    def validate_youtube_link(self, value) :
+        cleaned_input = self.clean_input(value)
+
+        if not all(char.isalnum() or char in ["@", ":", "/", "."] for char in value) :
+            raise serializers.ValidationError("Le lien youtube contient des caractères non autorisée.")
+
+        return cleaned_input 
+    
+    def validate_description(self, value) :
+        cleaned_input = self.clean_input(value)
+
+        #On vérifie que la description n'est pas vide
+        if not value.strip() :
+            raise serializers.ValidationError("La description est vide.")
+        
+        #On vérifie les caractères dans la value
+        if not all(char.isalnum() or char in ["-", "_", ".", " ", "?", "!", ":", ";", "'"] for char in value) :
+            raise serializers.ValidationError("La description contient des caractères non autorisée.")
+        
+        return cleaned_input
+
+    def create(self, validated_data):
+        return Website.objects.create(**validated_data)       
 
 
 
