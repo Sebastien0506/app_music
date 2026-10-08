@@ -4,12 +4,13 @@ import { NavBarComponent } from "./nav-bar/nav-bar.component";
 import { LoggedService } from './logged.service';
 import { AuthServiceService } from './auth-service.service';
 import { ThemeService } from './theme.service';
+import { FooterComponent } from './footer/footer.component';
 
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavBarComponent],
+  imports: [RouterOutlet, NavBarComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

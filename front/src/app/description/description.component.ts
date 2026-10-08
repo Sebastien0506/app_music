@@ -5,7 +5,8 @@ import { FormsModule, ReactiveFormsModule, FormControl, FormArray } from '@angul
 import { MatButton } from '@angular/material/button';
 import { MessageDialogComponent } from '../message-dialog/message-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-
+import { AddDescriptionAndLink, DescriptionService } from './description.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-description',
@@ -16,7 +17,9 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class DescriptionComponent {
    
-  constructor(){}
+  constructor(private addDescriptionAndLink: DescriptionService){}
+
+  private snackBar = inject(MatSnackBar);
 
   //On déclare la variable qui va recevoir le message
   descriptionInput = new FormControl('');
@@ -27,7 +30,8 @@ export class DescriptionComponent {
   ])
 
   errorMessage = signal('');
-
+ 
+  messageAddDescriptionAndLink = signal('');
   //On crée le dialogue
   dialog = inject(MatDialog);
   
@@ -289,6 +293,34 @@ export class DescriptionComponent {
     if(!checkLink){
       return;
     }
+   
+    //On récupère les données 
+    const data =  {
+        "description": this.descriptionInput.value,
+        "discord_link": this.discordInput.value,
+        "twitch_link" : this.twitchInput.value,
+        "tiktok_link": this.tiktokInput.value,
+        "youtube_link": this.youtubeInput.value,
+    }
+
+    //On fait la requête 
+    this.addDescriptionAndLink.addDescriptionAndlink(data).subscribe({
+      next : (res) => {
+          this.messageAddDescriptionAndLink.set(res.success ?? '');
+          this.snackBar.open(this.messageAddDescriptionAndLink(),
+        "Fermer",
+        {
+          duration: 3000
+        }
+      )
+      }, 
+      error: (err) => {
+          this.messageAddDescriptionAndLink.set(err.error.error);
+          this.snackBar.open(this.messageAddDescriptionAndLink(), "Fermer", {duration: 3000})
+          
+      }
+    })
+    console.log(data);
     console.log(checkDescription);
     console.log(checkLink);
     
