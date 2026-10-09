@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from .authentication import IsStaff
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response 
-from back.app_back.service.serializer import UserSerializer, LoginSerializer, UpdateUserSerializer, CreateCategorySerializer, UpdateMusicSerializer, AvatarSerializer, AddMusicSerializer, WebsiteSerializer
+from back.app_back.service.serializer import UserSerializer, LoginSerializer, UpdateUserSerializer, CreateCategorySerializer, UpdateMusicSerializer, AvatarSerializer, AddMusicSerializer, WebsiteSerializer, DescriptionSerializer
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
@@ -436,8 +436,9 @@ def add_music(request) :
 
     #On initialise le serializer
     serializer = AddMusicSerializer(data={
-        "title": audioFileName,
-        "image_filename": imageFileName
+        "title": original_name,
+        "image_filename": imageFileName,
+        "filename" : audioFileName
     })
 
     #Si le serializer n'est pas valide on renvoi un message d'erreur
@@ -1296,6 +1297,56 @@ def get_description(request) :
         description_website, 
         status=status.HTTP_200_OK
     )
+
+@api_view(["PUT"])
+# @permission_classes([IsAuthenticated, IsStaff])
+def update_description(request):
+
+    # On récupère la description dans la requête
+    new_description = request.data.get("description")
+
+    # Si aucune description, on renvoie un message d'erreur
+    if not new_description or not new_description.strip():
+        return Response(
+            {
+                "error": "Le champ description est vide."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # On récupère l'enregistrement existant
+    old_description = Website.objects.first()
+
+    if old_description is None:
+        return Response(
+            {
+                "error": "Aucune description existante."
+            },
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    # On initialise le serializer avec l'objet existant
+    serializer = DescriptionSerializer(
+        instance=old_description,
+        data={"description": new_description},
+        partial=True
+    )
+
+    if serializer.is_valid():
+        serializer.save()
+
+        return Response(
+            {
+                "success": "La description a bien été modifiée."
+            },
+            status=status.HTTP_200_OK
+        )
+
+    return Response(
+        serializer.errors,
+        status=status.HTTP_400_BAD_REQUEST
+    )
+
 
 @api_view(["GET"])
 def get_link(request) :

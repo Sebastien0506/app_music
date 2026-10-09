@@ -311,7 +311,8 @@ class AddMusicSerializer(serializers.ModelSerializer) :
         model = Music
         fields = [
             "title",
-            "image_filename"
+            "image_filename",
+            "filename",
         ]
     #On nettoie les données
     def clean_input(self, value) :
@@ -319,9 +320,30 @@ class AddMusicSerializer(serializers.ModelSerializer) :
     
     #On vérifie le titre de la musique
     def validate_title(self, value) :
+        print("Titre reçu :", repr(value), flush=True)
         #On appel la fonction pour valider les données
         cleaned_input = self.clean_input(value)
 
+        print("Titre nettoyé :", repr(cleaned_input), flush=True)
+        #On vérifie que le titre ne contient pas des caractères non autorisée
+        if not all(char.isalnum() or char in ["-", "_", " "] for char in cleaned_input) : 
+            raise serializers.ValidationError("Le champ 'Titre' contient des caractères non autorisée.")
+        
+        cleaned_input = cleaned_input.strip()
+        
+        #On vérifie que le titre contient au moin un caractère
+        if not cleaned_input :
+            raise serializers.ValidationError("Le champ 'Titre' est vide.")
+        
+        return cleaned_input
+    
+    #On vérifie le titre de la musique
+    def validate_filename(self, value) :
+        print("Titre reçu :", repr(value), flush=True)
+        #On appel la fonction pour valider les données
+        cleaned_input = self.clean_input(value)
+
+        print("Titre nettoyé :", repr(cleaned_input), flush=True)
         #On vérifie que le titre ne contient pas des caractères non autorisée
         if not all(char.isalnum() or char in ["-", "_"] for char in cleaned_input) : 
             raise serializers.ValidationError("Le champ 'Titre' contient des caractères non autorisée.")
@@ -407,7 +429,33 @@ class WebsiteSerializer(serializers.ModelSerializer) :
         return cleaned_input
 
     def create(self, validated_data):
-        return Website.objects.create(**validated_data)       
+        return Website.objects.create(**validated_data)   
+
+class DescriptionSerializer(serializers.ModelSerializer) :
+        class Meta :
+            model = Website
+            fields = ["description"]
+
+        def cleant_input(self, value):
+            return html.escape(value, quote=False)
+        
+        def validate_description(self, value) :
+
+            cleaned_input = self.cleant_input(value)
+
+            #On vérifie si la valeur est vide
+            if not value.strip() :
+                raise serializers.ValidationError("La description est vide.")
+            
+            #On vérifie les caractères
+            if not all(char.isalnum() or char in [" ", ".", "?", "!", "-", "_", "'", "’"] for char in value) :
+                raise serializers.ValidationError("Le champs description contient des caractères non autorisée.")
+            
+            return cleaned_input
+        
+        
+            
+
 
 
 

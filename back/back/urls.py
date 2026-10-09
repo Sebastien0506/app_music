@@ -20,7 +20,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView
 )
-from back.app_back.views import get_link, get_description, add_description_and_link, filter_music_by_download, filter_music_by_like, delete_music_favorites, get_avatar, add_avatar, get_all_music_category, download_music, get_all_music_favorites, add_favorite_music, get_csrf, register, login, me, logout, user_update, add_music, get_all_music, create_category, get_all_category, delete_category, get_all_music, delete_music, get_one_music, update_music
+from back.app_back.views import update_description, get_link, get_description, add_description_and_link, filter_music_by_download, filter_music_by_like, delete_music_favorites, get_avatar, add_avatar, get_all_music_category, download_music, get_all_music_favorites, add_favorite_music, get_csrf, register, login, me, logout, user_update, add_music, get_all_music, create_category, get_all_category, delete_category, get_all_music, delete_music, get_one_music, update_music
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -55,6 +55,7 @@ urlpatterns = [
     path('api/add_description_and_link/', add_description_and_link),
     path('api/get_description/', get_description),
     path('api/get_link/', get_link),
+    path('api/update_description/', update_description),
    
 ]
 

@@ -35,7 +35,7 @@ class Avatar(models.Model) :
     size = models.PositiveIntegerField()
 
 class Website(models.Model) :
-    description = models.CharField(max_length=150)
+    description = models.CharField(max_length=150, blank=True)
     discord_link = models.URLField(max_length=200, blank=True)
     twitch_link = models.URLField(max_length=200, blank=True)
     tiktok_link = models.URLField(max_length=200, blank=True)
