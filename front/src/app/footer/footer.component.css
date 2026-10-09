@@ -1,0 +1,15 @@
+img {
+    width: 35px;
+}
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.link {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}

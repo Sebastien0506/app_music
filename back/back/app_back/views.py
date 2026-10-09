@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import ensure_csrf_cookie
-from back.app_back.models import User, Music, Category, Avatar
+from back.app_back.models import User, Music, Category, Avatar, Website
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .authentication import IsStaff
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
@@ -1285,8 +1285,39 @@ def add_description_and_link(request) :
         status=status.HTTP_201_CREATED
     )
 
-    
-    
+
+@api_view(["GET"])
+def get_description(request) :
+
+    #Dans l'entité Website on récupère uniquement la description
+    description_website = Website.objects.values("description").first()
+
+    return Response (
+        description_website, 
+        status=status.HTTP_200_OK
+    )
+
+@api_view(["GET"])
+def get_link(request) :
+    #Dans l'entité Website on récupère tous les liens
+    links = Website.objects.values("discord_link", "twitch_link", "tiktok_link", "youtube_link").first()
+
+    #On déclare la variable links en tant que tableau vide pour stocker tous les liens disponible
+    linkSocialNetwork = []
+
+    #Pour tous les lien on vérifie si il ne sont pas vide
+    for name, link in links.items() :
+        if link is not None :
+            linkSocialNetwork.append({
+                "name": name,
+                "link": link
+            })
+
+
+    return Response(
+        linkSocialNetwork,
+        status=status.HTTP_200_OK
+    )   
 
 
 

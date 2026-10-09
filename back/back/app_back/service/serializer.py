@@ -358,7 +358,7 @@ class WebsiteSerializer(serializers.ModelSerializer) :
     
     #On clean les données
     def clean_input(self, value):
-        return html.escape(value)
+        return html.escape(value, quote=False)
 
     def validate_discord_link(self, value) :
         cleaned_input = self.clean_input(value)

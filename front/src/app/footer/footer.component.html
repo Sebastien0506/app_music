@@ -1,3 +1,38 @@
 <footer>
-    <p>2026 - Mon site</p>
+    <div class="footer">
+        <h6><strong>Mes liens:</strong></h6>
+        <div class="link">
+            @for (social of AllLink(); track social.name) {
+
+                @if (social.name === "discord_link") {
+                    <a [href]="social.link" target="_blank">
+                        <img src="/discord-brands-solid-full.svg" alt="Discord">
+                    </a>
+                }
+            
+                @if (social.name === "tiktok_link") {
+                    <a [href]="social.link" target="_blank">
+                        <img src="/tiktok-brands-solid.svg" alt="TikTok">
+                    </a>
+                }
+            
+                @if (social.name === "twitch_link") {
+                    <a [href]="social.link" target="_blank">
+                        <img src="/twitch-brands-solid.svg" alt="Twitch">
+                    </a>
+                }
+            
+                @if (social.name === "youtube_link") {
+                    <a [href]="social.link" target="_blank">
+                        <img src="/youtube-brands-solid.svg" alt="YouTube">
+                    </a>
+                }
+            
+            } @empty {
+                <p>Aucun lien enregistré</p>
+            }
+        </div>
+       
+    </div>
+   
 </footer>
