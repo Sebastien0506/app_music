@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from .authentication import IsStaff
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response 
-from back.app_back.service.serializer import UserSerializer, LoginSerializer, UpdateUserSerializer, CreateCategorySerializer, UpdateMusicSerializer, AvatarSerializer, AddMusicSerializer, WebsiteSerializer, DescriptionSerializer
+from back.app_back.service.serializer import UserSerializer, LoginSerializer, UpdateUserSerializer, CreateCategorySerializer, UpdateMusicSerializer, AvatarSerializer, AddMusicSerializer, WebsiteSerializer, DescriptionSerializer, LinkSerializer
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
@@ -1299,7 +1299,7 @@ def get_description(request) :
     )
 
 @api_view(["PUT"])
-# @permission_classes([IsAuthenticated, IsStaff])
+@permission_classes([IsAuthenticated, IsStaff])
 def update_description(request):
 
     # On récupère la description dans la requête
@@ -1368,7 +1368,71 @@ def get_link(request) :
     return Response(
         linkSocialNetwork,
         status=status.HTTP_200_OK
-    )   
+    ) 
+
+#Fonction pour modifier les lien
+@api_view(["PUT"])
+# @permission_classes([IsAuthenticated, IsStaff])
+def update_link(request) : 
+
+    #On récupère les liens dans la requête
+    discord_link = request.data.get("discord_link")
+    tiktok_link = request.data.get("tiktok_link")
+    twitch_link = request.data.get("twitch_link")
+    youtube_link = request.data.get("youtube_link")
+
+    print("Discord :", repr(discord_link), flush=True)
+    print("TikTok :", repr(tiktok_link), flush=True)
+    print("Twitch :", repr(twitch_link), flush=True)
+    print("YouTube :", repr(youtube_link), flush=True)
+
+    #On vérifie tous les lien
+    check_link = checkLink(discord_link, twitch_link, tiktok_link, youtube_link)
+
+    #Si check_link est faux on renvoi un message d'erreur
+    if check_link is not True :
+        return check_link
+    
+    old_link = Website.objects.first()
+
+    if old_link is None :
+        return Response(
+            {
+                "error" :  "Aucun lien enregistrer."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    #On initialise le serializer
+    serializer = LinkSerializer(instance=old_link, 
+        data={
+        "discord_link": discord_link,
+        "twitch_link": twitch_link,
+        "tiktok_link" : tiktok_link,
+        "youtube_link": youtube_link,
+        }, partial = True)
+    
+    #Si le serializer n'est pas valide on renvoi un message d'erreur
+    if not serializer.is_valid():
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    serializer.save()
+    
+    
+    return Response(
+        {
+            "success" : "Modification des lien réussi."
+        },
+        status=status.HTTP_200_OK
+    )
+    
+    
+
+
+
+
 
 
 

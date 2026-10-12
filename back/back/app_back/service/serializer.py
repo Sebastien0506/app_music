@@ -429,7 +429,59 @@ class WebsiteSerializer(serializers.ModelSerializer) :
         return cleaned_input
 
     def create(self, validated_data):
-        return Website.objects.create(**validated_data)   
+        return Website.objects.create(**validated_data) 
+
+
+class LinkSerializer(serializers.ModelSerializer) :
+    class Meta :
+        model = Website
+        fields = ["discord_link", "twitch_link", "tiktok_link", "youtube_link"]
+
+    def cleant_input(self, value) :
+        return html.escape(value)
+
+    def validate_discord_link(self, value) :
+
+        cleaned_input = self.cleant_input(value)
+
+        #On vérifie le lien discord 
+        if not all(char.isalnum() or char in ["/", ".", ":"] for char in value) :
+            raise serializers.ValidationError("Le lien discord contient des caractère non autorisée.")
+        
+        print("Test de discord_link", value, flush=True)
+
+        return cleaned_input
+
+    def validate_tiktok_link(self, value) :
+
+        cleaned_inupt = self.cleant_input(value)
+
+        #On vérifie le lien tiktok
+        if not all (char.isalnum() or char in [":", "/", ".", "@"] for char in value) :
+            raise serializers.ValidationError("Le lien tiktok contient des caractères non autorisée.")
+
+        return cleaned_inupt
+    
+    def validate_twitch_link(self, value) :
+        cleaned_input = self.cleant_input(value)
+
+        #On vérifie le lien twitch
+        if not all (char.isalnum() or char in [":", "/", "."] for char in value) :
+            raise serializers.ValidationError("Le lien twitch contient des caractères non autorisée.")
+        
+        return cleaned_input
+    
+    def validate_youtube_link(self, value) :
+        cleaned_input = self.cleant_input(value)
+
+        #On vérifie le lien youtube
+        if not all (char.isalnum() or char in [":", "/", ".", "@"] for char in value) :
+            raise serializers.ValidationError("Le lien youtube contient des caractères non autorisée.")
+        
+        return cleaned_input
+    
+
+
 
 class DescriptionSerializer(serializers.ModelSerializer) :
         class Meta :
