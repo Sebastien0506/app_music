@@ -1,0 +1,25 @@
+<form [formGroup]="websiteForm" >
+
+    <mat-form-field>
+        <mat-label>Description</mat-label>
+        <textarea
+            matInput
+            formControlName="description">
+        </textarea>
+    </mat-form-field>
+
+    @for (links of allLink(); track links.name) {
+        <mat-form-field>
+            <mat-label>{{ links.name }}</mat-label>
+            <input
+                matInput
+                type="text"
+                [formControlName]="links.name">
+        </mat-form-field>
+    }
+
+    <button mat-raised-button (click)="sendRequest()">
+        Enregistrer
+    </button>
+
+</form>
