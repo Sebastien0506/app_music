@@ -1,0 +1,38 @@
+.update_form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10%;
+}
+
+.card {
+    background-color: whitesmoke;
+    width: 450px;
+    min-height: 600px;
+    padding: 30px 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 20px;
+    box-shadow: 2px 2px 4px grey;
+}
+
+.input_update {
+    width: 350px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.input_update mat-form-field {
+    width: 100%;
+}
+
+.input_update button {
+    margin-top: 10px;
+}

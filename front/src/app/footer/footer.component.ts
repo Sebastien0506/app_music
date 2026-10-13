@@ -23,10 +23,6 @@ export class FooterComponent {
             this.AllLink.set(data);
            
         }
-  
-          
-        
-        
         console.log(this.AllLink);
       },
       error: (err) => {

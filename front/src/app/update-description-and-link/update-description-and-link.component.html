@@ -1,25 +1,38 @@
-<form [formGroup]="websiteForm" >
+<div class="update_form">
+    <div class="card">
 
-    <mat-form-field>
-        <mat-label>Description</mat-label>
-        <textarea
-            matInput
-            formControlName="description">
-        </textarea>
-    </mat-form-field>
+        <form [formGroup]="websiteForm" (ngSubmit)="checkDescription()">
 
-    @for (links of allLink(); track links.name) {
-        <mat-form-field>
-            <mat-label>{{ links.name }}</mat-label>
-            <input
-                matInput
-                type="text"
-                [formControlName]="links.name">
-        </mat-form-field>
-    }
+            <div class="input_update">
 
-    <button mat-raised-button (click)="sendRequest()">
-        Enregistrer
-    </button>
+                <mat-form-field>
+                    <mat-label>Description</mat-label>
 
-</form>
+                    <textarea
+                        matInput
+                        formControlName="description">
+                    </textarea>
+                </mat-form-field>
+
+                @for (links of allLink(); track links.name) {
+                    <mat-form-field>
+                        <mat-label>{{ links.name }}</mat-label>
+
+                        <input
+                            matInput
+                            type="text"
+                            [formControlName]="links.name">
+                    </mat-form-field>
+                }
+                <button mat-raised-button (click)="sendRequest()">test</button>
+                <button mat-raised-button type="submit">
+                    Enregistrer
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+

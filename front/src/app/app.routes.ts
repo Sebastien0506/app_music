@@ -14,6 +14,7 @@ import { Page403Component } from './page403/page403.component';
 import { Page500Component } from './page500/page500.component';
 import { HomeComponent } from './home/home.component';
 import { Page404Component } from './page404/page404.component';
+import { UpdateDescriptionAndLinkComponent } from './update-description-and-link/update-description-and-link.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent},
@@ -27,6 +28,7 @@ export const routes: Routes = [
     {path: 'get_all_music', component: GetAllMusicComponent},
     {path: 'favorites', component: DisplayFavoriteComponent},
     {path: 'get_all_music_category/:id', component: GetAllMusicCategoryComponent},
+    {path: 'update_description_and_link', component: UpdateDescriptionAndLinkComponent},
     { path: 'page403', component: Page403Component},
     { path: 'page500', component: Page500Component},
     { path: '**', component: Page404Component},
