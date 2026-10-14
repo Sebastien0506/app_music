@@ -6,7 +6,7 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { MatButton } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-update-description-and-link',
   standalone: true,
@@ -16,7 +16,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class UpdateDescriptionAndLinkComponent {
 
-  constructor(private getDescription: UpdateDescriptionAndLinkService){}
+  constructor(private updateDescriptionAndLinkService: UpdateDescriptionAndLinkService){}
 
   //On déclare les variable qui vont stocker les données
   
@@ -24,6 +24,9 @@ export class UpdateDescriptionAndLinkComponent {
 
   //On définit une variable pour les message d'erreur
   errorMessage = signal('');
+
+  //On définit une variable pour stocker les messages de succes
+  successMessage = signal('');
   
   snackBar = inject(MatSnackBar);
   websiteForm = new FormGroup({
@@ -36,7 +39,7 @@ export class UpdateDescriptionAndLinkComponent {
 
   //On fait la requête au chargement de la page 
   ngOnInit() {
-      this.getDescription.get_description().subscribe({
+      this.updateDescriptionAndLinkService.get_description().subscribe({
         next: (data) => {
           //Si aucune description
           if(data) {
@@ -53,7 +56,7 @@ export class UpdateDescriptionAndLinkComponent {
         }
       })
 
-      this.getDescription.get_link().subscribe({
+      this.updateDescriptionAndLinkService.get_link().subscribe({
         next: (data) => {
           this.allLink.set(data);
 
@@ -340,19 +343,47 @@ export class UpdateDescriptionAndLinkComponent {
     return true
   }
   sendRequest(){
-    console.log("Appelle de la fonction sendRequest");
+    //On vérifie si les données son correct
     const checkDescription = this.checkDescription();
     const checkLink = this.checkLink();
-    console.log("Appelle de la fonction checkLink:", checkLink);
-    console.log("Appelle de la fonction checkDescription:", checkDescription);
 
-    if(!checkDescription){
+    if(!checkDescription || !checkLink){
       return;
     }
 
-    if(!checkLink){
-      return;
+   //On stock les données dans la variable data
+    const data = {
+      description : this.websiteForm.value.description,
+      discord_link : this.websiteForm.value.discord_link,
+      twitch_link: this.websiteForm.value.twitch_link,
+      tiktok_link: this.websiteForm.value.tiktok_link,
+      youtube_link: this.websiteForm.value.youtube_link
     }
-    
+
+    //On fait la requête
+    this.updateDescriptionAndLinkService.updateWebsite(data).subscribe({
+      next: (res) => {
+        this.successMessage.set(res.success);
+        this.snackBar.open(
+          this.successMessage(),
+          "Fermer",
+          {
+            duration: 5000
+          }
+        )
+      },
+      error: (err) => {
+        console.error(err.error.error);
+        this.errorMessage.set("Une erreur c'est produit.");
+        this.snackBar.open(
+          this.errorMessage(),
+          "Fermer",
+          {
+            duration: 5000
+          }
+        )
+      },
+    });
   }
+    
 }

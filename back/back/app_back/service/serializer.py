@@ -432,13 +432,13 @@ class WebsiteSerializer(serializers.ModelSerializer) :
         return Website.objects.create(**validated_data) 
 
 
-class LinkSerializer(serializers.ModelSerializer) :
+class DescriptionAndLinkSerializer(serializers.ModelSerializer) :
     class Meta :
         model = Website
-        fields = ["discord_link", "twitch_link", "tiktok_link", "youtube_link"]
+        fields = ["description", "discord_link", "twitch_link", "tiktok_link", "youtube_link"]
 
     def cleant_input(self, value) :
-        return html.escape(value)
+        return html.escape(value, quote=False)
 
     def validate_discord_link(self, value) :
 
@@ -480,30 +480,22 @@ class LinkSerializer(serializers.ModelSerializer) :
         
         return cleaned_input
     
-
-
-
-class DescriptionSerializer(serializers.ModelSerializer) :
-        class Meta :
-            model = Website
-            fields = ["description"]
-
-        def cleant_input(self, value):
-            return html.escape(value, quote=False)
-        
-        def validate_description(self, value) :
+    def validate_description(self, value) :
 
             cleaned_input = self.cleant_input(value)
-
-            #On vérifie si la valeur est vide
-            if not value.strip() :
-                raise serializers.ValidationError("La description est vide.")
             
             #On vérifie les caractères
             if not all(char.isalnum() or char in [" ", ".", "?", "!", "-", "_", "'", "’"] for char in value) :
                 raise serializers.ValidationError("Le champs description contient des caractères non autorisée.")
             
             return cleaned_input
+    
+
+
+
+
+        
+        
         
         
             

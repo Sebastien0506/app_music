@@ -12,6 +12,17 @@ export interface Link{
   name: string;
   link: string;
 }
+
+//On crée les interface pour stocker les reponse pour l'update de la description et des liens
+export interface ResponseUpdateDescription{
+  success: string;
+  
+}
+
+export interface ResponseUpdateLink{
+  success: string;
+  
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -31,4 +42,15 @@ export class UpdateDescriptionAndLinkService {
       withCredentials: true
     });
   }
+
+  //On fait les deux requête
+  updateWebsite(data: any): Observable<ResponseUpdateDescription>{
+    return this.http.put<ResponseUpdateDescription>('api/update_website/', data, {
+      withCredentials: true
+    });
+  }
+
+  
+
+
 }
