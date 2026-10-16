@@ -23,8 +23,9 @@ from mutagen.mp3 import MP3
 import uuid
 from pathlib import Path
 from django.http.response import FileResponse
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote
 from back.app_back.service.linkService import checkLink
+from django.db.models import F
 
 # @api_view(["GET"])
 # @permission_classes([AllowAny])
@@ -941,7 +942,7 @@ def get_all_music_favorites(request) :
     )
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def download_music(request, music_id) :
 
     #On récupère la musique par son id
@@ -952,23 +953,38 @@ def download_music(request, music_id) :
             {
                 "error": "Musique introuvable."
             },
-            status=status.HTTP_400_BAD_REQUEST
+            status=status.HTTP_404_NOT_FOUND
         )
-    #On ajoute +1 au nombre de téléchargement
-    music.count_download += 1
-    music.save()
+    #On augmente le nombre de musique télécharger de + 1
+    Music.objects.filter(id=music_id).update(
+        count_download=F("count_download") + 1
+    )
+    
     #On récupère sont extension
     extension = music.filename.split(".")[-1]
 
     download_name = f"{music.title}.{extension}"
 
-    
+    response = HttpResponse(content_type="audio/mpeg")
 
-    return FileResponse(
-        music.file.open('rb'),
-        as_attachment=True,
-        filename=download_name
+    print("Fichier django :", music.file.name, flush=True)
+
+    print(
+        "X-Accel-Redirect :",
+        "/protected-media/" + quote(music.file.name, safe="/"),
+        flush=True
     )
+
+    response["X-Accel-Redirect"] = (
+        "/protected-media/" + quote(music.file.name, safe="/")
+    )
+
+    response["Content-Disposition"] = (
+        f"attachment; filename*=UTF-8''{quote(download_name)}"
+    )
+
+    return response
+
 
 #PERMET DE RÉCUPÉRER LES MUSIQUES PRÉSENT DANS UNE CATÉGORIE
 @api_view(["GET"])

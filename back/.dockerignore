@@ -1,0 +1,8 @@
+.venv/
+venv/
+__psycache__/
+*.pyc
+.git/
+.pytest_cache/
+.mypy_cache/
+.DS_Store
