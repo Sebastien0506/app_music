@@ -9,6 +9,7 @@ export interface AllMusicFavorites{
   duration: number;
   size: number;
   file: string;
+  image_file: string;
   category: {
     id: number;
     name: string;

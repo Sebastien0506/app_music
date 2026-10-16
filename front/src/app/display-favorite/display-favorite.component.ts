@@ -3,10 +3,12 @@ import { AllMusicFavorites, DeleteMusicFavoritesResponse, DisplayFavoriteService
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
 @Component({
   selector: 'app-display-favorite',
   standalone: true,
-  imports: [MatTableModule, MatButtonModule],
+  imports: [MatTableModule, MatButtonModule, MatCardModule, MatIcon],
   templateUrl: './display-favorite.component.html',
   styleUrl: './display-favorite.component.css'
 })
@@ -35,6 +37,7 @@ export class DisplayFavoriteComponent {
   ngOnInit(){
     this.allMusicFavorites.getAllMusicFavorites().subscribe({
       next: (data) => {
+        console.log("Verification de data",data);
         //On récpère les données.
         this.musicFavorite = data;
         console.log(this.musicFavorite);

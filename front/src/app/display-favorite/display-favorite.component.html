@@ -1,80 +1,101 @@
-<div class="favorite-page">
 
-    <div class="favorite-card">
+  <div class="favorite-page">
+
+    <div class="music-grid">
   
-      <h2>Mes musiques favorites</h2>
+      @for(music of musicFavorite; track music.id){
   
-      <table mat-table [dataSource]="musicFavorite">
+        <mat-card class="music-card">
   
-        <ng-container matColumnDef="title">
-          <th mat-header-cell *matHeaderCellDef>Titre</th>
-          <td mat-cell *matCellDef="let music">
-            {{ music.title }}
-          </td>
-        </ng-container>
+          <!-- Image -->
+          <div class="music-image">
   
-        <ng-container matColumnDef="category">
-          <th mat-header-cell *matHeaderCellDef>Catégorie</th>
-  
-          <td mat-cell *matCellDef="let music">
-            @for(category of music.category; track category.id) {
-              <span class="category-badge">
-                {{ category.name }}
-              </span>
+            @if(music.image_file){
+              <img
+                [src]="'http://localhost:8000' + music.image_file"
+                [alt]="music.title"
+              >
+            } @else {
+              <mat-icon>music_note</mat-icon>
             }
-          </td>
-        </ng-container>
   
-        <ng-container matColumnDef="duration">
-          <th mat-header-cell *matHeaderCellDef>Durée</th>
-          <td mat-cell *matCellDef="let music">
-            {{ formatDuration(music.duration) }}
-          </td>
-        </ng-container>
+          </div>
   
-        <ng-container matColumnDef="size">
-          <th mat-header-cell *matHeaderCellDef>Taille</th>
-          <td mat-cell *matCellDef="let music">
-            {{ formatSize(music.size) }} Mo
-          </td>
-        </ng-container>
+          <!-- Informations -->
+          <mat-card-content class="music-content">
   
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <h2 class="music-title">
+              {{music.title}}
+            </h2>
   
-          <td mat-cell *matCellDef="let music">
+            <div class="music-categories">
+              @for(category of music.category; track category.id){
+                <span class="category">
+                  {{category.name}}
+                </span>
+              }
+            </div>
   
-            <audio
-              #audioOption
-              [src]="'http://localhost:8000' + music.file">
-            </audio>
+            <!-- Favoris -->
+            <button
+              mat-icon-button
+              class="favorite-button"
+              (click)="deleteMusicFavorites(music.id)"
+              aria-label="Retirer des favoris"
+            >
+              <mat-icon>favorite</mat-icon>
+            </button>
   
-            @if (playingMusicId() === music.id) {
-              <button mat-button (click)="stopAudioMusic(audioOption)">
+          </mat-card-content>
+  
+          <!-- Audio -->
+          <audio
+            #audioOption
+            [src]="'http://localhost:8000' + music.file">
+          </audio>
+  
+          <!-- Actions -->
+          <mat-card-actions class="actions">
+  
+            @if(playingMusicId() === music.id){
+  
+              <button
+                mat-flat-button
+                (click)="stopAudioMusic(audioOption)"
+              >
+                <mat-icon>stop</mat-icon>
                 Stopper
               </button>
-            }
-            @else {
-              <button mat-button (click)="playAudioMusic(audioOption, music.id)">
-                Lire
+  
+            } @else {
+  
+              <button
+                mat-flat-button
+                (click)="playAudioMusic(audioOption, music.id)"
+              >
+                <mat-icon>play_arrow</mat-icon>
+                Écouter
               </button>
+  
             }
   
-            <button mat-button (click)="downloadMusic(music.id)">
+            <button
+              mat-stroked-button
+              (click)="downloadMusic(music.id)"
+            >
+              <mat-icon>download</mat-icon>
               Télécharger
             </button>
-            <button mat-button (click)="deleteMusicFavorites(music.id)">Supprimer des favoris</button>
   
-          </td>
-        </ng-container>
+          </mat-card-actions>
   
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </mat-card>
   
-      </table>
+      }
   
     </div>
   
   </div>
+
 
 

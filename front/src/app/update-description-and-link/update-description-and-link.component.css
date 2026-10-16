@@ -36,3 +36,13 @@
 .input_update button {
     margin-top: 10px;
 }
+
+@media screen and (max-width: 650px) {
+    .card{
+        width: 350px;
+    }
+
+    .input_update{
+        width: 250px;
+    }
+}

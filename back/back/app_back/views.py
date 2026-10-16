@@ -925,6 +925,7 @@ def get_all_music_favorites(request) :
                 "size": music.size,
                 "duration": music.duration,
                 'file': music.file.url,
+                "image_file": music.image_file.url if music.image_file else None,
                 'category': [
                     {
                         "id": cat.id,

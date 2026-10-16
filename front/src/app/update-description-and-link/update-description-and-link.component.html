@@ -1,7 +1,7 @@
 <div class="update_form">
     <div class="card">
 
-        <form [formGroup]="websiteForm" (ngSubmit)="checkDescription()">
+        <form [formGroup]="websiteForm" (ngSubmit)="sendRequest()">
 
             <div class="input_update">
 
@@ -24,7 +24,7 @@
                             [formControlName]="links.name">
                     </mat-form-field>
                 }
-                <button mat-raised-button (click)="sendRequest()">test</button>
+                
                 <button mat-raised-button type="submit">
                     Enregistrer
                 </button>
